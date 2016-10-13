@@ -35,57 +35,12 @@ var xpos = angular.module('xisoPos', ['ionic', 'ionicMultipleViews'])
 				}
 			})
 			//월차
-			.state('masterDetail.monthCars', {
-				url: '/monthCars',
+			.state('masterDetail.historyCars', {
+				url: '/historyCars',
 				views: {
 					'screen': {
-						templateUrl: 'templates/month_cars.html',
-						controller: 'MonthCarsCtrl'
-					},
-
-					'fixed-panel': {
-						templateUrl: 'templates/panel.html',
-						controller: 'PanelCtrl'
-					}
-				}
-			})
-			//지정주차
-			.state('masterDetail.cooperCars', {
-				url: '/cooperCars',
-				views: {
-					'screen': {
-						templateUrl: 'templates/cooper_cars.html',
-						controller: 'CooperCarsCtrl'
-					},
-
-					'fixed-panel': {
-						templateUrl: 'templates/panel.html',
-						controller: 'PanelCtrl'
-					}
-				}
-			})
-			//정산
-			.state('masterDetail.calcu', {
-				url: '/calcu',
-				views: {
-					'screen': {
-						templateUrl: 'templates/calcu.html',
-						controller: 'CalcuCtrl'
-					},
-
-					'fixed-panel': {
-						templateUrl: 'templates/panel.html',
-						controller: 'PanelCtrl'
-					}
-				}
-			})
-			//설정
-			.state('masterDetail.setting', {
-				url: '/setting',
-				views: {
-					'screen': {
-						templateUrl: 'templates/setting.html',
-						controller: 'SettingCtrl'
+						templateUrl: 'templates/history_cars.html',
+						controller: 'HistoryCarsCtrl'
 					},
 
 					'fixed-panel': {

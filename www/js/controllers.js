@@ -1,7 +1,7 @@
-xpos.controller('CurrentCarsCtrl', function ($scope, $stateParams, MultipleViewsManager, MessageService) {
-		$scope.message = MessageService.get($stateParams.messageId);
+xpos
+.controller('CurrentCarsCtrl', function ($scope, $stateParams, MultipleViewsManager, MessageService) {
 
-		MultipleViewsManager.updated('view-message', function (params) {
-			$scope.message = MessageService.get(params.messageId);
-		});
-	});
+})
+.controller('HistoryCarsCtrl', function ($scope, $stateParams, MultipleViewsManager, MessageService) {
+
+});
