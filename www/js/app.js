@@ -1,6 +1,7 @@
-var xpos = angular.module('xisoPos', ['ionic', 'ionicMultipleViews'])
+var db = null;
+var xpos = angular.module('xisoPos', ['ionic', 'ngCordova','ionicMultipleViews'])
 
-	.run(function ($ionicPlatform) {
+	.run(function ($ionicPlatform,$cordovaSQLite) {
 		$ionicPlatform.ready(function () {
 			if (window.cordova && window.cordova.plugins.Keyboard) {
 				cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
@@ -9,6 +10,14 @@ var xpos = angular.module('xisoPos', ['ionic', 'ionicMultipleViews'])
 			if (window.StatusBar) {
 				StatusBar.styleDefault();
 			}
+			if (window.cordova) {
+				db = $cordovaSQLite.openDB("xpos.db");
+			}else{
+				db = window.openDatabase("xpos.db", '1', 'my', 1024 * 1024 * 100);
+
+			}
+			$query = "CREATE TABLE IF NOT EXISTS config (id integer primary key, firstname text, lastname text)";
+			$cordovaSQLite.execute(db,$query);
 		});
 	})
 
