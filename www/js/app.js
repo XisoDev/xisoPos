@@ -43,20 +43,47 @@ var xpos = angular.module('xisoPos', ['ionic', 'ngCordova','ionicMultipleViews']
 				}
 			})
 			.state('mainLayout.tabs.current', {
-				url: '/currentCars',
+				url: '/current',
 				views: {
 					'tab-current': {
-						templateUrl: 'templates/current_cars.html',
-						controller: 'CurrentCarsCtrl'
+						templateUrl: 'templates/current.html',
+						controller: 'currentCtrl'
 					}
 				}
 			})
 			.state('mainLayout.tabs.history', {
-				url: '/historyCars',
+				url: '/history',
 				views: {
 					'tab-history': {
-						templateUrl: 'templates/history_cars.html',
-						controller: 'HistoryCarsCtrl'
+						templateUrl: 'templates/history.html',
+						controller: 'historyCtrl'
+					}
+				}
+			})
+			.state('mainLayout.tabs.month', {
+				url: '/month',
+				views: {
+					'tab-month': {
+						templateUrl: 'templates/month.html',
+						controller: 'monthCtrl'
+					}
+				}
+			})
+			.state('mainLayout.tabs.cooper', {
+				url: '/cooper',
+				views: {
+					'tab-cooper': {
+						templateUrl: 'templates/cooper.html',
+						controller: 'cooperCtrl'
+					}
+				}
+			})
+			.state('mainLayout.tabs.calcu', {
+				url: '/calcu',
+				views: {
+					'tab-calcu': {
+						templateUrl: 'templates/calcu.html',
+						controller: 'calcuCtrl'
 					}
 				}
 			})
@@ -65,11 +92,11 @@ var xpos = angular.module('xisoPos', ['ionic', 'ngCordova','ionicMultipleViews']
 				views: {
 					'tab-config': {
 						templateUrl: 'templates/config.html',
-						controller: 'CurrentCarsCtrl'
+						controller: 'configCtrl'
 					}
 				}
 			});
 
-		$urlRouterProvider.otherwise('/mainLayout/tabs/currentCars');
+		$urlRouterProvider.otherwise('/mainLayout/tabs/current');
 	});
 

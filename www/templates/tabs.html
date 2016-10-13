@@ -1,20 +1,33 @@
 <ion-tabs class="tabs-icon-top tabs-dark tabs-color-light tabs-color-active-positive">
 
-    <!-- Dashboard Tab -->
-    <ion-tab title="Status" icon-off="ion-ios-pulse" icon-on="ion-ios-pulse-strong" href="#/mainLayout/tabs/currentCars">
+    <!-- 입차목록 Tab -->
+    <ion-tab title="입차목록" icon-off="ion-ios-pulse" icon-on="ion-ios-pulse-strong" href="#/mainLayout/tabs/current">
         <ion-nav-view name="tab-current"></ion-nav-view>
     </ion-tab>
 
-    <!-- Chats Tab -->
-    <ion-tab title="Chats" icon-off="ion-ios-chatboxes-outline" icon-on="ion-ios-chatboxes" href="#/mainLayout/tabs/historyCars">
+    <!-- 입출차기록 Tab -->
+    <ion-tab title="입출차기록" icon-off="ion-ios-chatboxes-outline" icon-on="ion-ios-chatboxes" href="#/mainLayout/tabs/history">
         <ion-nav-view name="tab-history"></ion-nav-view>
     </ion-tab>
 
-    <!-- Account Tab -->
-    <ion-tab title="Account" icon-off="ion-ios-gear-outline" icon-on="ion-ios-gear" href="#/mainLayout/tabs/config">
+    <!-- 월차 Tab -->
+    <ion-tab title="월차" icon-off="ion-ios-chatboxes-outline" icon-on="ion-ios-chatboxes" href="#/mainLayout/tabs/month">
+        <ion-nav-view name="tab-month"></ion-nav-view>
+    </ion-tab>
+
+    <!-- 지정주차 Tab -->
+    <ion-tab title="지정주차" icon-off="ion-ios-chatboxes-outline" icon-on="ion-ios-chatboxes" href="#/mainLayout/tabs/cooper">
+        <ion-nav-view name="tab-cooper"></ion-nav-view>
+    </ion-tab>
+
+    <!-- 정산 Tab -->
+    <ion-tab title="정산" icon-off="ion-ios-chatboxes-outline" icon-on="ion-ios-chatboxes" href="#/mainLayout/tabs/calcu">
+        <ion-nav-view name="tab-calcu"></ion-nav-view>
+    </ion-tab>
+
+    <!-- 설정 Tab -->
+    <ion-tab title="설정" icon-off="ion-ios-gear-outline" icon-on="ion-ios-gear" href="#/mainLayout/tabs/config">
         <ion-nav-view name="tab-config"></ion-nav-view>
     </ion-tab>
 
-
-    <multiple-views-support width="65%" />
 </ion-tabs>
