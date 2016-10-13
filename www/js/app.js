@@ -1,4 +1,4 @@
-angular.module('xisoPos', ['ionic', 'ionicMultipleViews'])
+var xpos = angular.module('xisoPos', ['ionic', 'ionicMultipleViews'])
 
 	.run(function ($ionicPlatform) {
 		$ionicPlatform.ready(function () {
