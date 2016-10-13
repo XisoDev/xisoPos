@@ -14,18 +14,17 @@ var xpos = angular.module('xisoPos', ['ionic', 'ionicMultipleViews'])
 
 	.config(function ($stateProvider, $urlRouterProvider) {
 		$stateProvider
-			.state('masterDetail', {
-				url: '/masterDetail',
-				templateUrl: 'templates/master-detail-layout.html',
+			.state('mainLayout', {
+				url: '/mainLayout',
+				templateUrl: 'templates/main_layout.html',
 				abstract: true
 			})
 			//입출차 기록
-			.state('masterDetail.currentCars', { 
-				url: '/currentCars',
+			.state('mainLayout.tabs', {
+				url: '/tabs',
 				views: {
 					'screen': {
-						templateUrl: 'templates/current_cars.html',
-						controller: 'CurrentCarsCtrl'
+						templateUrl: 'templates/tabs.html'
 					},
 
 					'fixed-panel': {
@@ -34,22 +33,34 @@ var xpos = angular.module('xisoPos', ['ionic', 'ionicMultipleViews'])
 					}
 				}
 			})
-			//월차
-			.state('masterDetail.historyCars', {
+			.state('mainLayout.tabs.current', {
+				url: '/currentCars',
+				views: {
+					'tab-current': {
+						templateUrl: 'templates/current_cars.html',
+						controller: 'CurrentCarsCtrl'
+					}
+				}
+			})
+			.state('mainLayout.tabs.history', {
 				url: '/historyCars',
 				views: {
-					'screen': {
+					'tab-history': {
 						templateUrl: 'templates/history_cars.html',
 						controller: 'HistoryCarsCtrl'
-					},
-
-					'fixed-panel': {
-						templateUrl: 'templates/panel.html',
-						controller: 'PanelCtrl'
+					}
+				}
+			})
+			.state('mainLayout.tabs.config', {
+				url: '/config',
+				views: {
+					'tab-config': {
+						templateUrl: 'templates/config.html',
+						controller: 'CurrentCarsCtrl'
 					}
 				}
 			});
 
-		$urlRouterProvider.otherwise('/masterDetail/currentCars');
+		$urlRouterProvider.otherwise('/mainLayout/tabs/currentCars');
 	});
 

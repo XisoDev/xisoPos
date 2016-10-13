@@ -1,28 +1,20 @@
-<div class="tabs-striped tabs-top tabs-background-dark tabs-color-stable tabs-icon-left">
-    <div class="tabs">
-        <a class="tab-item active" href="#/masterDetail/currentCars">
-            <i class="icon ion-home"></i>
-            입차 목록
-        </a>
-        <a class="tab-item" href="#/masterDetail/historyCars">
-            <i class="icon ion-ios-list"></i>
-            입/출차 기록
-        </a>
-        <a class="tab-item" href="#">
-            <i class="icon ion-star"></i>
-            월차
-        </a>
-        <a class="tab-item" href="#">
-            <i class="icon ion-model-s"></i>
-            지정주차
-        </a>
-        <a class="tab-item" href="#">
-            <i class="icon ion-calculator"></i>
-            정산
-        </a>
-        <a class="tab-item" href="#">
-            <i class="icon ion-gear-a"></i>
-            설정
-        </a>
-    </div>
-</div>
+<ion-tabs class="tabs-icon-top tabs-dark tabs-color-light tabs-color-active-positive">
+
+    <!-- Dashboard Tab -->
+    <ion-tab title="Status" icon-off="ion-ios-pulse" icon-on="ion-ios-pulse-strong" href="#/mainLayout/tabs/currentCars">
+        <ion-nav-view name="tab-current"></ion-nav-view>
+    </ion-tab>
+
+    <!-- Chats Tab -->
+    <ion-tab title="Chats" icon-off="ion-ios-chatboxes-outline" icon-on="ion-ios-chatboxes" href="#/mainLayout/tabs/historyCars">
+        <ion-nav-view name="tab-history"></ion-nav-view>
+    </ion-tab>
+
+    <!-- Account Tab -->
+    <ion-tab title="Account" icon-off="ion-ios-gear-outline" icon-on="ion-ios-gear" href="#/mainLayout/tabs/config">
+        <ion-nav-view name="tab-config"></ion-nav-view>
+    </ion-tab>
+
+
+    <multiple-views-support width="65%" />
+</ion-tabs>
