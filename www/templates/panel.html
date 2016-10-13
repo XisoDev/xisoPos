@@ -2,31 +2,49 @@
 	
 	<ion-nav-bar class="bar-dark"></ion-nav-bar>
 	<ion-content class="has-header" scroll="false">
+		<a class="closeButton" ng-click="mainFieldInit()"><i class="ion-android-close"></i></a>
 		<div class="list card background">
 			<div class="item">
 				<label class="item item-input">
-					<input type="text" placeholder="관리 번호" id="mainField">
+					<input type="text" placeholder="관리 번호" id="mainField" ng-model="mainField" />
 				</label>
 			</div>
 		</div>
 		<ul id="numberPad">
-			<li class="small">입차</li>
-			<li class="small">출차</li>
-			<li class="small">열람</li>
-			<li ng-click="inputField('7');">7</li>
-			<li ng-click="inputField('8');">8</li>
-			<li ng-click="inputField('9');">9</li>
-			<li ng-click="inputField('4');">4</li>
-			<li ng-click="inputField('5');">5</li>
-			<li ng-click="inputField('6');">6</li>
-			<li ng-click="inputField('1');">1</li>
-			<li ng-click="inputField('2');">2</li>
-			<li ng-click="inputField('3');">3</li>
-			<li ng-click="inputField('0');" class="double">0</li>
-			<li ng-click="inputField('-');">-</li>
-			<li class="small">카드취소</li>
-			<li class="small">카드결제</li>
-			<li class="small">현금영수증</li>
+			<li class="small"><span>
+				<i class="ion-ios-cart"></i><br />
+				입차
+			</span></li>
+			<li class="small"><span>
+				<i class="ion-android-car"></i><br />
+				출차</span></li>
+			<li class="small">
+				<span>
+				<i class="ion-ios-information"></i><br />
+				열람</span></li>
+			<li ng-click="inputField('7');"><span>7</span></li>
+			<li ng-click="inputField('8');"><span>8</span></li>
+			<li ng-click="inputField('9');"><span>9</span></li>
+			<li ng-click="inputField('4');"><span>4</span></li>
+			<li ng-click="inputField('5');"><span>5</span></li>
+			<li ng-click="inputField('6');"><span>6</span></li>
+			<li ng-click="inputField('1');"><span>1</span></li>
+			<li ng-click="inputField('2');"><span>2</span></li>
+			<li ng-click="inputField('3');"><span>3</span></li>
+			<li ng-click="inputField('0');" class="double"><span>0</span></li>
+			<li ng-click="inputField('-');"><span>-</span></li>
+			<li class="small"><span>
+					<i class="ion-card"></i><br />
+					카드결제
+			</span></li>
+			<li class="small"><span>
+					<i class="ion-android-arrow-back"></i><br />
+					카드취소
+				</span></li>
+			<li class="small"><span>
+				<i class="ion-document-text"></i><br />
+				현금영수증</span></li>
+			<li class="bottom"></li>
 		</ul>
 	</ion-content>
   
