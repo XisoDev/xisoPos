@@ -1,4 +1,4 @@
-<ion-view title="상점 기초정보 설정">
+<ion-view title="상점 기초정보 설정" ng-init="config_default_init()">
     <ion-nav-bar class="bar-calm">
         <ion-nav-back-button>
         </ion-nav-back-button>
@@ -6,26 +6,26 @@
     <ion-content class="has-header" padding="true">
         <div class="list">
             <label class="item item-input">
-                <input type="text" placeholder="주차장명">
+                <input type="text" placeholder="주차장명" ng-model="defaultParams.shop_name">
             </label>
             <label class="item item-input">
-                <input type="tel" placeholder="휴대전화">
+                <input type="tel" placeholder="휴대전화" ng-model="defaultParams.mobile">
             </label>
             <label class="item item-input">
-                <input type="tel" placeholder="유선전화">
+                <input type="tel" placeholder="유선전화" ng-model="defaultParams.tel">
             </label>
             <label class="item item-input">
-                <input type="tel" placeholder="FAX">
+                <input type="tel" placeholder="FAX" ng-model="defaultParams.fax">
             </label>
             <label class="item item-input">
-                <input type="text" placeholder="대표자 명">
+                <input type="text" placeholder="대표자 명" ng-model="defaultParams.user_name">
             </label>
             <label class="item item-input">
-                <input type="text" placeholder="표기할 주소입력">
+                <input type="text" placeholder="표기할 주소입력" ng-model="defaultParams.address">
             </label>
         </div>
 
-        <button class="button button-block button-calm">
+        <button class="button button-block button-calm" ng-click="insertShopInfo()">
             저장
         </button>
     </ion-content>

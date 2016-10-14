@@ -3,7 +3,6 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 		self.db = null;
 
 		self.init = function() {
-			console.log('initt');
 			// Use self.db = window.sqlitePlugin.openDatabase({name: DB_CONFIG.name}); in production
 				if (window.cordova) {
 					self.db = $cordovaSQLite.openDB(DB_CONFIG.name);
@@ -71,6 +70,26 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 				.then(function(result){
 					return DB.fetch(result);
 				});
+		};
+
+		return self;
+	})
+	.factory('ShopInfo', function(DB) {
+		var self = this;
+
+		self.all = function() {
+			return DB.query('SELECT * FROM shop_info')
+				.then(function(result){
+					return DB.fetchAll(result);
+				});
+		};
+
+		self.delete = function() {
+			return DB.query('DELETE FROM shop_info');
+		};
+
+		self.insert = function(params) {
+			return DB.query('INSERT INTO shop_info (shop_name,mobile,tel,fax,user_name,address) VALUES(?,?,?,?,?,?)', [params.shop_name, params.mobile, params.tel, params.fax, params.user_name, params.address]);
 		};
 
 		return self;
