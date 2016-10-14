@@ -1,4 +1,4 @@
-xpos.controller('PanelCtrl', function ($scope, $cordovaSQLite, $state, MultipleViewsManager, MessageService) {
+xpos.controller('PanelCtrl', function ($scope, $cordovaSQLite, $state, MultipleViewsManager) {
     $scope.mainField = "";
 
     $scope.inputField = function(data){
