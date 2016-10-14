@@ -6,6 +6,7 @@ xpos.controller('PanelCtrl', function ($scope, $cordovaSQLite, $state, MultipleV
     }
 
     $scope.mainFieldInit = function(){
+        delete $scope.mainField;
         $scope.mainField = "";
     }
 
