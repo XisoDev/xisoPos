@@ -74,7 +74,7 @@ var xpos = angular.module('xisoPos', ['ionic', 'ngCordova','ionicMultipleViews']
 				views: {
 					'tab-cooper': {
 						templateUrl: 'templates/cooper.html',
-						controller: 'HistoryCarsCtrl'
+						controller: 'cooperCtrl'
 					}
 				}
 			})
@@ -83,7 +83,7 @@ var xpos = angular.module('xisoPos', ['ionic', 'ngCordova','ionicMultipleViews']
 				views: {
 					'tab-calcu': {
 						templateUrl: 'templates/calcu.html',
-						controller: 'HistoryCarsCtrl'
+						controller: 'calcuCtrl'
 					}
 				}
 			})
@@ -92,11 +92,11 @@ var xpos = angular.module('xisoPos', ['ionic', 'ngCordova','ionicMultipleViews']
 				views: {
 					'tab-config': {
 						templateUrl: 'templates/config.html',
-						controller: 'CurrentCarsCtrl'
+						controller: 'configCtrl'
 					}
 				}
 			});
 
-		$urlRouterProvider.otherwise('/mainLayout/tabs/currentCars');
+		$urlRouterProvider.otherwise('/mainLayout/tabs/current');
 	});
 
