@@ -13,7 +13,7 @@ var xpos = angular.module('xisoPos', ['ionic', 'ngCordova','ionicMultipleViews',
 			// 
 			// $query = "CREATE TABLE IF NOT EXISTS config (id integer primary key, firstname text, lastname text)";
 			// $cordovaSQLite.execute(db,$query);
-			// DB.init();
+			DB.init();
 		});
 	})
 
