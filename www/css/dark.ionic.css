@@ -3502,7 +3502,7 @@ ion-infinite-scroll:not(.active) .icon:before {
     top: 88px; }
 
 .has-tabs-top {
-    top: 93px; }
+    top: 96px; }
 
 .has-header.has-subheader.has-tabs-top {
     top: 137px; }
@@ -5003,7 +5003,9 @@ ion-tabs.tabs-color-active-dark .tab-item.tab-item-active, ion-tabs.tabs-color-a
     border-width: 0px 0px 2px 0px !important;
     border-style: solid; }
 .tabs-top.tabs-striped .tab-item.tab-item-active > .badge, .tabs-top.tabs-striped .tab-item.tab-item-active > i, .tabs-top.tabs-striped .tab-item.active > .badge, .tabs-top.tabs-striped .tab-item.active > i, .tabs-top.tabs-striped .tab-item.activated > .badge, .tabs-top.tabs-striped .tab-item.activated > i {
-    margin-top: -1px; }
+    margin: 5px auto;
+    font-size:25px
+}
 .tabs-top.tabs-striped .tab-item .badge {
     -webkit-transition: color .2s ease;
     -moz-transition: color .2s ease;
@@ -5022,7 +5024,7 @@ ion-tabs.tabs-color-active-dark .tab-item.tab-item-active, ion-tabs.tabs-color-a
 /* If you change this, change platform.scss as well */
 .tabs-top > .tabs,
 .tabs.tabs-top {
-    top: 0;
+    top: 43px;
     padding-top: 0;
     background-position: bottom;
     border-top-width: 0;
@@ -5053,7 +5055,7 @@ ion-tabs.tabs-color-active-dark .tab-item.tab-item-active, ion-tabs.tabs-color-a
     text-overflow: ellipsis;
     white-space: nowrap;
     font-weight: 400;
-    font-size: 14px;
+    font-size: 20px;
     font-family: "-apple-system", "Helvetica Neue", "Roboto", "Segoe UI", sans-serif;
     opacity: 0.7; }
 .tab-item:hover {
@@ -5074,9 +5076,9 @@ ion-tabs.tabs-color-active-dark .tab-item.tab-item-active, ion-tabs.tabs-color-a
 
 .tab-item .icon {
     display: block;
-    margin: 0 auto;
-    height: 32px;
-    font-size: 32px; }
+    margin: 10px auto 0;
+    height: 20px;
+    font-size: 20px; }
 
 .tabs-icon-left.tabs .tab-item,
 .tabs-icon-left > .tabs .tab-item,
