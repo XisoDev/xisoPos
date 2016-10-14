@@ -54,26 +54,7 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 
 		return self;
 	})
-	// Resource service example
-	.factory('Document', function(DB) {
-		var self = this;
 
-		self.all = function() {
-			return DB.query('SELECT * FROM documents')
-				.then(function(result){
-					return DB.fetchAll(result);
-				});
-		};
-
-		self.getById = function(id) {
-			return DB.query('SELECT * FROM documents WHERE id = ?', [id])
-				.then(function(result){
-					return DB.fetch(result);
-				});
-		};
-
-		return self;
-	})
 	.factory('ShopInfo', function(DB) {
 		var self = this;
 
@@ -90,6 +71,40 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 
 		self.insert = function(params) {
 			return DB.query('INSERT INTO shop_info (shop_name,mobile,tel,fax,user_name,address) VALUES(?,?,?,?,?,?)', [params.shop_name, params.mobile, params.tel, params.fax, params.user_name, params.address]);
+		};
+
+		return self;
+	})
+
+	.factory('CarType', function(DB) {
+		var self = this;
+
+		self.all = function() {
+			return DB.query('SELECT * FROM car_type')
+				.then(function(result){
+					return DB.fetchAll(result);
+				});
+		};
+
+		self.getByIdx = function(idx){
+			return DB.query('SELECT * FROM car_type WHERE idx = ?',[idx])
+				.then(function(result){
+					return DB.fetch(result);
+				});
+		};
+
+		self.insert = function(params) {
+			return DB.query('INSERT INTO car_type (car_type_title,minute_unit,minute_free,amount_unit,basic_amount,basic_minute) VALUES(?,?,?,?,?,?)',
+				[params.car_type_title, params.minute_unit, params.minute_free, params.amount_unit, params.basic_amount, params.basic_minute]);
+		};
+
+		self.update = function(params) {
+			return DB.query('UPDATE car_type SET car_type_title = ?,minute_unit = ?,minute_free = ?,amount_unit = ?,basic_amount = ?,basic_minute = ? WHERE idx = ?',
+				[params.car_type_title, params.minute_unit, params.minute_free, params.amount_unit, params.basic_amount, params.basic_minute, params.idx]);
+		};
+
+		self.delete = function(idx) {
+			return DB.query('DELETE FROM car_type WHERE idx = ?', [idx]);
 		};
 
 		return self;

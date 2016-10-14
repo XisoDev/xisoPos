@@ -1,19 +1,36 @@
 xpos
-    .controller('configCtrl', function ($scope, $ionicModal, ShopInfo) {
-        $scope.defaultParams = {};
+    .controller('configCtrl', function ($scope, $ionicModal, ShopInfo, CarType,$ionicPopup) {
 
-        $scope.config_default_init = function(){
+        $scope.initConfigParams = function(){
+            $scope.defaultParams = {};
             $scope.defaultParams.shop_name = "";
             $scope.defaultParams.mobile = "";
             $scope.defaultParams.tel = "";
             $scope.defaultParams.fax = "";
             $scope.defaultParams.user_name = "";
             $scope.defaultParams.address = "";
+        };
+        $scope.initConfigDefault = function(){
+            $scope.initConfigParams();
 
             ShopInfo.all().then(function(result){
                 if(result) $scope.defaultParams = result[0];
             });
-            console.log('shop info loaded!!');
+            console.log('Shop Info loaded!!');
+        };
+
+        $scope.initCartypeParams = function(){
+            $scope.carTypeList = {};
+            $scope.params = {};
+        };
+        $scope.initCartype = function(){
+            $scope.initCartypeParams();
+
+            CarType.all().then(function(result){
+                if(result) $scope.carTypeList = result;
+            });
+
+            console.log('Car Type loaded!!');
         };
 
         $scope.shouldShowDelete = false;
@@ -34,6 +51,7 @@ xpos
             $scope.addCartypeWindow.show();
         };
         $scope.closeCartype = function() {
+            $scope.initCartype();
             $scope.addCartypeWindow.hide();
         };
         // Cleanup the modal when we're done with it!
@@ -48,29 +66,62 @@ xpos
         $scope.$on('addCartypeWindowZ.removed', function() {
             console.log('removed cartype');
         });
-        // $scope.documents = [];
-        // $scope.document = null;
-        // // Get all the documents
-        // Document.all().then(function(documents){
-        //     $scope.documents = documents;
-        // });
-        // // Get one document, example with id = 2
-        // Document.getById(2).then(function(document) {
-        //     $scope.document = document;
-        // });
 
         $scope.insertShopInfo = function(){
             ShopInfo.delete().then(function(res) {
                 console.log(res);
 
                 ShopInfo.insert($scope.defaultParams).then(function(res) {
-                    console.log("insertId: " + res.insertId);
-                    $scope.config_default_init();
+                    // console.log("insertId: " + res.insertId);
+                    $scope.initConfigDefault();
                 }, function (err) {
                     console.error(err);
                 });
             }, function (err) {
                 console.error(err);
+            });
+        };
+        
+        $scope.insertCartype = function(){
+            CarType.insert($scope.params).then(function(res) {
+                console.log("insertId: " + res.insertId);
+
+                $scope.closeCartype();
+                $scope.initCartype();
+            }, function (err) {
+                console.error(err);
+            });
+        };
+
+        $scope.openUpdateCartype = function(cartype){
+            $scope.openCartype();
+            $scope.params = cartype;
+        };
+
+        $scope.updateCartype = function(){
+            CarType.update($scope.params).then(function(res){
+                $scope.closeCartype();
+                $scope.initCartype();
+            }, function (err) {
+                console.error(err);
+            });
+            console.log('updateCarType');
+        };
+
+        $scope.deleteCartype = function(idx){
+            var confirmPopup = $ionicPopup.confirm({
+                title: '차종 삭제 확인',
+                template: '정말로 삭제 하시겠습니까?'
+            });
+
+            confirmPopup.then(function(res) {
+                if(res) {
+                    CarType.delete(idx).then(function(res){
+                        $scope.initCartype();
+                    }, function (err) {
+                        console.error(err);
+                    });
+                }
             });
         };
     });

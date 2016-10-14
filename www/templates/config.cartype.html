@@ -1,4 +1,4 @@
-<ion-view title="차종 설정">
+<ion-view title="차종 설정" ng-init="initCartype()">
     <ion-nav-bar class="bar-calm">
         <ion-nav-back-button>
         </ion-nav-back-button>
@@ -18,11 +18,11 @@
 
     <ion-content class="has-header">
         <ion-list show-delete="shouldShowDelete" can-swipe="listCanSwipe" class="background">
-            <ion-item class="item">
-                경형
+            <ion-item class="item" ng-repeat="cartype in carTypeList" ng-click="openUpdateCartype(cartype)">
+                {{cartype.car_type_title}}
 
                 <ion-delete-button class="ion-minus-circled"
-                                   ng-click="items.splice($index, 1)">
+                                   ng-click="deleteCartype(cartype.idx)">
                 </ion-delete-button>
             </ion-item>
         </ul>
