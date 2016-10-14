@@ -14,7 +14,40 @@ xpos
 .controller('calcuCtrl', function ($scope, $stateParams, MultipleViewsManager) {
 
 })
-.controller('configCtrl', function ($scope, $stateParams, MultipleViewsManager) {
+.controller('configCtrl', function ($scope, $ionicModal) {
+
+    $scope.shouldShowDelete = false;
+    $scope.showDelete = function(){
+        $scope.shouldShowDelete = true;
+    }
+    $scope.hideDelete = function(){
+        $scope.shouldShowDelete = false;
+    }
+
+    $ionicModal.fromTemplateUrl('templates/config.addcartype.html', {
+        scope: $scope,
+        animation: 'slide-in-up'
+    }).then(function(modal) {
+        $scope.addCartypeWindow = modal;
+    });
+    $scope.openCartype = function() {
+        $scope.addCartypeWindow.show();
+    };
+    $scope.closeCartype = function() {
+        $scope.addCartypeWindow.hide();
+    };
+    // Cleanup the modal when we're done with it!
+    $scope.$on('$destroy', function() {
+        $scope.addCartypeWindow.remove();
+    });
+    // Execute action on hide modal
+    $scope.$on('addCartypeWindow.hidden', function() {
+        console.log('hidden cartype');
+    });
+    // Execute action on remove modal
+    $scope.$on('addCartypeWindowZ.removed', function() {
+        console.log('removed cartype');
+    });
     // $scope.documents = [];
     // $scope.document = null;
     // // Get all the documents

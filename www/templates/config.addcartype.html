@@ -1,0 +1,34 @@
+<ion-modal-view class="background">
+    <ion-header-bar class="bar-dark">
+        <h1 class="title">차종 추가</h1>
+    </ion-header-bar>
+    <ion-content padding="true">
+        <div class="list">
+            <label class="item item-input">
+                <input type="text" placeholder="차종 명">
+            </label>
+            <label class="item item-input">
+                <input type="number" placeholder="최초 무료시간 (분)">
+            </label>
+            <label class="item item-input">
+                <input type="number" placeholder="기본요금">
+            </label>
+            <label class="item item-input">
+                <input type="number" placeholder="기본시간 (분)">
+            </label>
+            <label class="item item-input">
+                <input type="number" placeholder="추가요금">
+            </label>
+            <label class="item item-input">
+                <input type="text" placeholder="추가요금 단위(분)">
+            </label>
+            <p class="padding"> <i class="ion-ios-information"></i> ((최종 차량 주차시간 - 최초무료시간 - 기본시간) / 추가요금단위){올림} * 추가요금 + 기본요금 의 요금계산이 적용됩니다.</p>
+        </div>
+    </ion-content>
+    <div class="bar bar-footer bar-dark">
+        <div class="button-bar">
+            <a class="button button-balanced">추가</a>
+            <a class="button button-light" ng-click="closeCartype()">닫기</a>
+        </div>
+    </div>
+</ion-modal-view>

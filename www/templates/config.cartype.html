@@ -4,26 +4,27 @@
         </ion-nav-back-button>
     </ion-nav-bar>
 
-    <ion-floating-button click="addCarType()" has-footer="false" button-color="#2AC9AA" icon="ion-plus" iconColor="#fff">
+    <ion-nav-buttons side="primary">
+        <button class="button" ng-show="!shouldShowDelete" ng-click="showDelete()">
+            편집
+        </button>
+        <button class="button" ng-show="shouldShowDelete" ng-click="hideDelete()">
+            완료
+        </button>
+    </ion-nav-buttons>
+
+    <ion-floating-button click="openCartype()" has-footer="false" button-color="#2AC9AA" icon="ion-plus" iconColor="#fff">
     </ion-floating-button>
 
     <ion-content class="has-header">
-        <ul class="list">
-            <li class="item">
+        <ion-list show-delete="shouldShowDelete" can-swipe="listCanSwipe" class="background">
+            <ion-item class="item">
                 경형
-            </li>
-            <li class="item">
-                소형
-            </li>
-            <li class="item">
-                중형
-            </li>
-            <li class="item">
-                대형
-            </li>
-            <li class="item">
-                기타
-            </li>
+
+                <ion-delete-button class="ion-minus-circled"
+                                   ng-click="items.splice($index, 1)">
+                </ion-delete-button>
+            </ion-item>
         </ul>
     </ion-content>
 </ion-view>
