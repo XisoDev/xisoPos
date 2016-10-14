@@ -64,3 +64,11 @@
     width:100%;
     background:#333;
 }
+
+.list-inset,
+.list{background:#444; color:#FFF;}
+.list-inset .item,
+.list .item{background:transparent; border-color:#333; font-size:16px; color:#d6d6d6;}
+.list .item-input input{font-size:15px; color:#FFF; padding-top:10px; padding-bottom:10px; height:30px;}
+
+.list .item-divider{color:#11c1f3; background:#555; font-size:16px; font-weight:bold; }

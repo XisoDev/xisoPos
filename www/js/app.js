@@ -1,5 +1,5 @@
 var db = null;
-var xpos = angular.module('xisoPos', ['ionic', 'ngCordova','ionicMultipleViews'])
+var xpos = angular.module('xisoPos', ['ionic', 'ngCordova','ionicMultipleViews','ion-floating-menu'])
 
 	.run(function ($ionicPlatform,$cordovaSQLite) {
 		$ionicPlatform.ready(function () {
@@ -92,6 +92,24 @@ var xpos = angular.module('xisoPos', ['ionic', 'ngCordova','ionicMultipleViews']
 				views: {
 					'tab-config': {
 						templateUrl: 'templates/config.html',
+						controller: 'configCtrl'
+					}
+				}
+			})
+			.state('mainLayout.tabs.configDefault', {
+				url: '/configDefault',
+				views: {
+					'tab-config': {
+						templateUrl: 'templates/config.default.html',
+						controller: 'configCtrl'
+					}
+				}
+			})
+			.state('mainLayout.tabs.configCartype', {
+				url: '/configCartype',
+				views: {
+					'tab-config': {
+						templateUrl: 'templates/config.cartype.html',
 						controller: 'configCtrl'
 					}
 				}
