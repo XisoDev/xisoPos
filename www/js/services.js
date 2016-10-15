@@ -1,13 +1,13 @@
 xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
-	var self = this;
-	self.db = null;
+		var self = this;
+		self.db = null;
 
-	self.init = function() {
-		// Use self.db = window.sqlitePlugin.openDatabase({name: DB_CONFIG.name}); in production
-			if (window.cordova) {
-				self.db = $cordovaSQLite.openDB(DB_CONFIG.name);
-			}else{
-				self.db = window.openDatabase(DB_CONFIG.name, '1', 'database', -1);
+		self.init = function() {
+			// Use self.db = window.sqlitePlugin.openDatabase({name: DB_CONFIG.name}); in production
+				if (window.cordova) {
+					self.db = $cordovaSQLite.openDB({ name: DB_CONFIG.name, iosDatabaseLocation:'default'});
+				}else{
+					self.db = window.openDatabase(DB_CONFIG.name, '1', 'database', -1);
 
 			}
 		angular.forEach(DB_CONFIG.tables, function(table) {
