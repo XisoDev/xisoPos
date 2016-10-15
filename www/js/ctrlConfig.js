@@ -14,7 +14,7 @@ xpos
             $scope.initConfigParams();
 
             ShopInfo.all().then(function(result){
-                if(result) $scope.defaultParams = result[0];
+                if(result.length > 0) $scope.defaultParams = result[0];
             });
             console.log('Shop Info loaded!!');
         };
@@ -27,7 +27,7 @@ xpos
             $scope.initCartypeParams();
 
             CarType.all().then(function(result){
-                if(result) $scope.carTypeList = result;
+                if(result.length > 0) $scope.carTypeList = result;
             });
 
             console.log('Car Type loaded!!');
