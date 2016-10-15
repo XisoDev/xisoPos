@@ -1,5 +1,5 @@
 xpos
-    .controller('configCtrl', function ($scope, $ionicModal, ShopInfo, CarType,$ionicPopup) {
+    .controller('configCtrl', function ($scope, $ionicModal, ShopInfo, CarType,$ionicPopup,$cordovaToast) {
 
         $scope.initConfigParams = function(){
             $scope.defaultParams = {};
@@ -72,6 +72,7 @@ xpos
                 console.log(res);
 
                 ShopInfo.insert($scope.defaultParams).then(function(res) {
+                    $cordovaToast.showShortBottom("저장되었습니다.");
                     // console.log("insertId: " + res.insertId);
                     $scope.initConfigDefault();
                 }, function (err) {
