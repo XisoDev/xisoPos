@@ -5,7 +5,7 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 		self.init = function() {
 			// Use self.db = window.sqlitePlugin.openDatabase({name: DB_CONFIG.name}); in production
 				if (window.cordova) {
-					self.db = $cordovaSQLite.openDB(DB_CONFIG.name);
+					self.db = $cordovaSQLite.openDB({ name: DB_CONFIG.name, iosDatabaseLocation:'default'});
 				}else{
 					self.db = window.openDatabase(DB_CONFIG.name, '1', 'database', -1);
 

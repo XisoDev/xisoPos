@@ -1,0 +1,74 @@
+/* Empty. Add your own CSS if you like */
+.background, .background .pane, .background .item, .background .item-complex .item-content {
+    background-color: #444;
+    color:#FFF;
+}
+
+#mainField{
+    font-size:40px;
+    color:#FFF;
+    font-family:arial;
+    font-weight:bold;
+    text-align:right;
+}
+
+.closeButton{
+    position:absolute;
+    right:20px;
+    top:30px;
+    padding:20px;
+    cursor:pointer;
+    z-index:999999;
+}
+
+#numberPad{
+    list-style:none;
+    padding:0;margin:0;
+    height:100%;
+}
+
+#numberPad i{
+    font-size:30px;
+}
+
+#numberPad li{
+    float:left;
+    width: 33.33333%;
+    font-size:35px; text-align:center;
+    font-family:Arial;
+    font-weight:bold;
+    color:#FFF;
+    background:linear-gradient(#444,#333);
+    border-left:1px solid #444;
+    height:13.5%;
+    position:relative;
+}
+#numberPad li span{
+    position:absolute; top:50%;
+    width:100%;
+    left:0;
+    transform:translateY(-50%);
+}
+#numberPad li:hover,
+#numberPad li:active{
+    background:linear-gradient(#000,#333);
+    color:orange;
+}
+#numberPad li.small{
+    font-size:14px;
+}
+#numberPad li.double{
+    width:66.666666%;
+}
+#numberPad li.bottom{
+    width:100%;
+    background:#333;
+}
+
+.list-inset,
+.list{background:#444; color:#FFF;}
+.list-inset .item,
+.list .item{background:transparent; border-color:#333; font-size:16px; color:#d6d6d6;}
+.list .item-input input{font-size:15px; color:#FFF; padding-top:10px; padding-bottom:10px; height:30px;}
+
+.list .item-divider{color:#11c1f3; background:#555; font-size:16px; font-weight:bold; }
