@@ -72,3 +72,26 @@
 .list .item-input input{font-size:15px; color:#FFF; padding-top:10px; padding-bottom:10px; height:30px;}
 
 .list .item-divider{color:#11c1f3; background:#555; font-size:16px; font-weight:bold; }
+
+
+/* ionic popup customize*/
+.popup-head {
+    background-color: #444444;
+}
+.popup-title {
+     color: white;
+}
+
+.popup-body{
+    background: #444444;
+    color:#eee;
+}
+.popup-buttons{
+    background: #444444;
+}
+.input-label {
+    color:#eee;
+}
+.item p {
+    color: #ddd;
+}
