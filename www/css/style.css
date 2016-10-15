@@ -96,3 +96,15 @@
 .item p {
     color: #ddd;
 }
+
+.grid_items{
+    width:18% !important;
+    margin:1%;
+    float:left !important;
+    font-size:15px;
+}
+.gar_card{
+    text-align:center;
+    font-size:40px; font-weight:bold;
+    padding:10px 0;
+}

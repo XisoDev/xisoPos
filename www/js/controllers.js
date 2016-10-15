@@ -1,6 +1,15 @@
 xpos
-.controller('currentCtrl', function ($scope, $stateParams, MultipleViewsManager) {
-
+.controller('currentCtrl', function ($scope, $stateParams, MultipleViewsManager, Garage) {
+    
+    $scope.getGarageList = function(){
+        Garage.all().then(function(result){
+            if(result.length > 0) {
+                $scope.garageList = result;
+                $scope.$broadcast('scroll.refreshComplete');
+            }
+        });
+    };
+    
 })
 .controller('historyCtrl', function ($scope, $stateParams, MultipleViewsManager) {
 

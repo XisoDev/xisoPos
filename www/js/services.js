@@ -1,15 +1,14 @@
 xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
-		var self = this;
-		self.db = null;
+	var self = this;
+	self.db = null;
 
-		self.init = function() {
-			// Use self.db = window.sqlitePlugin.openDatabase({name: DB_CONFIG.name}); in production
-				if (window.cordova) {
-					self.db = $cordovaSQLite.openDB({ name: DB_CONFIG.name, iosDatabaseLocation:'default'});
-				}else{
-					self.db = window.openDatabase(DB_CONFIG.name, '1', 'database', -1);
-
-			}
+	self.init = function() {
+		// Use self.db = window.sqlitePlugin.openDatabase({name: DB_CONFIG.name}); in production
+		if (window.cordova) {
+			self.db = $cordovaSQLite.openDB({ name: DB_CONFIG.name, iosDatabaseLocation:'default'});
+		}else{
+			self.db = window.openDatabase(DB_CONFIG.name, '1', 'database', -1);
+		}
 		angular.forEach(DB_CONFIG.tables, function(table) {
 			var columns = [];
 
@@ -21,6 +20,10 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 			self.query(query);
 			console.log('Table ' + table.name + ' initialized');
 		});
+		// var times = new Date().getTime() - (1000 * 60 * 60 * 2 + 1000 * 60 * 1);
+		// var qry = 'update garage set `start_date` = '+times;
+		// self.query(qry);
+		// console.log('garage deleted!!');
 	};
 
 	self.query = function(query, bindings) {
