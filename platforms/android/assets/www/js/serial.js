@@ -1,26 +1,41 @@
-xpos.factory('xSerial', function() {
+xpos.factory('xSerial', function($cordovaToast) {
     var self = this;
-
     self.init = function() {
-        // Use self.db = window.sqlitePlugin.openDatabase({name: DB_CONFIG.name}); in production
         if (window.cordova) {
-            var getPermission = serial.requestPermission();
-            console.log(getPermission);
-
-            var opts = {
-                baudRate: '115200',
-                dataBits: '8',
-                stopBits: '1',
-                parity: '0',
-                dtr: 'false',
-                rts: false,
-                sleepOnPause : false
-            }
-            serial.open(opts, function success(success){alert(success)}, function error(error){alert(error)});
+            serial.requestPermission({
+                // vid: '0x0403',
+                // pid: '0x6001',
+                // driver: 'FtdiSerialDriver'
+            },
+            function success(success){
+                console.log(success);
+            },
+            function error(error){
+                $cordovaToast("카드단말기에 접근권한을 부여해야합니다. \n" + error);
+            });
         }
     };
 
-    self.query = function(query, bindings) {
+    self.Sender = function(content){
+        var opts = {baudRate: '9600'};
+        serial.open(opts, function success(){
+            serial.write(content,
+                function sr(success){
+                    console.log(success);
+                },
+                function er(error){
+                    console.log("error:" + error);
+                }
+            );
+            console.log(content);
+            serial.close();
+        }, function error(){
+            $cordovaToast.showShortBottom("카드단말기가 연결되지 않았습니다.");
+        });
+    };
+
+    self.openCash = function() {
+        self.Sender("ABCDE");
     };
 
     return self;

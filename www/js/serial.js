@@ -1,33 +1,41 @@
 xpos.factory('xSerial', function($cordovaToast) {
     var self = this;
-    var opts = {
-        baudRate: '9600',
-        dataBits: '8',
-        sleepOnPause : false
-    }
     self.init = function() {
         if (window.cordova) {
-            serial.requestPermission();
-            serial.open(opts, function success(){
-                $cordovaToast.showShortBottom("카드단말기가 정상적으로 연결되었습니다.");
-            }, function error(){
-                $cordovaToast.showShortBottom("카드단말기가 연결되지 않았습니다.");
+            serial.requestPermission({
+                // vid: '0x0403',
+                // pid: '0x6001',
+                // driver: 'FtdiSerialDriver'
+            },
+            function success(success){
+                console.log(success);
+            },
+            function error(error){
+                $cordovaToast("카드단말기에 접근권한을 부여해야합니다. \n" + error);
             });
         }
     };
-    self.close = function(){
-        serial.close();
-    }
-    self.openCash = function() {
-        self.init();
-        serial.write("ABCD");
-        serial.read(function success(buffer){
-            alert(buffer);
-        }, function error(error){
-            console.log(error);
+
+    self.Sender = function(content){
+        var opts = {baudRate: '9600'};
+        serial.open(opts, function success(){
+            serial.write(content,
+                function sr(success){
+                    console.log(success);
+                },
+                function er(error){
+                    console.log("error:" + error);
+                }
+            );
+            console.log(content);
+            serial.close();
+        }, function error(){
+            $cordovaToast.showShortBottom("카드단말기가 연결되지 않았습니다.");
         });
-        console.log("매번열고닫기");
-        self.close();
+    };
+
+    self.openCash = function() {
+        self.Sender("S01=EX;S02=D1;S03= ;S04=40;S05=0700081;S08=A;S09=SECU301M00012200055184800048A00001NkNyt05B0YHBP/MvFwvzTohARZ46IUfaTQv2zVnal4vuyTiKtZJOLcQFNvUUzHRd;S11=00;S12=1000;S17=0;S18=91;S19=N;S29=EASYPOS0002");
     };
 
     return self;

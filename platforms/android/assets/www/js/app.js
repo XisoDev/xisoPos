@@ -1,7 +1,7 @@
 //var db = null;
 var xpos = angular.module('xisoPos', ['ionic', 'ngCordova','ionicMultipleViews','ion-floating-menu'])
 
-	.run(function ($ionicPlatform,DB,xSerial) {
+	.run(function ($ionicPlatform,DB,xSerial,$ionicHistory,$ionicPopup,$rootScope,$document,$window) {
 		$ionicPlatform.ready(function () {
 			if (window.cordova && window.cordova.plugins.Keyboard) {
 				cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
@@ -13,6 +13,58 @@ var xpos = angular.module('xisoPos', ['ionic', 'ngCordova','ionicMultipleViews',
 			DB.init();
 			xSerial.init();
 		});
+
+		//back button action
+		$ionicPlatform.registerBackButtonAction(function(e) {
+
+		  e.preventDefault();
+
+			$rootScope.exitApp = function() {
+		    $ionicPopup.confirm({
+		      title: "<strong>앱을 종료할까요?</strong>",
+		      template: '확인하시면 앱을 종료할 수 있습니다.',
+		      buttons: [
+		        { text: '취소' },
+		        {
+		          text: '<b>종료</b>',
+		          type: 'button-positive',
+		          onTap: function(e) {
+		            ionic.Platform.exitApp();
+		          }
+		        }
+		      ]
+		    });
+		  }
+
+		  if ($ionicHistory.backView().stateName ==  'mainLayout.tabs.current'){
+			  $rootScope.exitApp();
+		  } else {
+			$ionicHistory.goBack();
+		  }
+		  return false;
+		  }, 101);
+
+		//fake backbutton
+		var document = $document[0];
+
+		function triggerBackButton() {
+			var backButtonEvent = document.createEvent('Events');
+			backButtonEvent.initEvent('backbutton', false, false);
+			document.dispatchEvent(backButtonEvent);
+		}
+
+		function registerBackButtonFake() {
+			document.addEventListener('keyup', function (event) {
+				// Alt+Ctrl+<
+				if (event.altKey && event.ctrlKey && event.keyCode === 188) {
+					triggerBackButton();
+				}
+			});
+		}
+
+		if (!$window.cordova) {
+			$ionicPlatform.ready(registerBackButtonFake);
+		}
 	})
 
 	.config(function ($stateProvider, $urlRouterProvider) {
