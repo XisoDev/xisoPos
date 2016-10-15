@@ -69,6 +69,8 @@ xpos
         //     timeString += seconds + ' 초 ';
         // }
 
+        if(timeString == '') timeString = '0 분';
+
         return timeString;
     };
 })

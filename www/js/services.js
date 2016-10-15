@@ -52,6 +52,7 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 	};
 
 	self.fetch = function(result) {
+		if(result.rows.length == 0) return false;
 		return result.rows.item(0);
 	};
 
@@ -123,8 +124,33 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 			});
 	};
 
+	self.current = function() {
+		return DB.query("SELECT * FROM garage WHERE is_out = 'N' AND is_cancel = 'N'")
+			.then(function(result){
+				return DB.fetchAll(result);
+			});
+	};
+
+	self.outCar = function(idx) {
+		return DB.query("UPDATE garage SET is_out = 'Y' WHERE idx = ?",
+			[idx]);
+	};
+
+	self.cancelCar = function(idx) {
+		return DB.query("UPDATE garage SET is_cancel = 'Y', is_out = 'Y' WHERE idx = ?",
+			[idx]);
+	};
+
+
 	self.getByIdx = function(idx){
 		return DB.query('SELECT * FROM garage WHERE idx = ?',[idx])
+			.then(function(result){
+				return DB.fetch(result);
+			});
+	};
+
+	self.getByCarNum = function(car_num){
+		return DB.query("SELECT * FROM garage WHERE car_num = ? AND is_out = 'N' AND is_cancel = 'N'",[car_num])
 			.then(function(result){
 				return DB.fetch(result);
 			});

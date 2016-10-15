@@ -8,18 +8,17 @@
 				pulling-text="당겨서 새로 고침"
 				on-refresh="getGarageList()">
 		</ion-refresher>
-		<div ng-repeat="gar in garageList">
-			<div class="card grid_items button button-positive">
-				<div class="">
-					{{gar.car_type_title}} / {{gar | calcu | currency : "" : 0}} 원
-				</div>
-				<div class="gar_card">
-					{{gar.car_num}}
-				</div>
-				<div class="">
-					{{gar.start_date | passTime}}
-				</div>
+		<div class="card grid_items button button-positive" ng-repeat="gar in garageList" ng-click="openGarageView(gar)">
+			<div class="">
+				{{gar.car_type_title}} / {{gar | calcu | currency : "" : 0}} 원
+			</div>
+			<div class="gar_card">
+				{{gar.car_num}}
+			</div>
+			<div class="">
+				{{gar.start_date | passTime}}
 			</div>
 		</div>
+		<div style="clear: both;"></div>
 	</ion-content>
 </ion-view>

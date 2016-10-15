@@ -32,11 +32,11 @@
             <p class="padding"> <i class="ion-ios-information"></i> ((최종 차량 주차시간 - 최초무료시간 - 기본시간) / 추가요금단위){올림} * 추가요금 + 기본요금 의 요금계산이 적용됩니다.</p>
         </div>
     </ion-content>
-    <div class="bar bar-footer bar-dark">
+    <ion-footer-bar class="bar bar-footer bar-dark">
         <div class="button-bar">
             <a class="button button-balanced" ng-click="insertCartype()" ng-show="!params.idx">추가</a>
             <a class="button button-balanced" ng-click="updateCartype()" ng-show="params.idx">수정</a>
             <a class="button button-light" ng-click="closeCartype()">닫기</a>
         </div>
-    </div>
+    </ion-footer-bar>
 </ion-modal-view>

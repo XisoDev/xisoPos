@@ -2,10 +2,29 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicModal, $ionicPopup,
 
     //입차버튼
     $scope.inCar = function(mainField){
-        if(!mainField) return alert('관리 번호를 입력하지 않았습니다');
+        if(!mainField) return $ionicPopup.alert({title: '알림', template: '관리 번호를 입력해주세요'});
+
         $scope.carnum = mainField;
+
+        Garage.getByCarNum(mainField).then(function(result){
+            if(result){
+                $ionicPopup.alert({
+                    title: '알림',
+                    template: '같은 차번호가 입차되어있습니다.<br/>다른 번호를 입력해주세요.'
+                });
+            }else{
+                $scope.confirmMonth();
+            }
+        },function(err){
+            console.log(err);
+        });
         
+
+    };
+    $scope.confirmMonth = function(){
+        //
         //디비에서 현재 차번호를 검색하여 월차에 있는지 판단하여 있으면 컨펌을 띄움
+        //
         if(false) {
             $ionicPopup.confirm({
                 title: '월차 확인',
