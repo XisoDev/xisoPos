@@ -20,10 +20,11 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 			self.query(query);
 			console.log('Table ' + table.name + ' initialized');
 		});
-		// var times = new Date().getTime() - (1000 * 60 * 60 * 2 + 1000 * 60 * 1);
-		// var qry = 'update garage set `start_date` = '+times;
+		// var qry = 'delete from garage where car_num = "8888"';
 		// self.query(qry);
-		// console.log('garage deleted!!');
+		// var times = new Date().getTime() - (1000 * 60 * 60 * 2 + 1000 * 60 * 1);
+		// var qry = 'update garage set `start_date` = '+times+ ' where car_num="7976"';
+		// self.query(qry);
 	};
 
 	self.query = function(query, bindings) {
@@ -123,6 +124,13 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 				return DB.fetchAll(result);
 			});
 	};
+	
+	self.allForHistory = function() {
+		return DB.query("SELECT gar.*, (SELECT sum(pay_amount) FROM payment WHERE lookup_idx = gar.idx AND is_cancel = 'N') as pay_amount FROM garage gar")
+			.then(function(result){
+				return DB.fetchAll(result);
+			});
+	};
 
 	self.current = function() {
 		return DB.query("SELECT * FROM garage WHERE is_out = 'N' AND is_cancel = 'N'")
@@ -131,14 +139,16 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 			});
 	};
 
-	self.outCar = function(idx) {
-		return DB.query("UPDATE garage SET is_out = 'Y' WHERE idx = ?",
-			[idx]);
+	//출차
+	self.outCar = function(garage) {
+		return DB.query("UPDATE garage SET is_out = 'Y', end_date = ?, total_amount = ? WHERE idx = ?",
+			[garage.end_date, garage.total_amount, garage.idx]);
 	};
 
-	self.cancelCar = function(idx) {
-		return DB.query("UPDATE garage SET is_cancel = 'Y', is_out = 'Y' WHERE idx = ?",
-			[idx]);
+	//입차취소
+	self.cancelCar = function(garage) {
+		return DB.query("UPDATE garage SET is_cancel = 'Y', is_out = 'Y', end_date = ?, total_amount = 0 WHERE idx = ?",
+			[garage.end_date, 0, garage.idx]);
 	};
 
 

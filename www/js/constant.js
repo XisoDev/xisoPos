@@ -20,7 +20,7 @@ xpos
                 {name: "lookup_idx", type: "INTEGER NOT NULL"},
                 {name: "lookup_type", type: "TEXT NOT NULL"},
                 {name: "pay_type", type: "TEXT"},
-                {name: "pay_amount", type: "INTEGER"},
+                {name: "pay_amount", type: "INTEGER DEFAULT 0"},
                 {name: "return_data", type: "TEXT"},
                 {name: "regdate", type: "INTEGER"},
                 {name: "is_cancel", type: "TEXT NOT NULL DEFAULT 'N'"}
@@ -32,7 +32,7 @@ xpos
                 {name: "idx", type: "INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT"},
                 {name: "start_date", type: "INTEGER NOT NULL"},
                 {name: "end_date", type: "INTEGER"},
-                {name: "amount", type: "INTEGER"},
+                {name: "amount", type: "INTEGER DEFAULT 0"},
                 {name: "car_num", type: "TEXT"},
                 {name: "car_name", type: "TEXT"},
                 {name: "car_type_title", type: "TEXT"},
@@ -50,15 +50,16 @@ xpos
                 {name: "end_date", type: "INTEGER"},
                 {name: "car_num", type: "TEXT"},
                 {name: "car_type_title", type: "TEXT"},
-                {name: "minute_unit", type: "INTEGER"},
-                {name: "minute_free", type: "INTEGER"},
-                {name: "amount_unit", type: "INTEGER"},
-                {name: "basic_amount", type: "INTEGER"},
-                {name: "basic_minute", type: "INTEGER"},
-                {name: "month_idx", type: "INTEGER"},
-                {name: "cooper_idx", type: "INTEGER"},
-                {name: "discount_cooper", type: "INTEGER"},
-                {name: "discount_self", type: "INTEGER"},
+                {name: "minute_unit", type: "INTEGER DEFAULT 0"},
+                {name: "minute_free", type: "INTEGER DEFAULT 0"},
+                {name: "amount_unit", type: "INTEGER DEFAULT 0"},
+                {name: "basic_amount", type: "INTEGER DEFAULT 0"},
+                {name: "basic_minute", type: "INTEGER DEFAULT 0"},
+                {name: "month_idx", type: "INTEGER DEFAULT 0"},
+                {name: "cooper_idx", type: "INTEGER DEFAULT 0"},
+                {name: "discount_cooper", type: "INTEGER DEFAULT 0"},
+                {name: "discount_self", type: "INTEGER DEFAULT 0"},
+                {name: "total_amount", type: "INTEGER DEFAULT 0"},
                 {name: "is_out", type: "TEXT NOT NULL DEFAULT 'N'"},
                 {name: "is_cancel", type: "TEXT NOT NULL DEFAULT 'N'"}
             ]
@@ -71,10 +72,10 @@ xpos
                 {name: "coop_tel", type: "TEXT"},
                 {name: "coop_address", type: "TEXT"},
                 {name: "coop_user_name", type: "TEXT"},
-                {name: "minute_unit", type: "INTEGER"},
-                {name: "minute_free", type: "INTEGER"},
-                {name: "minute_max", type: "INTEGER"},
-                {name: "amount_unit", type: "INTEGER"},
+                {name: "minute_unit", type: "INTEGER DEFAULT 0"},
+                {name: "minute_free", type: "INTEGER DEFAULT 0"},
+                {name: "minute_max", type: "INTEGER DEFAULT 0"},
+                {name: "amount_unit", type: "INTEGER DEFAULT 0"},
                 {name: "regdate", type: "INTEGER"},
                 {name: "is_end", type: "TEXT NOT NULL DEFAULT 'N'"}
             ]
@@ -84,11 +85,11 @@ xpos
             columns: [
                 {name: "idx", type: "INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT"},
                 {name: "car_type_title", type: "TEXT NOT NULL"},
-                {name: "minute_unit", type: "INTEGER"},
-                {name: "minute_free", type: "INTEGER"},
-                {name: "amount_unit", type: "INTEGER"},
-                {name: "basic_amount", type: "INTEGER"},
-                {name: "basic_minute", type: "INTEGER"}
+                {name: "minute_unit", type: "INTEGER DEFAULT 0"},
+                {name: "minute_free", type: "INTEGER DEFAULT 0"},
+                {name: "amount_unit", type: "INTEGER DEFAULT 0"},
+                {name: "basic_amount", type: "INTEGER DEFAULT 0"},
+                {name: "basic_minute", type: "INTEGER DEFAULT 0"}
             ]
         }
 

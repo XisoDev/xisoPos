@@ -124,7 +124,7 @@
     padding: 5px 8px !important;
     font-size: 20px;
 }
-.button.button-energized {
+.button.button-energized, .button.button-balanced{
     color: black;
 }
 .has-footer {
@@ -132,4 +132,28 @@
 }
 .platform-android .bar .title {
     font-weight: bold;
+}
+.content-header {
+    position:fixed;
+    left: 0;
+    width:100%;
+    top:127px;
+    z-index: 999999;
+    background: #444;
+    border-bottom: 2px solid #000;
+}
+.spacer {
+    width:100%;
+    display: block;
+    min-height:50px;
+}
+.ovc_header .col, .ovc_item .col{
+    text-align:center;
+}
+.ovc_item .col .button{
+    display: block;
+    margin:0 auto;
+}
+.ovc_item .col.tright{
+    text-align: right;
 }

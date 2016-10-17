@@ -76,6 +76,8 @@ xpos
 })
 .filter('calcu', function() {
     return function(garage) {
+        if(!garage) return false;
+
         var result_charge = 0;
 
         var oneSecond = 1000;
