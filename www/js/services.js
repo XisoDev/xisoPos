@@ -148,7 +148,7 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 	//입차취소
 	self.cancelCar = function(garage) {
 		return DB.query("UPDATE garage SET is_cancel = 'Y', is_out = 'Y', end_date = ?, total_amount = 0 WHERE idx = ?",
-			[garage.end_date, 0, garage.idx]);
+			[garage.end_date, garage.idx]);
 	};
 
 
