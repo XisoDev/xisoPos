@@ -98,6 +98,13 @@
     font-size: 16px;
     font-weight: bold;
 }
+.item .item-toggle{
+    border:none;
+}
+.item .item-toggle .toggle {
+    top: 8px;
+    left: 1px;
+}
 
 .grid_items{
     width:18% !important;

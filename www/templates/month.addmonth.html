@@ -38,16 +38,16 @@
                 <span class="input-label">연락처</span>
                 <input type="tel" placeholder="연락처" ng-model="params.mobile">
             </label>
-            <label class="item item-input">
-                <span class="input-label">만료 상태</span>
-                <a class="button button-light button-small">만료됨</a>
+            <label class="item item-input" ng-if="params.idx">
+                <span class="input-label">중단</span>
+                <ion-toggle ng-model="params.is_stop" toggle-class="toggle-assertive" ng-true-value="'Y'" ng-false-value="'N'"></ion-toggle>
             </label>
         </div>
     </ion-content>
     <ion-footer-bar class="bar bar-footer bar-dark">
         <div class="button-bar">
             <a class="button button-balanced" ng-click="insertMonth()" ng-show="!params.idx">추가</a>
-            <a class="button button-balanced" ng-click="updateMonth()" ng-show="params.idx">수정</a>
+            <a class="button button-balanced" ng-click="insertMonth()" ng-show="params.idx">수정</a>
             <a class="button button-light" ng-click="closeMonth()">닫기</a>
         </div>
     </ion-footer-bar>

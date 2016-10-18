@@ -168,6 +168,7 @@ xpos
         $scope.modalMonth.show();
     };
 
+    //월차 등록, 수정
     $scope.insertMonth = function(){
         var start_date = angular.copy($scope.temp_start_date);
         var end_date  = angular.copy($scope.temp_end_date);
@@ -175,54 +176,34 @@ xpos
         $scope.params.start_date = getStartDate(start_date);    //시작일 00:00:00
         $scope.params.end_date = getEndDate(end_date);          //종료일 23:59:59
 
-        if(!$scope.params.car_num) return $ionicPopup.alert({title: '알림',template: '차량번호를 입력하지않았습니다.'});
-        if(!$scope.params.car_name) return $ionicPopup.alert({title: '알림',template: '차종을 입력하지않았습니다.'});
-        if(!$scope.params.car_type_title) return $ionicPopup.alert({title: '알림',template: '구분을 입력하지않았습니다.'});
-        if(!$scope.params.start_date) return $ionicPopup.alert({title: '알림',template: '시작날짜를 입력하지않았습니다.'});
-        if(!$scope.params.end_date) return $ionicPopup.alert({title: '알림',template: '종료날짜를 입력하지않았습니다.'});
+        if(!$scope.params.car_num) return $ionicPopup.alert({title: '알림',template: '차량번호를 입력하지 않았습니다.'});
+        if(!$scope.params.car_name) return $ionicPopup.alert({title: '알림',template: '차종을 입력하지 않았습니다.'});
+        if(!$scope.params.car_type_title) return $ionicPopup.alert({title: '알림',template: '구분을 입력하지 않았습니다.'});
+        if(!$scope.params.start_date) return $ionicPopup.alert({title: '알림',template: '시작날짜를 입력하지 않았습니다.'});
+        if(!$scope.params.end_date) return $ionicPopup.alert({title: '알림',template: '종료날짜를 입력하지 않았습니다.'});
         if($scope.params.start_date >= $scope.params.end_date)
             return $ionicPopup.alert({title: '알림',template: '시작날짜가 종료날짜보다 크거나 같을 수 없습니다.'});
-        if(!$scope.params.amount) return $ionicPopup.alert({title: '알림',template: '월차금액을 입력하지않았습니다.'});
-        if(!$scope.params.user_name) return $ionicPopup.alert({title: '알림',template: '차주명을 입력하지않았습니다.'});
-        if(!$scope.params.mobile) return $ionicPopup.alert({title: '알림',template: '연락처를 입력하지않았습니다.'});
-        
-        Month.insert($scope.params).then(function(res){
-            console.log("insertId: " + res.insertId);
-            $state.go($state.current, {}, {reload: true});
-            $scope.closeMonth();
-        },function(err){
-            console.log(err);
-        });
+        if(!$scope.params.amount) return $ionicPopup.alert({title: '알림',template: '월차금액을 입력하지 않았습니다.'});
+        if(!$scope.params.user_name) return $ionicPopup.alert({title: '알림',template: '차주명을 입력하지 않았습니다.'});
+        if(!$scope.params.mobile) return $ionicPopup.alert({title: '알림',template: '연락처를 입력하지 않았습니다.'});
+
+        if(!$scope.params.idx) {
+            Month.insert($scope.params).then(function (res) {
+                console.log("insertId: " + res.insertId);
+                $state.go($state.current, {}, {reload: true});
+                $scope.closeMonth();
+            }, function (err) {
+                console.log(err);
+            });
+        }else{
+            Month.update($scope.params).then(function(res){
+                $state.go($state.current, {}, {reload: true});
+                $scope.closeMonth();
+            },function(err){
+                console.log(err);
+            });
+        }
     };
-
-    $scope.updateMonth = function(){
-        var start_date = angular.copy($scope.temp_start_date);
-        var end_date  = angular.copy($scope.temp_end_date);
-
-        $scope.params.start_date = getStartDate(start_date);    //시작일 00:00:00
-        $scope.params.end_date = getEndDate(end_date);          //종료일 23:59:59
-
-        if(!$scope.params.car_num) return $ionicPopup.alert({title: '알림',template: '차량번호를 입력하지않았습니다.'});
-        if(!$scope.params.car_name) return $ionicPopup.alert({title: '알림',template: '차종을 입력하지않았습니다.'});
-        if(!$scope.params.car_type_title) return $ionicPopup.alert({title: '알림',template: '구분을 입력하지않았습니다.'});
-        if(!$scope.params.start_date) return $ionicPopup.alert({title: '알림',template: '시작날짜를 입력하지않았습니다.'});
-        if(!$scope.params.end_date) return $ionicPopup.alert({title: '알림',template: '종료날짜를 입력하지않았습니다.'});
-        if($scope.params.start_date >= $scope.params.end_date)
-            return $ionicPopup.alert({title: '알림',template: '시작날짜가 종료날짜보다 크거나 같을 수 없습니다.'});
-        if(!$scope.params.amount) return $ionicPopup.alert({title: '알림',template: '월차금액을 입력하지않았습니다.'});
-        if(!$scope.params.user_name) return $ionicPopup.alert({title: '알림',template: '차주명을 입력하지않았습니다.'});
-        if(!$scope.params.mobile) return $ionicPopup.alert({title: '알림',template: '연락처를 입력하지않았습니다.'});
-
-        Month.update($scope.params).then(function(res){
-            $state.go($state.current, {}, {reload: true});
-            $scope.closeMonth();
-        },function(err){
-            console.log(err);
-        });
-    };
-    
-    
-
 
     $scope.initMonthModal = function(){
         console.log('month modal initialized');
@@ -234,8 +215,69 @@ xpos
 
 })
     
-.controller('cooperCtrl', function ($scope, $stateParams, MultipleViewsManager) {
+.controller('cooperCtrl', function ($scope, $state, $stateParams, $ionicModal, $ionicPopup, Cooper, MultipleViewsManager) {
+    $scope.initCooper = function(){
+        $scope.getCooperList();
+    };
+    $scope.getCooperList = function(){
+        Cooper.all().then(function(result){
+            if(result.length > 0) $scope.cooperList = result;
+        });
 
+    };
+
+    //업체 추가 모달
+    $ionicModal.fromTemplateUrl('templates/cooper.addcooper.html', {
+        scope: $scope
+    }).then(function(modal) {
+        $scope.modalCooper = modal;
+    });
+    $scope.openAddCooper = function(){
+        $scope.params = {};
+
+        $scope.modalCooper.show();
+    };
+    $scope.closeCooper = function(){
+        $scope.params = {};
+        $scope.modalCooper.hide();
+    };
+
+    $scope.openEditCooper = function(cooper){
+        $scope.params = cooper;
+
+        $scope.modalCooper.show();
+    };
+
+
+    //지정주차 등록, 수정
+    $scope.insertCooper = function(){
+
+        if(!$scope.params.coop_title) return $ionicPopup.alert({title: '알림',template: '업체명을 입력하지 않았습니다.'});
+        if(!$scope.params.coop_tel) return $ionicPopup.alert({title: '알림',template: '전화번호를 입력하지 않았습니다.'});
+        if(!$scope.params.coop_address) return $ionicPopup.alert({title: '알림',template: '주소를 입력하지 않았습니다.'});
+        if(!$scope.params.coop_user_name) return $ionicPopup.alert({title: '알림',template: '대표자 명을 입력하지 않았습니다.'});
+        if(!$scope.params.minute_free && $scope.params.minute_free!==0) return $ionicPopup.alert({title: '알림',template: '무료 시간을 입력하지않았습니다.'});
+        if(!$scope.params.minute_max && $scope.params.minute_max!==0) return $ionicPopup.alert({title: '알림',template: '최대 지원 시간을 입력하지않았습니다.'});
+        if(!$scope.params.amount_unit && $scope.params.amount_unit!==0) return $ionicPopup.alert({title: '알림',template: '추가요금을 입력하지않았습니다.'});
+        if(!$scope.params.minute_unit && $scope.params.minute_unit!==0) return $ionicPopup.alert({title: '알림',template: '추가요금 단위를 입력하지않았습니다.'});
+
+        if(!$scope.params.idx){
+            Cooper.insert($scope.params).then(function(res){
+                console.log("insertId: " + res.insertId);
+                $state.go($state.current, {}, {reload: true});
+                $scope.closeCooper();
+            },function(err){
+                console.log(err);
+            });
+        }else{
+            Cooper.update($scope.params).then(function(res){
+                $state.go($state.current, {}, {reload: true});
+                $scope.closeCooper();
+            },function(err){
+                console.log(err);
+            });
+        }
+    };
 })
     
 .controller('calcuCtrl', function ($scope, $stateParams, MultipleViewsManager) {

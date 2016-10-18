@@ -21,6 +21,7 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 			console.log('Table ' + table.name + ' initialized');
 		});
 		// var qry = 'delete from garage where car_num = "7778"';
+		// var qry = 'delete from cooper';
 		// self.query(qry);
 		// var times = new Date().getTime() - (1000 * 60 * 60 * 2 + 1000 * 60 * 1);
 		// var qry = 'update garage set `start_date` = '+times+ ' where car_num="7976"';
@@ -209,6 +210,37 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 		console.log(params);
 		return DB.query("UPDATE month SET start_date=?, end_date=?, amount=?, car_num=?, car_name=?, car_type_title=?, user_name=?, mobile=? WHERE idx = ?",
 			[params.start_date, params.end_date, params.amount, params.car_num, params.car_name, params.car_type_title, params.user_name, params.mobile, params.idx]);
+	};
+
+	return self;
+})
+
+.factory('Cooper', function(DB) {
+	var self = this;
+
+	self.all = function() {
+		return DB.query('SELECT * FROM cooper')
+			.then(function(result){
+				return DB.fetchAll(result);
+			});
+	};
+
+	self.getByIdx = function(idx){
+		return DB.query('SELECT * FROM cooper WHERE idx = ?',[idx])
+			.then(function(result){
+				return DB.fetch(result);
+			});
+	};
+
+	self.insert = function(params) {
+		return DB.query('INSERT INTO cooper (coop_title, coop_tel, coop_address, coop_user_name, minute_unit, minute_free, minute_max, amount_unit, regdate) VALUES(?,?,?,?,?,?,?,?,?)',
+			[params.coop_title, params.coop_tel, params.coop_address, params.coop_user_name, params.minute_unit, params.minute_free, params.minute_max, params.amount_unit, new Date().getTime()]);
+	};
+
+	self.update = function(params) {
+		console.log(params);
+		return DB.query("UPDATE cooper SET coop_title=?, coop_tel=?, coop_address=?, coop_user_name=?, minute_unit=?, minute_free=?, minute_max=?, amount_unit=?, is_end=? WHERE idx = ?",
+			[params.coop_title, params.coop_tel, params.coop_address, params.coop_user_name, params.minute_unit, params.minute_free, params.minute_max, params.amount_unit, params.is_end, params.idx]);
 	};
 
 	return self;

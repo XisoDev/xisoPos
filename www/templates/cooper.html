@@ -1,9 +1,52 @@
-<ion-view title="지정주차">
+<ion-view title="지정주차" ng-init="initCooper()">
     <ion-nav-bar class="bar-calm">
         <ion-nav-back-button>
         </ion-nav-back-button>
     </ion-nav-bar>
+
+    <div class="content-header">
+        <div class="button-bar">
+            <a class="button button-energized">업체목록</a>
+            <a class="button button-dark">업체별 이용기록</a>
+        </div>
+
+        <div class="row header ovc_header">
+            <div class="col">업체명</div>
+            <div class="col">전화번호</div>
+            <div class="col">주소</div>
+            <div class="col">대표자명</div>
+            <div class="col">무료시간</div>
+            <div class="col">최대지원시간</div>
+            <div class="col">요금</div>
+            <div class="col">상태</div>
+        </div>
+    </div>
+
+    <ion-floating-button click="openAddCooper()" has-footer="false" button-color="#2AC9AA" icon="ion-plus" iconColor="#fff">
+    </ion-floating-button>
+
     <ion-content class="has-header">
-        지정주차
+        <div class="spacer" style="height:86px"></div>
+        <ion-refresher
+                pulling-text="당겨서 새로 고침"
+                on-refresh="getCooperList()" style="top:0px;">
+        </ion-refresher>
+
+        <div class="row item item-dark ovc_item" ng-repeat="coop in cooperList" ng-click="openEditCooper(coop)">
+            <div class="col">{{coop.coop_title}}</div>
+            <div class="col">{{coop.coop_tel}}</div>
+            <div class="col">{{coop.coop_address}}</div>
+            <div class="col">{{coop.coop_user_name}}</div>
+            <div class="col">{{coop.minute_free}}</div>
+            <div class="col">{{coop.minute_max}}</div>
+            <div class="col">{{coop.minute_unit}}분당 {{coop.amount_unit}}원</div>
+            <div class="col" ng-if="coop.is_end=='N'">활성</div>
+            <div class="col" ng-if="coop.is_end=='Y'">중단됨</div>
+        </div>
+        <ion-infinite-scroll
+                ng-if="0"
+                on-infinite="loadMore()"
+                distance="1%">
+        </ion-infinite-scroll>
     </ion-content>
 </ion-view>

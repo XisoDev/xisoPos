@@ -38,8 +38,9 @@ xpos
                 {name: "car_type_title", type: "TEXT"},
                 {name: "user_name", type: "TEXT"},
                 {name: "mobile", type: "TEXT"},
-                {name: "regdate", type: "TEXT"},
-                {name: "is_end", type: "TEXT NOT NULL DEFAULT 'N'"}
+                {name: "regdate", type: "INTEGER"},
+                {name: "is_stop", type: "TEXT NOT NULL DEFAULT 'N'"},
+                {name: "stop_date", type: "INTEGER"}
             ]
         },
         {

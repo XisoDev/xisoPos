@@ -48,6 +48,7 @@ xpos
             $scope.addCartypeWindow = modal;
         });
         $scope.openCartype = function() {
+            $scope.params = {};
             $scope.addCartypeWindow.show();
         };
         $scope.closeCartype = function() {
@@ -68,6 +69,13 @@ xpos
         });
 
         $scope.insertShopInfo = function(){
+            if(!$scope.defaultParams.shop_name) return $ionicPopup.alert({title: '알림',template: '주차장명을 입력하지 않았습니다.'});
+            if(!$scope.defaultParams.mobile) return $ionicPopup.alert({title: '알림',template: '휴대전화를 입력하지 않았습니다.'});
+            if(!$scope.defaultParams.tel) return $ionicPopup.alert({title: '알림',template: '유선전화를 입력하지 않았습니다.'});
+            if(!$scope.defaultParams.fax) return $ionicPopup.alert({title: '알림',template: 'FAX를 입력하지 않았습니다.'});
+            if(!$scope.defaultParams.user_name) return $ionicPopup.alert({title: '알림',template: '대표자 명을 입력하지 않았습니다.'});
+            if(!$scope.defaultParams.address) return $ionicPopup.alert({title: '알림',template: '주소를 입력하지 않았습니다.'});
+
             ShopInfo.delete().then(function(res) {
                 console.log(res);
 
@@ -84,6 +92,13 @@ xpos
         };
         
         $scope.insertCartype = function(){
+            if(!$scope.params.car_type_title) return $ionicPopup.alert({title: '알림',template: '차종명을 입력하지 않았습니다.'});
+            if(!$scope.params.minute_free && $scope.params.minute_free!==0) return $ionicPopup.alert({title: '알림',template: '최초 무료시간을 입력하지 않았습니다.'});
+            if(!$scope.params.basic_amount && $scope.params.basic_amount!==0) return $ionicPopup.alert({title: '알림',template: '기본요금을 입력하지 않았습니다.'});
+            if(!$scope.params.basic_minute && $scope.params.basic_minute!==0) return $ionicPopup.alert({title: '알림',template: '기본시간을 입력하지 않았습니다.'});
+            if(!$scope.params.amount_unit && $scope.params.amount_unit!==0) return $ionicPopup.alert({title: '알림',template: '추가요금을 입력하지 않았습니다.'});
+            if(!$scope.params.minute_unit && $scope.params.minute_unit!==0) return $ionicPopup.alert({title: '알림',template: '추가요금 단위를 입력하지 않았습니다.'});
+
             CarType.insert($scope.params).then(function(res) {
                 console.log("insertId: " + res.insertId);
 
@@ -97,9 +112,18 @@ xpos
         $scope.openUpdateCartype = function(cartype){
             $scope.openCartype();
             $scope.params = cartype;
+
+
         };
 
         $scope.updateCartype = function(){
+            if(!$scope.params.car_type_title) return $ionicPopup.alert({title: '알림',template: '차종명을 입력하지 않았습니다.'});
+            if(!$scope.params.minute_free && $scope.params.minute_free!==0) return $ionicPopup.alert({title: '알림',template: '최초 무료시간을 입력하지 않았습니다.'});
+            if(!$scope.params.basic_amount && $scope.params.basic_amount!==0) return $ionicPopup.alert({title: '알림',template: '기본요금을 입력하지 않았습니다.'});
+            if(!$scope.params.basic_minute && $scope.params.basic_minute!==0) return $ionicPopup.alert({title: '알림',template: '기본시간을 입력하지 않았습니다.'});
+            if(!$scope.params.amount_unit && $scope.params.amount_unit!==0) return $ionicPopup.alert({title: '알림',template: '추가요금을 입력하지 않았습니다.'});
+            if(!$scope.params.minute_unit && $scope.params.minute_unit!==0) return $ionicPopup.alert({title: '알림',template: '추가요금 단위를 입력하지 않았습니다.'});
+
             CarType.update($scope.params).then(function(res){
                 $scope.closeCartype();
                 $scope.initCartype();
