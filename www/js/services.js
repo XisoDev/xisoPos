@@ -20,7 +20,7 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 			self.query(query);
 			console.log('Table ' + table.name + ' initialized');
 		});
-		// var qry = 'delete from garage where car_num = "8888"';
+		// var qry = 'delete from garage where car_num = "7778"';
 		// self.query(qry);
 		// var times = new Date().getTime() - (1000 * 60 * 60 * 2 + 1000 * 60 * 1);
 		// var qry = 'update garage set `start_date` = '+times+ ' where car_num="7976"';

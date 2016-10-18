@@ -61,7 +61,8 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicModal, $ionicPopup,
 
         Garage.insert(params).then(function(res) {
             console.log("insertId: " + res.insertId);
-            document.location.href="/";
+            $state.go($state.current, {}, {reload: true});
+            $scope.closeCartypeList();
         }, function (err) {
             console.error(err);
         });
