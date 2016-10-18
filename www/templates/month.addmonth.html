@@ -1,12 +1,14 @@
 <ion-modal-view class="background">
     <ion-header-bar class="bar-dark">
-        <h1 class="title" style="text-align:center;">월차 추가</h1>
+        <h1 class="title" style="text-align:center;" ng-if="!params.idx">월차 추가</h1>
+        <h1 class="title" style="text-align:center;" ng-if="params.idx">월차 수정 - {{params.car_num}}</h1>
     </ion-header-bar>
     <ion-content padding="true">
         <div class="list">
             <label class="item item-input">
                 <span class="input-label">차량 번호</span>
-                <input type="text" placeholder="차량 식별 번호" ng-model="params.car_num">
+                <input type="text" placeholder="차량 식별 번호" ng-model="params.car_num" ng-if="!params.idx">
+                <p ng-if="params.idx">{{params.car_num}}</p>
             </label>
             <label class="item item-input">
                 <span class="input-label">차종</span>
@@ -18,11 +20,11 @@
             </label>
             <label class="item item-input">
                 <span class="input-label">시작 날짜</span>
-                <input type="date" placeholder="시작 날짜" ng-model="params.start_date">
+                <input type="date" placeholder="시작 날짜" ng-model="temp_start_date">
             </label>
             <label class="item item-input">
                 <span class="input-label">종료 날짜</span>
-                <input type="date" placeholder="종료 날짜" ng-model="params.end_date">
+                <input type="date" placeholder="종료 날짜" ng-model="temp_end_date">
             </label>
             <label class="item item-input">
                 <span class="input-label">월차 금액</span>
@@ -44,7 +46,7 @@
     </ion-content>
     <ion-footer-bar class="bar bar-footer bar-dark">
         <div class="button-bar">
-            <a class="button button-balanced" ng-click="insertMonth()">추가</a>
+            <a class="button button-balanced" ng-click="insertMonth()" ng-show="!params.idx">추가</a>
             <a class="button button-balanced" ng-click="updateMonth()" ng-show="params.idx">수정</a>
             <a class="button button-light" ng-click="closeMonth()">닫기</a>
         </div>

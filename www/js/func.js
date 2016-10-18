@@ -43,8 +43,24 @@ function cal_garage(garage) {
     return result_charge;
 }
 
-Date.prototype.toDateInputValue = (function() {
-    var local = new Date(this);
-    local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
-    return local.toJSON().slice(0,10);
-});
+function getStartDate(dt){
+    var month = dt.getMonth()+1;
+    var day = dt.getDate();
+    var year = dt.getFullYear();
+
+    return new Date(month+'-'+day+'-'+year).getTime();  //00시 00분 00초로 맞춤
+}
+function getEndDate(dt){
+    var oneSecond = 1000;
+    var oneMinute = oneSecond * 60;
+    var oneHour = oneMinute * 60;
+
+    var month = dt.getMonth()+1;
+    var day = dt.getDate();
+    var year = dt.getFullYear();
+
+    var last_date = new Date(month+'-'+day+'-'+year).getTime();
+    last_date = last_date + (oneHour * 23) + (oneMinute * 59) + (oneSecond * 59);   //23시 59분 59초로 맞춤
+
+    return last_date;
+}

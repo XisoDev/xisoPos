@@ -1,9 +1,63 @@
-<ion-view title="입출차기록">
+<ion-view title="입출차기록" ng-init="initHistory()">
     <ion-nav-bar class="bar-calm">
         <ion-nav-back-button>
         </ion-nav-back-button>
     </ion-nav-bar>
+
+    <div class="content-header">
+        <div class="button-bar">
+            <a class="button" ng-click="changeStatus('all')" ng-class="{'button-energized' : status=='all', 'button-dark' : status!='all'}">전체</a>
+            <a class="button" ng-click="changeStatus('in')" ng-class="{'button-energized' : status=='in', 'button-dark' : status!='in'}">입차중</a>
+            <a class="button" ng-click="changeStatus('out')" ng-class="{'button-energized' : status=='out', 'button-dark' : status!='out'}">정상출차</a>
+            <a class="button" ng-click="changeStatus('no_pay')" ng-class="{'button-energized' : status=='no_pay', 'button-dark' : status!='no_pay'}">미결제</a>
+            <a class="button" ng-click="changeStatus('cancel')" ng-class="{'button-energized' : status=='cancel', 'button-dark' : status!='cancel'}">입차취소</a>
+        </div>
+
+        <div class="row header ovc_header">
+            <div class="col">차량 번호</div>
+            <div class="col">입차 시간</div>
+            <div class="col">출차 시간</div>
+            <div class="col">이용 요금</div>
+            <div class="col">할인 금액</div>
+            <div class="col">결제 금액</div>
+            <div class="col">입차</div>
+            <div class="col">결제</div>
+        </div>
+    </div>
+
     <ion-content class="has-header">
-        입출차기록
+        <div class="spacer" style="height:86px"></div>
+        <ion-refresher
+                pulling-text="당겨서 새로 고침"
+                on-refresh="getGarageList()" style="top:0px;">
+        </ion-refresher>
+
+        <div class="row item item-dark ovc_item" ng-repeat="gar in garageList" ng-click="openGarageView(gar)">
+            <div class="col">{{gar.car_num}}</div>
+            <div class="col">{{gar.start_date | date:'MM-dd HH:mm'}}</div>
+            <div class="col">{{gar.end_date | date:'MM-dd HH:mm'}}</div>
+
+            <div class="col tright" ng-if="gar.total_amount">{{gar.total_amount | currency : "" : 0}} 원</div>
+            <div class="col tright" ng-if="!gar.total_amount">{{gar | calcu | currency : "" : 0}} 원</div>
+
+            <div class="col tright">{{(gar.discount_cooper + gar.discount_self) | currency : "" : 0}} 원</div>
+
+            <div class="col tright" ng-if="gar.pay_amount">{{gar.pay_amount | currency : "" : 0}} 원</div>
+            <div class="col tright" ng-if="!gar.pay_amount">0 원</div>
+            <div class="col">
+                <button class="button button-small button-positive" ng-if="!gar.end_date">입차중</button>
+                <button class="button button-small button-balanced" ng-if="gar.is_out=='Y'&&gar.is_cancel=='N'">출차완료</button>
+                <button class="button button-small button-energized" ng-if="gar.is_out=='Y'&&gar.is_cancel=='Y'">입차취소</button>
+            </div>
+            <div class="col">
+                <button class="button button-small button-royal" ng-if="!gar.pay_amount || gar.pay_amount < gar.total_amount">미결제</button>
+                <button class="button button-small" ng-if="gar.pay_amount && gar.pay_amount >= gar.total_amount">결제완료</button>
+            </div>
+        </div>
+        <ion-infinite-scroll
+                ng-if="0"
+                on-infinite="loadMore()"
+                distance="1%">
+        </ion-infinite-scroll>
     </ion-content>
 </ion-view>

@@ -1,4 +1,4 @@
-<ion-view title="월차">
+<ion-view title="월차" ng-init="initMonth()">
     <ion-nav-bar class="bar-calm">
         <ion-nav-back-button>
         </ion-nav-back-button>
@@ -23,7 +23,7 @@
         </div>
     </div>
 
-    <ion-floating-button click="openMonth()" has-footer="false" button-color="#2AC9AA" icon="ion-plus" iconColor="#fff">
+    <ion-floating-button click="openAddMonth()" has-footer="false" button-color="#2AC9AA" icon="ion-plus" iconColor="#fff">
     </ion-floating-button>
 
     <ion-content class="has-header">
@@ -33,7 +33,7 @@
                 on-refresh="getMonthList()" style="top:0px;">
         </ion-refresher>
 
-        <div class="row item item-dark ovc_item" ng-repeat="mon in monthList">
+        <div class="row item item-dark ovc_item" ng-repeat="mon in monthList" ng-click="openEditMonth(mon)">
             <div class="col">{{mon.car_num}}</div>
             <div class="col">{{mon.start_date | date:'MM-dd HH:mm'}}</div>
             <div class="col">{{mon.end_date | date:'MM-dd HH:mm'}}</div>
@@ -41,10 +41,9 @@
             <div class="col">{{mon.car_type_title}}</div>
             <div class="col">{{mon.user_name}}</div>
             <div class="col">{{mon.mobile}}</div>
-            <div class="col">{{mon.is_end}}</div>
             <div class="col">
-                <button class="button button-small button-positive">계약중</button>
-                <button class="button button-small button-energized">만료</button>
+                <button class="button button-small button-positive" ng-if="mon.is_end=='N'">계약중</button>
+                <button class="button button-small button-energized" ng-if="mon.is_end=='Y'">만료</button>
             </div>
         </div>
         <ion-infinite-scroll

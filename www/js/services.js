@@ -181,4 +181,35 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 	// };
 
 	return self;
+})
+
+.factory('Month', function(DB) {
+	var self = this;
+
+	self.all = function() {
+		return DB.query('SELECT * FROM month')
+			.then(function(result){
+				return DB.fetchAll(result);
+			});
+	};
+
+	self.getByIdx = function(idx){
+		return DB.query('SELECT * FROM month WHERE idx = ?',[idx])
+			.then(function(result){
+				return DB.fetch(result);
+			});
+	};
+
+	self.insert = function(params) {
+		return DB.query('INSERT INTO month (start_date,end_date,amount,car_num,car_name,car_type_title,user_name,mobile,regdate) VALUES(?,?,?,?,?,?,?,?,?)',
+			[params.start_date, params.end_date, params.amount, params.car_num, params.car_name, params.car_type_title, params.user_name, params.mobile, new Date().getTime()]);
+	};
+
+	self.update = function(params) {
+		console.log(params);
+		return DB.query("UPDATE month SET start_date=?, end_date=?, amount=?, car_num=?, car_name=?, car_type_title=?, user_name=?, mobile=? WHERE idx = ?",
+			[params.start_date, params.end_date, params.amount, params.car_num, params.car_name, params.car_type_title, params.user_name, params.mobile, params.idx]);
+	};
+
+	return self;
 });

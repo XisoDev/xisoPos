@@ -1,4 +1,4 @@
-<ion-view title="XISOPOS">
+<ion-view title="XISOPOS" ng-init="mainField=''">
 	<div class="bar bar-header bar-calm" style="height:49px; border-bottom:1px solid #FFF;">
 		<h1 class="title">XISO POS</h1>
 	</div>
@@ -12,7 +12,7 @@
 			</div>
 		</div>
 		<ul id="numberPad">
-			<li class="small" ng-click="inCar(mainField)"><span>
+			<li class="small" ng-click="inCarChk(mainField)"><span>
 				<i class="ion-ios-cart"></i><br />
 				입차
 			</span></li>
