@@ -43,12 +43,7 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicModal, $ionicPopup,
     };
 
     //차종 선택되면 입차시킴
-    $scope.selectCartype = function(){
-
-        // console.log($scope.carnum);
-        // console.log($scope.selectedCartype);
-        var cartype = $scope.selectedCartype;
-
+    $scope.selectCartype = function(cartype){
         var params = {
             start_date : new Date().getTime(),
             car_num : $scope.carnum,
@@ -103,15 +98,8 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicModal, $ionicPopup,
     };
     $scope.closeCartypeList = function() {
         $scope.modalCartypeList.hide();
-        $scope.selectedCartype = '';
     };
 
-    $scope.showCartypeDetail = function(cartype){
-       $scope.selectedCartype = cartype;
-    };
-    $scope.cancelCartype = function(){
-      $scope.selectedCartype = '';
-    };
 
     // if (MultipleViewsManager.isActive()) {
     //     MultipleViewsManager.updateView('view-message', { messageId: $scope.selectedMessageId });

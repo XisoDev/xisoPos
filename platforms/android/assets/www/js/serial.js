@@ -35,7 +35,7 @@ xpos.factory('xSerial', function($cordovaToast) {
     };
 
     self.openCash = function() {
-        self.Sender("ABCDE");
+        self.Sender("S01=EX;S02=D1;S03= ;S04=40;S05=0700081;S08=A;S09=SECU301M00012200055184800048A00001NkNyt05B0YHBP/MvFwvzTohARZ46IUfaTQv2zVnal4vuyTiKtZJOLcQFNvUUzHRd;S11=00;S12=1000;S17=0;S18=91;S19=N;S29=EASYPOS0002");
     };
 
     return self;

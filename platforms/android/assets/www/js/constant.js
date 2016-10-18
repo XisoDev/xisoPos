@@ -22,7 +22,7 @@ xpos
                 {name: "pay_type", type: "TEXT"},
                 {name: "pay_amount", type: "INTEGER"},
                 {name: "return_data", type: "TEXT"},
-                {name: "regdate", type: "TEXT"},
+                {name: "regdate", type: "INTEGER"},
                 {name: "is_cancel", type: "TEXT NOT NULL DEFAULT 'N'"}
             ]
         },
@@ -30,8 +30,8 @@ xpos
             name: "month",
             columns: [
                 {name: "idx", type: "INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT"},
-                {name: "start_date", type: "TEXT NOT NULL"},
-                {name: "end_date", type: "TEXT"},
+                {name: "start_date", type: "INTEGER NOT NULL"},
+                {name: "end_date", type: "INTEGER"},
                 {name: "amount", type: "INTEGER"},
                 {name: "car_num", type: "TEXT"},
                 {name: "car_name", type: "TEXT"},
@@ -46,25 +46,21 @@ xpos
             name: "garage",
             columns: [
                 {name: "idx", type: "INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT"},
-                {name: "start_date", type: "TEXT NOT NULL"},
-                {name: "end_date", type: "TEXT"},
+                {name: "start_date", type: "INTEGER NOT NULL"},
+                {name: "end_date", type: "INTEGER"},
                 {name: "car_num", type: "TEXT"},
-                {name: "car_name", type: "TEXT"},
                 {name: "car_type_title", type: "TEXT"},
                 {name: "minute_unit", type: "INTEGER"},
                 {name: "minute_free", type: "INTEGER"},
-                {name: "minute_unit", type: "INTEGER"},
                 {name: "amount_unit", type: "INTEGER"},
                 {name: "basic_amount", type: "INTEGER"},
                 {name: "basic_minute", type: "INTEGER"},
-                {name: "user_name", type: "TEXT"},
-                {name: "mobile", type: "TEXT"},
                 {name: "month_idx", type: "INTEGER"},
                 {name: "cooper_idx", type: "INTEGER"},
                 {name: "discount_cooper", type: "INTEGER"},
                 {name: "discount_self", type: "INTEGER"},
-                {name: "regdate", type: "TEXT"},
-                {name: "is_out", type: "TEXT NOT NULL DEFAULT 'N'"}
+                {name: "is_out", type: "TEXT NOT NULL DEFAULT 'N'"},
+                {name: "is_cancel", type: "TEXT NOT NULL DEFAULT 'N'"}
             ]
         },
         {
@@ -79,7 +75,7 @@ xpos
                 {name: "minute_free", type: "INTEGER"},
                 {name: "minute_max", type: "INTEGER"},
                 {name: "amount_unit", type: "INTEGER"},
-                {name: "regdate", type: "TEXT"},
+                {name: "regdate", type: "INTEGER"},
                 {name: "is_end", type: "TEXT NOT NULL DEFAULT 'N'"}
             ]
         },
