@@ -15,6 +15,9 @@
             <div class="col">차량 번호</div>
             <div class="col">시작일</div>
             <div class="col">종료일</div>
+            <div class="col">월차금액</div>
+            <div class="col">결제금액</div>
+            <div class="col">미수금액</div>
             <div class="col">차종</div>
             <div class="col">구분</div>
             <div class="col">차주명</div>
@@ -37,13 +40,19 @@
             <div class="col">{{mon.car_num}}</div>
             <div class="col">{{mon.start_date | date:'MM-dd HH:mm'}}</div>
             <div class="col">{{mon.end_date | date:'MM-dd HH:mm'}}</div>
+            <div class="col">{{mon.amount | currency : "" : 0 }} 원</div>
+
+            <div class="col" ng-if="!mon.pay_amount">0 원</div>
+            <div class="col" ng-if="mon.pay_amount">{{mon.pay_amount | currency : "" : 0 }} 원</div>
+
+            <div class="col">{{(mon.amount-mon.pay_amount) | currency : "" : 0 }} 원</div>
             <div class="col">{{mon.car_name}}</div>
             <div class="col">{{mon.car_type_title}}</div>
             <div class="col">{{mon.user_name}}</div>
             <div class="col">{{mon.mobile}}</div>
             <div class="col">
-                <button class="button button-small button-positive" ng-if="mon.is_end=='N'">계약중</button>
-                <button class="button button-small button-energized" ng-if="mon.is_end=='Y'">만료</button>
+                <button class="button button-small button-positive" ng-if="mon.is_stop=='N'">활성</button>
+                <button class="button button-small button-energized" ng-if="mon.is_stop=='Y'">중단</button>
             </div>
         </div>
         <ion-infinite-scroll

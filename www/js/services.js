@@ -127,7 +127,7 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 	};
 	
 	self.allForHistory = function() {
-		return DB.query("SELECT gar.*, (SELECT sum(pay_amount) FROM payment WHERE lookup_idx = gar.idx AND is_cancel = 'N') as pay_amount FROM garage gar")
+		return DB.query("SELECT gar.*, (SELECT sum(pay_amount) FROM payment WHERE lookup_idx = gar.idx AND lookup_type='garage' AND is_cancel = 'N') as pay_amount FROM garage gar")
 			.then(function(result){
 				return DB.fetchAll(result);
 			});
@@ -188,7 +188,13 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 	var self = this;
 
 	self.all = function() {
-		return DB.query('SELECT * FROM month')
+		return DB.query("SELECT mon.*, (SELECT sum(pay_amount) FROM payment WHERE lookup_idx = mon.idx AND lookup_type='month' AND is_cancel = 'N') as pay_amount FROM month mon")
+			.then(function(result){
+				return DB.fetchAll(result);
+			});
+	};
+	self.allPositive = function() {
+		return DB.query("SELECT mon.*, (SELECT sum(pay_amount) FROM payment WHERE lookup_idx = mon.idx AND lookup_type='month' AND is_cancel = 'N') as pay_amount FROM month mon WHERE is_stop = 'N' AND end_date > ?", [new Date().getTime()])
 			.then(function(result){
 				return DB.fetchAll(result);
 			});
@@ -198,6 +204,13 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 		return DB.query('SELECT * FROM month WHERE idx = ?',[idx])
 			.then(function(result){
 				return DB.fetch(result);
+			});
+	};
+
+	self.getByCarNum = function(car_num) {
+		return DB.query("SELECT * FROM month WHERE car_num like ? AND is_stop='N' AND end_date > ?", [car_num+'%', new Date().getTime()])
+			.then(function(result){
+				return DB.fetchAll(result);
 			});
 	};
 

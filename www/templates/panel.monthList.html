@@ -1,0 +1,17 @@
+<ion-modal-view  class="background">
+    <ion-header-bar class="bar-dark">
+        <h1 class="title" style="text-align:center;">월차 선택</h1>
+    </ion-header-bar>
+
+    <ion-content class="has-header">
+        <ion-list class="background">
+            <ion-item class="square" ng-repeat="month in monthList" ng-click="selectMonth(month)">
+            </ion-item>
+        </ion-list>
+    </ion-content>
+    <ion-footer-bar class="bar bar-footer bar-dark">
+        <div class="button-bar">
+            <a class="button button-light" ng-click="closeMonthList()">닫기</a>
+        </div>
+    </ion-footer-bar>
+</ion-modal-view>
