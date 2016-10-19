@@ -30,6 +30,15 @@
                 <span class="input-label">월차 금액</span>
                 <input type="number" placeholder="월차 금액" ng-model="params.amount">
             </label>
+            <label class="item item-input" ng-if="params.idx">
+                <span class="input-label">결제 금액</span>
+                <p ng-if="params.pay_amount">{{params.pay_amount | currency : "" : 0}} 원</p>
+                <p ng-if="!params.pay_amount">0 원</p>
+            </label>
+            <label class="item item-input" ng-if="params.idx">
+                <span class="input-label">미수 금액</span>
+                <p>{{(params.amount-params.pay_amount) | currency : "" : 0}} 원</p>
+            </label>
             <label class="item item-input">
                 <span class="input-label">차주 명</span>
                 <input type="text" placeholder="차주 명" ng-model="params.user_name">

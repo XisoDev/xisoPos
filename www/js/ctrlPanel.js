@@ -1,4 +1,4 @@
-xpos.controller('PanelCtrl', function ($scope, $state, $ionicModal, $ionicPopup, CarType, Garage, Month, MultipleViewsManager) {
+xpos.controller('PanelCtrl', function ($scope, $state, $ionicModal, $ionicPopup, $cordovaToast, CarType, Garage, Month, MultipleViewsManager) {
 
     // 입차버튼 클릭시 체크
     $scope.inCarChk = function(mainField){
@@ -20,37 +20,20 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicModal, $ionicPopup,
 
         //디비에서 현재 차번호를 검색하여 월차에 있는지 판단하여 있으면 컨펌을 띄움
         Month.getByCarNum(mainField).then(function(result){
-            if(result.length > 1){
-                //차량번호가 2개이상일떄
+            if(result.length > 0){
                 $scope.monthList = result;
 
                 $ionicPopup.confirm({
                     title: '월차 확인',
-                    template: mainField + '로 시작되는 차량번호 2개 이상 있습니다.<br/>어떻게 입차할까요?',
-                    cancelText: '월차목록에서 선택',
-                    okText: '다른 차량으로 입차'
+                    template: '월차에 '+mainField + '(으)로 시작되는 차량번호가 있습니다.<br/>어떻게 입차할까요?',
+                    okText: '월차로 입차',
+                    cancelText: '다른 번호 입력'
                 }).then(function (res) {
                     if (res) {
-                        //다른차량으로 입차시에 차종선택을 띄움
-                        $scope.openCartypeList(mainField);
-                    } else {
                         //월차로 입차시에 월차 목록을 띄움
                         $scope.openMonthModal();
-                    }
-                });
-            }else if(result.length == 1){
-                $ionicPopup.confirm({
-                    title: '월차 확인',
-                    template: mainField + '은(는) 월차등록된 차량입니다.<br/>어떻게 입차할까요?',
-                    cancelText: '월차로 입차',
-                    okText: '다른 차량으로 입차'
-                }).then(function (res) {
-                    if (res) {
-                        //다른차량으로 입차시에 차종선택을 띄움
-                        $scope.openCartypeList(mainField);
                     } else {
-                        //월차로 입차
-                        $scope.monthIn(result);
+                        $cordovaToast.showShortBottom('다른 차량번호를 입력하고 입차버튼을 누르세요');
                     }
                 });
             }else{
@@ -76,7 +59,7 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicModal, $ionicPopup,
             discount_cooper : 0,
             discount_self : 0
         };
-
+        
         Garage.insert(params).then(function(res) {
             console.log("insertId: " + res.insertId);
             $state.go($state.current, {}, {reload: true});
@@ -87,8 +70,29 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicModal, $ionicPopup,
     };
 
     //월차로 입차시에
-    $scope.monthIn = function(month){
+    $scope.monthIn = function (month) {
+        var params = {
+            start_date: new Date().getTime(),
+            car_num: month.car_num,
+            car_type_title: month.car_type_title,
+            minute_unit: 0,
+            minute_free: 0,
+            amount_unit: 0,
+            basic_amount: 0,
+            basic_minute: 0,
+            month_idx: month.idx,
+            cooper_idx: 0,
+            discount_cooper: 0,
+            discount_self: 0
+        };
 
+        Garage.insert(params).then(function (res) {
+            console.log("insertId: " + res.insertId);
+            $state.go($state.current, {}, { reload: true });
+            $scope.closeCartypeList();
+        }, function (err) {
+            console.error(err);
+        });
     };
 
     //차종선택 리스트 모달

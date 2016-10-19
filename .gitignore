@@ -1,2 +1,10 @@
 .idea/
 xpos.db-journal
+/xisoPos.sln
+/xisoPos.jsproj
+/taco.json
+/.vs/xisoPos/v14
+/node_modules/node-sass/vendor/win32-x64-46
+/node_modules/.bin/node-sass.cmd
+/.vs/config
+*.user
