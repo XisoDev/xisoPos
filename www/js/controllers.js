@@ -270,12 +270,56 @@ xpos
 //-------------------
 // 월차
 //-------------------
-.controller('monthCtrl', function ($scope, $state,$stateParams,$ionicModal,$ionicPopup, Month,MultipleViewsManager, xSerial) {
+.controller('monthCtrl', function ($scope, $state,$stateParams,$ionicModal,$ionicPopup, Month,MultipleViewsManager, xSerial, $compile, uiCalendarConfig) {
     $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
         if(toState.name == 'mainLayout.tabs.month'){
             $scope.initMonth();
         }
     });
+
+    /* Start Of Calendar */
+    $scope.alertOnEventClick = function(date, jsEvent, view){
+        console.log(date);
+    };
+
+    $scope.dayClick = function(date, jsEvent, view){
+        console.log(new Date(date));
+    };
+
+    $scope.extraEventSignature = function(event) {
+        console.log(event);
+    };
+
+    $scope.uiConfig = {
+
+        calendar:{
+            titleFormat : 'YYYY 년 MMMM',
+            height: 650,
+            header:{
+                left: 'title',
+                center: '',
+                right: 'today prev,next'
+            },
+            dayClick: $scope.dayClick,
+            eventClick: $scope.alertOnEventClick,
+            dayNamesShort : ["일", "월", "화", "수", "목", "금", "토"],
+            monthNames : ["1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"],
+            viewRender: function(view, element) {
+                $scope.makeEvents(view.start, view.end);
+            }
+        }
+        
+    };
+
+    $scope.eventSources = [];
+    
+    $scope.makeEvents = function(start,end){
+        console.log(start + " " + end);
+        Month.allForCalendar(start,end).then(function(result){
+            console.log(result);
+        });
+    };
+    /* End Of Calendar */
 
     $scope.initMonth = function(){
         $scope.status = 'all';
@@ -366,6 +410,12 @@ xpos
 // 지정주차
 //-------------------
 .controller('cooperCtrl', function ($scope, $state, $stateParams, $ionicModal, $ionicPopup, Cooper, MultipleViewsManager) {
+    $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
+        if(toState.name == 'mainLayout.tabs.cooper'){
+            $scope.initCooper();
+        }
+    });
+    
     $scope.initCooper = function(){
         $scope.getCooperList();
     };

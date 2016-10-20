@@ -202,7 +202,12 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 				return DB.fetchAll(result);
 			});
 	};
-
+	self.allForCalendar = function(start, end) {
+		return DB.query("SELECT mon.* FROM month mon WHERE (start_date BETWEEN ? AND ?) OR (end_date BETWEEN ? AND ?)", [start,end,start,end])
+			.then(function(result){
+				return DB.fetchAll(result);
+			});
+	};
 	self.getByIdx = function(idx){
 		return DB.query('SELECT * FROM month WHERE idx = ?',[idx])
 			.then(function(result){

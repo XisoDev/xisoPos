@@ -40,6 +40,8 @@
             <div class="col">{{coop.minute_free}}</div>
             <div class="col">{{coop.minute_max}}</div>
             <div class="col">{{coop.minute_unit}}분당 {{coop.amount_unit}}원</div>
+
+            <!--상태-->
             <div class="col" ng-if="coop.is_end=='N'">활성</div>
             <div class="col" ng-if="coop.is_end=='Y'">중단됨</div>
         </div>

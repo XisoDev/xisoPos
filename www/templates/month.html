@@ -32,7 +32,8 @@
     <ion-content class="has-header">
         <div class="spacer" style="height:86px" ng-if="status!='calendar'"></div>
         <ion-refresher
-                pulling-text="당겨서 새로 고침" ng-if="status!='calendar'"
+                ng-if="status!='calendar'"
+                pulling-text="당겨서 새로 고침"
                 on-refresh="getMonthList()" style="top:0px;">
         </ion-refresher>
 
@@ -57,7 +58,7 @@
         <!--캘린더-->
         <div ng-if="status=='calendar'">
             <div class="spacer" style="height:56px"></div>
-            <calendar calendar-mode="mode" event-source="eventSource" />
+            <div ui-calendar="uiConfig.calendar" class="span8 calendar" ng-model="eventSources" calendar-watch-event="extraEventSignature(event)"></div>
         </div>
 
         <ion-infinite-scroll
