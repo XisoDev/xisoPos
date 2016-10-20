@@ -10,7 +10,7 @@
             <a class="button" ng-click="changeStatus('in')" ng-class="{'button-energized' : status=='in', 'button-dark' : status!='in'}">입차중</a>
             <a class="button" ng-click="changeStatus('out')" ng-class="{'button-energized' : status=='out', 'button-dark' : status!='out'}">정상출차</a>
             <a class="button" ng-click="changeStatus('no_pay')" ng-class="{'button-energized' : status=='no_pay', 'button-dark' : status!='no_pay'}">미결제</a>
-            <a class="button" ng-click="changeStatus('cancel')" ng-class="{'button-energized' : status=='cancel', 'button-dark' : status!='cancel'}">입차취소</a>
+            <a class="button" ng-click="changeStatus('cancel')" ng-class="{'button-energized' : status=='cancel', 'button-dark' : status!='cancel'}">입차취소{{moredata}}</a>
         </div>
 
         <div class="row header ovc_header">

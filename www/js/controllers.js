@@ -1,5 +1,7 @@
 xpos
+//-------------------
 //입차목록
+//-------------------
 .controller('currentCtrl', function ($scope, $stateParams, $ionicModal, $ionicPopup, MultipleViewsManager, $cordovaToast, Garage) {
     $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
         if(toState.name == 'mainLayout.tabs.current'){
@@ -25,32 +27,40 @@ xpos
         $scope.garage = '';
         $scope.offset = 0;
         $scope.moredata = true;
-        $scope.getGarageList();
+        $scope.getGarageList(false);
         // console.log('current page initialized!!');
     };
     
-    $scope.getGarageList = function(){
+    $scope.getGarageList = function(is_load_more){
+        var limit = 100;
 
-        Garage.allForCurrent(100, $scope.offset).then(function(result){
+        Garage.allForCurrent(limit, $scope.offset).then(function(result){
             if(result.length > 0) {
-                $scope.garageList = result;
-                $scope.$broadcast('scroll.refreshComplete');
-            }
-        });
-    };
-
-    $scope.loadMore = function(){
-        Garage.allForCurrent(100, $scope.offset + 100).then(function(result){
-            if(result.length > 0) {
-                for(var key in result) {
-                    $scope.garageList.push(result[key]);
+                if(!is_load_more) {
+                    $scope.garageList = result;
+                }else{
+                    for(var key in result) {
+                        $scope.garageList.push(result[key]);
+                    }
                 }
-                $scope.offset = $scope.offset + 100;
+                $scope.offset += limit;
             }else{
                 $scope.moredata = false;    // 더이상 추가로드 할게 없음
             }
+
+            $scope.$broadcast('scroll.refreshComplete');
             $scope.$broadcast('scroll.infiniteScrollComplete');
         });
+    };
+
+    $scope.refresh = function(){
+        $scope.offset = 0;
+        $scope.moredata = true;
+        $scope.getGarageList(false);
+    };
+
+    $scope.loadMore = function(){
+        $scope.getGarageList(true);
     };
 
     //출차 버튼
@@ -69,7 +79,7 @@ xpos
                 Garage.outCar(tempGarage).then(function(res2){
                     $cordovaToast.showShortBottom('차량번호 [ '+ tempGarage.car_num +' ]의 출차가 완료 되었습니다');
                     $scope.closeGarageView();
-                    $scope.getGarageList();
+                    $scope.initCurrent();
                 },function(err){
                     console.log(err);
                 });
@@ -91,7 +101,7 @@ xpos
                 Garage.cancelCar(tempGarage).then(function(res2){
                     $cordovaToast.showShortBottom('차량번호 [ '+ tempGarage.car_num +' ]의 입차취소가 완료 되었습니다');
                     $scope.closeGarageView();
-                    $scope.getGarageList();
+                    $scope.initCurrent();
                 },function(err){
                     console.log(err);
                 });
@@ -103,7 +113,9 @@ xpos
     };
 })
 
+//-------------------
 //입출차기록
+//-------------------
 .controller('historyCtrl', function ($scope, $stateParams, $ionicModal, Garage, $ionicPopup, $cordovaToast, MultipleViewsManager) {
     $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
         if(toState.name == 'mainLayout.tabs.history'){
@@ -130,14 +142,14 @@ xpos
         $scope.search = {};
         $scope.offset = 0;
         $scope.moredata = true; //추가로드 여부
-        $scope.getGarageList();
+        $scope.getGarageList(false);
         // console.log('history page initialized!!');
     };
 
     $scope.getGarageList = function(is_load_more){
         var limit = 100;
-        var offset = $scope.offset;
-        Garage.allForHistory(limit, offset).then(function(result){
+
+        Garage.allForHistory(limit, $scope.offset).then(function(result){
             if(result.length > 0) {
                 for (var key in result) {
                     if (result[key].month_idx > 0) {  //월차차량은 내부적으로 결제됨으로 저장(월차로 표시)
@@ -156,25 +168,25 @@ xpos
                 if(!is_load_more) {
                     //추가 로드가 아닐때
                     $scope.garageList = result;
-                    $scope.$broadcast('scroll.refreshComplete');
                 }else{
                     //추가 로드일때
-                    console.log('more loaded!');
                     for(var key in result) {
                         $scope.garageList.push(result[key]);    // 기존 배열에 추가
                     }
-                    $scope.offset = offset + 100;
-                    $scope.$broadcast('scroll.infiniteScrollComplete');
                 }
+                $scope.offset += limit;
             }else{
                 $scope.moredata = false;    // 더이상 추가로드 할게 없음
             }
+            $scope.$broadcast('scroll.refreshComplete');
+            $scope.$broadcast('scroll.infiniteScrollComplete');
         });
     };
     
     $scope.refresh = function(){
         $scope.offset = 0;
-        $scope.getGarageList();
+        $scope.moredata = true;
+        $scope.getGarageList(false);
     };
 
     $scope.loadMore = function(){
@@ -218,7 +230,7 @@ xpos
                 Garage.outCar(tempGarage).then(function(res2){
                     $cordovaToast.showShortBottom('차량번호 [ '+ tempGarage.car_num +' ]의 출차가 완료 되었습니다');
                     $scope.closeGarageView();
-                    $scope.getGarageList();
+                    $scope.refresh();
                 },function(err){
                     console.log(err);
                 });
@@ -240,7 +252,7 @@ xpos
                 Garage.cancelCar(tempGarage).then(function(res2){
                     $cordovaToast.showShortBottom('차량번호 [ '+ tempGarage.car_num +' ]의 입차취소가 완료 되었습니다');
                     $scope.closeGarageView();
-                    $scope.getGarageList();
+                    $scope.refresh();
                 },function(err){
                     console.log(err);
                 });
@@ -251,7 +263,10 @@ xpos
 
     };
 })
-    
+
+//-------------------
+// 월차
+//-------------------
 .controller('monthCtrl', function ($scope, $state,$stateParams,$ionicModal,$ionicPopup, Month,MultipleViewsManager, xSerial) {
     $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
         if(toState.name == 'mainLayout.tabs.month'){
@@ -343,7 +358,10 @@ xpos
     // };
 
 })
-    
+
+//-------------------
+// 지정주차
+//-------------------
 .controller('cooperCtrl', function ($scope, $state, $stateParams, $ionicModal, $ionicPopup, Cooper, MultipleViewsManager) {
     $scope.initCooper = function(){
         $scope.getCooperList();
@@ -408,7 +426,10 @@ xpos
         }
     };
 })
-    
+
+//-------------------
+// 정산
+//-------------------
 .controller('calcuCtrl', function ($scope, $stateParams, MultipleViewsManager) {
 
 });
