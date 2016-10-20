@@ -8,3 +8,5 @@ xpos.db-journal
 /node_modules/.bin/node-sass.cmd
 /.vs/config
 *.user
+.gradle
+platforms/
