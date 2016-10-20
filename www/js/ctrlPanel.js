@@ -1,13 +1,22 @@
 xpos.controller('PanelCtrl', function ($scope, $state, $ionicModal, $ionicPopup, $cordovaToast, CarType, Garage, Month, MultipleViewsManager) {
 
+    $scope.mainField = '';
+
+    $scope.addMainField = function(num){
+        $scope.mainField = $scope.mainField + num;
+    };
+    $scope.clearMainField = function(){
+        $scope.mainField = '';
+    };
+
     // 입차버튼 클릭시 체크
-    $scope.inCarChk = function(mainField){
-        if(!mainField) return $ionicPopup.alert({title: '알림', template: '관리 번호를 입력해주세요'});
+    $scope.inCarChk = function(){
+        if(!$scope.mainField) return $ionicPopup.alert({title: '알림', template: '관리 번호를 입력해주세요'});
 
 
         CarType.all().then(function(result){
             if(result.length > 0) {
-                $scope.inCar(mainField);
+                $scope.inCar();
             }else{
                 $ionicPopup.alert({title: '알림', template: '등록된 차종이 없습니다.<br>먼저 설정에서 차종을 추가해주세요.'});
             }
@@ -15,17 +24,16 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicModal, $ionicPopup,
     };
 
     //입차 전 월차 검사
-    $scope.inCar = function(mainField){
-        $scope.carnum = mainField;
+    $scope.inCar = function(){
 
         //디비에서 현재 차번호를 검색하여 월차에 있는지 판단하여 있으면 컨펌을 띄움
-        Month.getByCarNum(mainField).then(function(result){
+        Month.getByCarNum($scope.mainField).then(function(result){
             if(result.length > 0){
                 $scope.monthList = result;
 
                 $ionicPopup.confirm({
                     title: '월차 확인',
-                    template: '월차에 '+mainField + '(으)로 시작되는 차량번호가 있습니다.<br/>어떻게 입차할까요?',
+                    template: '월차에 '+$scope.mainField + '(으)로 시작되는 차량번호가 있습니다.<br/>어떻게 입차할까요?',
                     okText: '월차로 입차',
                     cancelText: '다른 번호 입력'
                 }).then(function (res) {
@@ -38,7 +46,7 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicModal, $ionicPopup,
                 });
             }else{
                 //월차목록에 없으면 다른 차량으로 입차
-                $scope.openCartypeList(mainField);
+                $scope.openCartypeList();
             }
         },function (err){ console.log(err); });
     };
@@ -47,7 +55,7 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicModal, $ionicPopup,
     $scope.selectCartype = function(cartype){
         var params = {
             start_date : new Date().getTime(),
-            car_num : $scope.carnum,
+            car_num : $scope.mainField,
             car_type_title : cartype.car_type_title,
             minute_unit : cartype.minute_unit,
             minute_free : cartype.minute_free,
@@ -64,6 +72,8 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicModal, $ionicPopup,
             console.log("insertId: " + res.insertId);
             $state.go($state.current, {}, {reload: true});
             $scope.closeCartypeList();
+            $cordovaToast.showShortBottom('[ '+ $scope.mainField +' ] - 입차되었습니다');
+            $scope.clearMainField();
         }, function (err) {
             console.error(err);
         });
@@ -89,7 +99,9 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicModal, $ionicPopup,
         Garage.insert(params).then(function (res) {
             console.log("insertId: " + res.insertId);
             $state.go($state.current, {}, { reload: true });
-            $scope.closeCartypeList();
+            $scope.closeMonthModal();
+            $cordovaToast.showShortBottom('[ '+ month.car_num +' ] - 월차로 입차되었습니다');
+            $scope.clearMainField();
         }, function (err) {
             console.error(err);
         });
@@ -101,9 +113,9 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicModal, $ionicPopup,
     }).then(function(modal) {
         $scope.modalCartypeList = modal;
     });
-    $scope.openCartypeList = function(mainField) {
+    $scope.openCartypeList = function() {
 
-        Garage.getByCarNum(mainField).then(function(result){
+        Garage.getByCarNum($scope.mainField).then(function(result){
             if(result){
                 return false, $ionicPopup.alert({
                     title: '알림',
