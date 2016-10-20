@@ -1,4 +1,4 @@
-xpos.controller('PanelCtrl', function ($scope, $state, $ionicModal, $ionicPopup, $cordovaToast, CarType, Garage, Month, MultipleViewsManager) {
+xpos.controller('PanelCtrl', function ($scope, $state, $ionicModal, $ionicPopup, $cordovaToast, CarType, Garage, Month, xSerial) {
 
     $scope.mainField = '';
 
@@ -148,7 +148,16 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicModal, $ionicPopup,
         $scope.modalMonthList.hide();
     };
 
+    $scope.doCard = function(){
+        console.log("doCard function !");
+        xSerial.Sender('02 00 6F 04 FD 44 31 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 30 30 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 31 30 30 34 20 20 20 20 20 20 20 30 20 20 20 20 20 20 39 31 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 03 48 71                                        ');
 
+    }
+    $scope.doCash = function(){
+        console.log("open cash function !");
+        xSerial.Sender('02 00 06 04 FD 43 44 03 9E A6 ');
+
+    }
     // if (MultipleViewsManager.isActive()) {
     //     MultipleViewsManager.updateView('view-message', { messageId: $scope.selectedMessageId });
     // }

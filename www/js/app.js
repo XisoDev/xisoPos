@@ -11,7 +11,7 @@ var xpos = angular.module('xisoPos', ['ionic', 'ngCordova','ionicMultipleViews',
 				StatusBar.styleDefault();
 			}
 			DB.init();
-			xSerial.init();
+			//xSerial.init();
 		});
 
 		//back button action

@@ -13,6 +13,9 @@
         "cordova-plugin-device": {
             "PACKAGE_NAME": "com.ionicframework.xisopos928706"
         },
+        "cordova-plugin-serial": {
+            "PACKAGE_NAME": "com.ionicframework.xisopos928706"
+        },
         "cordova-plugin-splashscreen": {
             "PACKAGE_NAME": "com.ionicframework.xisopos928706"
         },
@@ -26,12 +29,6 @@
             "PACKAGE_NAME": "com.ionicframework.xisopos928706"
         },
         "cordova-sqlite-storage": {
-            "PACKAGE_NAME": "com.ionicframework.xisopos928706"
-        },
-        "ionic-plugin-keyboard": {
-            "PACKAGE_NAME": "com.ionicframework.xisopos928706"
-        },
-        "fr.drangies.cordova.serial": {
             "PACKAGE_NAME": "com.ionicframework.xisopos928706"
         }
     },

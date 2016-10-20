@@ -34,13 +34,13 @@
 			<li ng-click="addMainField('3')"><span>3</span></li>
 			<li ng-click="addMainField('0')" class="double"><span>0</span></li>
 			<li ng-click="addMainField('-')"><span>-</span></li>
-			<li class="small"><span>
+			<li ng-click="doCard()" class="small"><span>
 					<i class="ion-card"></i><br />
 					카드결제
 			</span></li>
-			<li class="small"><span>
-					<i class="ion-android-arrow-back"></i><br />
-					카드취소
+			<li ng-click="doCash()" class="small"><span>
+					<i class="ion-cash"></i><br />
+					현금함 열기
 				</span></li>
 			<li class="small"><span>
 				<i class="ion-document-text"></i><br />
