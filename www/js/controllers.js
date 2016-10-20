@@ -23,20 +23,37 @@ xpos
 
     $scope.initCurrent = function(){
         $scope.garage = '';
+        $scope.offset = 0;
+        $scope.moredata = true;
         $scope.getGarageList();
         // console.log('current page initialized!!');
     };
     
     $scope.getGarageList = function(){
 
-        Garage.current().then(function(result){
+        Garage.allForCurrent(100, $scope.offset).then(function(result){
             if(result.length > 0) {
                 $scope.garageList = result;
                 $scope.$broadcast('scroll.refreshComplete');
             }
         });
     };
-    
+
+    $scope.loadMore = function(){
+        Garage.allForCurrent(100, $scope.offset + 100).then(function(result){
+            if(result.length > 0) {
+                for(var key in result) {
+                    $scope.garageList.push(result[key]);
+                }
+                $scope.offset = $scope.offset + 100;
+            }else{
+                $scope.moredata = false;    // 더이상 추가로드 할게 없음
+            }
+            $scope.$broadcast('scroll.infiniteScrollComplete');
+        });
+    };
+
+    //출차 버튼
     $scope.outCar = function(garage){
         var tempGarage = angular.copy(garage);
         tempGarage.end_date = new Date().getTime();
@@ -49,7 +66,7 @@ xpos
                 //
                 // 이 구문 전체는 결제 프로세스 이후에 동작해야함
                 //
-                Garage.outCar(tempGarage).then(function(res){
+                Garage.outCar(tempGarage).then(function(res2){
                     $cordovaToast.showShortBottom('차량번호 [ '+ tempGarage.car_num +' ]의 출차가 완료 되었습니다');
                     $scope.closeGarageView();
                     $scope.getGarageList();
@@ -60,10 +77,9 @@ xpos
 
             }
         });
-
-        
     };
 
+    //입차취소 버튼
     $scope.cancelCar = function(garage){
         var tempGarage = angular.copy(garage);
         tempGarage.end_date = new Date().getTime();
@@ -72,7 +88,7 @@ xpos
             template: '취소시간 : ' + formatted_date(new Date(tempGarage.end_date)) + '<br/>취소 하시겠습니까?'
         }).then(function (res) {
             if(res){
-                Garage.cancelCar(tempGarage).then(function(res){
+                Garage.cancelCar(tempGarage).then(function(res2){
                     $cordovaToast.showShortBottom('차량번호 [ '+ tempGarage.car_num +' ]의 입차취소가 완료 되었습니다');
                     $scope.closeGarageView();
                     $scope.getGarageList();
@@ -86,8 +102,9 @@ xpos
 
     };
 })
-    
-.controller('historyCtrl', function ($scope, $stateParams, $ionicModal, Garage, MultipleViewsManager) {
+
+//입출차기록
+.controller('historyCtrl', function ($scope, $stateParams, $ionicModal, Garage, $ionicPopup, $cordovaToast, MultipleViewsManager) {
     $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
         if(toState.name == 'mainLayout.tabs.history'){
             $scope.initHistory();
@@ -109,23 +126,129 @@ xpos
     };
     
     $scope.initHistory = function(){
-        $scope.status = 'all';  //all, in, out, no_pay, cancel
-
+        $scope.status = 'all';
+        $scope.search = {};
+        $scope.offset = 0;
+        $scope.moredata = true; //추가로드 여부
         $scope.getGarageList();
         // console.log('history page initialized!!');
     };
 
-    $scope.getGarageList = function(){
-        Garage.allForHistory().then(function(result){
+    $scope.getGarageList = function(is_load_more){
+        var limit = 100;
+        var offset = $scope.offset;
+        Garage.allForHistory(limit, offset).then(function(result){
             if(result.length > 0) {
-                $scope.garageList = result;
-                $scope.$broadcast('scroll.refreshComplete');
+                for (var key in result) {
+                    if (result[key].month_idx > 0) {  //월차차량은 내부적으로 결제됨으로 저장(월차로 표시)
+                        result[key].is_paid = 'Y';
+                    } else if (result[key].pay_amount < (result[key].total_amount - result[key].discount_cooper - result[key].discount_self)) {
+                        //결제 금액 < (총 요금 - 지정주차할인 - 셀프할인)
+                        result[key].is_paid = 'N';
+                    } else if (!result[key].end_date) {
+                        //출차 하기 전엔 결제를 할수 없으므로
+                        result[key].is_paid = 'N';
+                    } else {
+                        result[key].is_paid = 'Y';
+                    }
+                }
+
+                if(!is_load_more) {
+                    //추가 로드가 아닐때
+                    $scope.garageList = result;
+                    $scope.$broadcast('scroll.refreshComplete');
+                }else{
+                    //추가 로드일때
+                    console.log('more loaded!');
+                    for(var key in result) {
+                        $scope.garageList.push(result[key]);    // 기존 배열에 추가
+                    }
+                    $scope.offset = offset + 100;
+                    $scope.$broadcast('scroll.infiniteScrollComplete');
+                }
+            }else{
+                $scope.moredata = false;    // 더이상 추가로드 할게 없음
+            }
+        });
+    };
+    
+    $scope.refresh = function(){
+        $scope.offset = 0;
+        $scope.getGarageList();
+    };
+
+    $scope.loadMore = function(){
+        $scope.getGarageList(true);
+    };
+
+    $scope.changeStatus = function(stat){
+        $scope.status = stat;   //all, in, out, no_pay, cancel
+        $scope.search = {};
+        switch(stat){
+            case 'in':
+                $scope.search.is_out = 'N';
+                $scope.search.is_cancel = 'N';
+                break;
+            case 'out':
+                $scope.search.is_out = 'Y';
+                $scope.search.is_cancel = 'N';
+                break;
+            case 'no_pay':
+                $scope.search.is_paid = 'N';
+                break;
+            case 'cancel':
+                $scope.search.is_cancel = 'Y';
+                break;
+        }
+    };
+
+    //출차 버튼
+    $scope.outCar = function(garage){
+        var tempGarage = angular.copy(garage);
+        tempGarage.end_date = new Date().getTime();
+        tempGarage.total_amount = cal_garage(tempGarage);
+        $ionicPopup.confirm({
+            title: '출차 - '+tempGarage.car_num,
+            template: '요금 : '+ tempGarage.total_amount +' 원<br/>출차시간 : ' + formatted_date(new Date(tempGarage.end_date)) + '<br/>출차 하시겠습니까?'
+        }).then(function (res) {
+            if(res){
+                //
+                // 이 구문 전체는 결제 프로세스 이후에 동작해야함
+                //
+                Garage.outCar(tempGarage).then(function(res2){
+                    $cordovaToast.showShortBottom('차량번호 [ '+ tempGarage.car_num +' ]의 출차가 완료 되었습니다');
+                    $scope.closeGarageView();
+                    $scope.getGarageList();
+                },function(err){
+                    console.log(err);
+                });
+            }else{
+
             }
         });
     };
 
-    $scope.changeStatus = function(stat){
-        $scope.status = stat;
+    //입차취소 버튼
+    $scope.cancelCar = function(garage){
+        var tempGarage = angular.copy(garage);
+        tempGarage.end_date = new Date().getTime();
+        $ionicPopup.confirm({
+            title: '입차 취소 - '+tempGarage.car_num,
+            template: '취소시간 : ' + formatted_date(new Date(tempGarage.end_date)) + '<br/>취소 하시겠습니까?'
+        }).then(function (res) {
+            if(res){
+                Garage.cancelCar(tempGarage).then(function(res2){
+                    $cordovaToast.showShortBottom('차량번호 [ '+ tempGarage.car_num +' ]의 입차취소가 완료 되었습니다');
+                    $scope.closeGarageView();
+                    $scope.getGarageList();
+                },function(err){
+                    console.log(err);
+                });
+            }else{
+
+            }
+        });
+
     };
 })
     

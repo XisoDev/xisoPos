@@ -23,23 +23,25 @@
             <div class="item item-divider" style="text-align: center;">
                 결제 정보
             </div>
-            <label class="item item-input">
-                <span class="input-label">이용 요금</span>
-                <p ng-if="!garage.end_date">{{garage | calcu | currency : "" : 0}} 원</p>
-                <p ng-if="garage.end_date">{{garage.total_amount | currency : "" : 0}} 원</p>
-            </label>
-            <label class="item item-input">
-                <span class="input-label">할인된 금액 (지정주차)</span>
-                <p>{{garage.discount_cooper | currency : "" : 0}} 원</p>
-            </label>
-            <label class="item item-input">
-                <span class="input-label">할인된 금액 (기타)</span>
-                <p>{{garage.discount_self | currency : "" : 0}} 원</p>
-            </label>
-            <label class="item item-input">
-                <span class="input-label">결제된 금액</span>
-                <p>{{0  | currency : "" : 0 | currency : "" : 0}} 원</p>
-            </label>
+            <div ng-if="garage.month_idx == 0">
+                <label class="item item-input">
+                    <span class="input-label">이용 요금</span>
+                    <p ng-if="!garage.end_date">{{garage | calcu | currency : "" : 0}} 원</p>
+                    <p ng-if="garage.end_date">{{garage.total_amount | currency : "" : 0}} 원</p>
+                </label>
+                <label class="item item-input">
+                    <span class="input-label">할인된 금액 (지정주차)</span>
+                    <p>{{garage.discount_cooper | currency : "" : 0}} 원</p>
+                </label>
+                <label class="item item-input">
+                    <span class="input-label">할인된 금액 (기타)</span>
+                    <p>{{garage.discount_self | currency : "" : 0}} 원</p>
+                </label>
+                <label class="item item-input">
+                    <span class="input-label">결제된 금액</span>
+                    <p>{{0  | currency : "" : 0 | currency : "" : 0}} 원</p>
+                </label>
+            </div>
             <div class="item item-divider" style="text-align: center;">
                 차종 정보
             </div>

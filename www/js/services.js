@@ -126,15 +126,18 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 			});
 	};
 	
-	self.allForHistory = function() {
-		return DB.query("SELECT gar.*, (SELECT sum(pay_amount) FROM payment WHERE lookup_idx = gar.idx AND lookup_type='garage' AND is_cancel = 'N') as pay_amount FROM garage gar")
+	self.allForHistory = function(limit, offset) {
+		var qry = "SELECT gar.*," +
+			" (SELECT IFNULL(sum(pay_amount), 0) FROM payment WHERE lookup_idx = gar.idx AND lookup_type='garage' AND is_cancel = 'N') as pay_amount " +
+			" FROM garage gar LIMIT ? OFFSET ?";
+		return DB.query(qry, [limit, offset])
 			.then(function(result){
 				return DB.fetchAll(result);
 			});
 	};
 
-	self.current = function() {
-		return DB.query("SELECT * FROM garage WHERE is_out = 'N' AND is_cancel = 'N'")
+	self.allForCurrent = function(limit, offset) {
+		return DB.query("SELECT * FROM garage WHERE is_out = 'N' AND is_cancel = 'N' LIMIT ? OFFSET ?", [limit, offset])
 			.then(function(result){
 				return DB.fetchAll(result);
 			});
@@ -188,13 +191,13 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 	var self = this;
 
 	self.all = function() {
-		return DB.query("SELECT mon.*, (SELECT sum(pay_amount) FROM payment WHERE lookup_idx = mon.idx AND lookup_type='month' AND is_cancel = 'N') as pay_amount FROM month mon")
+		return DB.query("SELECT mon.*, (SELECT IFNULL(sum(pay_amount), 0) FROM payment WHERE lookup_idx = mon.idx AND lookup_type='month' AND is_cancel = 'N') as pay_amount FROM month mon")
 			.then(function(result){
 				return DB.fetchAll(result);
 			});
 	};
 	self.allPositive = function() {
-		return DB.query("SELECT mon.*, (SELECT sum(pay_amount) FROM payment WHERE lookup_idx = mon.idx AND lookup_type='month' AND is_cancel = 'N') as pay_amount FROM month mon WHERE is_stop = 'N' AND end_date > ?", [new Date().getTime()])
+		return DB.query("SELECT mon.*, (SELECT IFNULL(sum(pay_amount), 0) FROM payment WHERE lookup_idx = mon.idx AND lookup_type='month' AND is_cancel = 'N') as pay_amount FROM month mon WHERE is_stop = 'N' AND end_date > ?", [new Date().getTime()])
 			.then(function(result){
 				return DB.fetchAll(result);
 			});

@@ -41,10 +41,7 @@
             <div class="col">{{mon.start_date | date:'MM-dd HH:mm'}}</div>
             <div class="col">{{mon.end_date | date:'MM-dd HH:mm'}}</div>
             <div class="col">{{mon.amount | currency : "" : 0 }} 원</div>
-
-            <div class="col" ng-if="!mon.pay_amount">0 원</div>
-            <div class="col" ng-if="mon.pay_amount">{{mon.pay_amount | currency : "" : 0 }} 원</div>
-
+            <div class="col">{{mon.pay_amount | currency : "" : 0 }} 원</div>
             <div class="col">{{(mon.amount-mon.pay_amount) | currency : "" : 0 }} 원</div>
             <div class="col">{{mon.car_name}}</div>
             <div class="col">{{mon.car_type_title}}</div>
