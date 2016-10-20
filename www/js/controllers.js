@@ -26,12 +26,13 @@ xpos
     $scope.initCurrent = function(){
         $scope.garage = '';
         $scope.offset = 0;
-        $scope.moredata = true;
+        $scope.moredata = false;
         $scope.getGarageList(false);
         // console.log('current page initialized!!');
     };
     
     $scope.getGarageList = function(is_load_more){
+        console.log('is_load_more = '+is_load_more);
         var limit = 100;
 
         Garage.allForCurrent(limit, $scope.offset).then(function(result){
@@ -44,6 +45,7 @@ xpos
                     }
                 }
                 $scope.offset += limit;
+                $scope.moredata = true;
             }else{
                 $scope.moredata = false;    // 더이상 추가로드 할게 없음
             }
@@ -55,7 +57,7 @@ xpos
 
     $scope.refresh = function(){
         $scope.offset = 0;
-        $scope.moredata = true;
+        $scope.moredata = false;
         $scope.getGarageList(false);
     };
 
@@ -141,7 +143,7 @@ xpos
         $scope.status = 'all';
         $scope.search = {};
         $scope.offset = 0;
-        $scope.moredata = true; //추가로드 여부
+        $scope.moredata = false; //추가로드 여부
         $scope.getGarageList(false);
         // console.log('history page initialized!!');
     };
@@ -175,6 +177,7 @@ xpos
                     }
                 }
                 $scope.offset += limit;
+                $scope.moredata = true;
             }else{
                 $scope.moredata = false;    // 더이상 추가로드 할게 없음
             }
@@ -185,7 +188,7 @@ xpos
     
     $scope.refresh = function(){
         $scope.offset = 0;
-        $scope.moredata = true;
+        $scope.moredata = false;
         $scope.getGarageList(false);
     };
 
