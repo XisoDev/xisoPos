@@ -1,5 +1,5 @@
 //var db = null;
-var xpos = angular.module('xisoPos', ['ionic', 'ngCordova','ionicMultipleViews','ion-floating-menu'])
+var xpos = angular.module('xisoPos', ['ionic', 'ngCordova','ionicMultipleViews','ion-floating-menu','ui.rCalendar'])
 
 	.run(function ($ionicPlatform,DB,xSerial,$ionicHistory,$ionicPopup,$rootScope,$document,$window) {
 		$ionicPlatform.ready(function () {

@@ -260,9 +260,15 @@ xpos
     });
 
     $scope.initMonth = function(){
+        $scope.status = 'all';
+
         Month.all().then(function(result){
             if(result.length > 0) $scope.monthList = result;
         });
+    };
+
+    $scope.changeStatus = function(stat){
+        $scope.status = stat;   //all, expired, calendar
     };
 
     //월차 추가 모달
