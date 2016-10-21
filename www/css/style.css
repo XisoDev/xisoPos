@@ -163,6 +163,16 @@
 .ovc_item .col.tright{
     text-align: right;
 }
+.ovc_date{
+    padding-top:4px;
+}
+.ovc_date input[type=date]{
+    background-color: #353535;
+    border-radius: 4px;
+    height:31px;
+    color:#fff;
+    padding:0 10px;
+}
 
 .square{
     border-radius:10px;

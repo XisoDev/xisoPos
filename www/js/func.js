@@ -64,3 +64,13 @@ function getEndDate(dt){
 
     return last_date;
 }
+
+function getStartEndDate(){
+    var dt = new Date();
+    var result = {};
+    result.start_date = new Date(dt.getFullYear(), dt.getMonth(), 1);
+    var temp_ed = new Date(dt.getFullYear(), dt.getMonth()+1, 0);
+    result.end_date = new Date(getEndDate(temp_ed));
+
+    return result;
+}

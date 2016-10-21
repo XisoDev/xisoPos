@@ -310,8 +310,8 @@ xpos
 
     $scope.eventSources = [];
 
+    // 캘린더 변동 이벤트 발생시 달력에 월차 데이터를 뿌려줌
     $scope.makeEvents = function(start,end){
-    // console.log('makeEvents');
         Month.allForCalendar(start,end).then(function(result){
 
             if(result.length > 0){
@@ -473,21 +473,57 @@ xpos
 //-------------------
 // 지정주차
 //-------------------
-.controller('cooperCtrl', function ($scope, $state, $stateParams, $ionicModal, $ionicPopup, Cooper, MultipleViewsManager) {
+.controller('cooperCtrl', function ($scope, $state, $stateParams, $ionicModal, $ionicPopup, Cooper, Garage, MultipleViewsManager) {
     $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
         if(toState.name == 'mainLayout.tabs.cooper'){
             $scope.initCooper();
         }
     });
-    
+
     $scope.initCooper = function(){
+        $scope.status = 'cooper';
         $scope.getCooperList();
     };
+    $scope.changeStatus = function(stat){
+        $scope.status = stat;   //cooper, period, day
+        switch(stat){
+            case 'period':
+                $scope.start_date = getStartEndDate().start_date;
+                $scope.end_date = getStartEndDate().end_date;
+                $scope.getGarageList();
+                break;
+            case 'day':
+                $scope.start_date = new Date();
+                $scope.getGarageList();
+                break;
+            default:
+                $scope.getCooperList();
+        }
+    };
+
+    $scope.refresh = function(){
+        $scope.$broadcast('scroll.refreshComplete');
+    };
+
     $scope.getCooperList = function(){
         Cooper.all().then(function(result){
             if(result.length > 0) $scope.cooperList = result;
         });
 
+    };
+
+    $scope.getGarageList = function(){
+        $scope.garageList = {};
+
+        var params = {};
+        console.log($scope.start_date);
+        console.log($scope.end_date);
+        params.start_date = $scope.start_date;
+        if($scope.status == 'period') params.end_date = $scope.end_date;
+        console.log(params);
+        Garage.allForCooper(params).then(function(result){
+            if(result.length > 0) $scope.garageList = result;
+        });
     };
 
     //업체 추가 모달
@@ -542,6 +578,8 @@ xpos
             });
         }
     };
+    
+    
 })
 
 //-------------------
