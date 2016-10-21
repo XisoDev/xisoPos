@@ -190,3 +190,14 @@
     color:#333;
     font-weight:300;
 }
+
+/* full calendar overwrite*/
+.fc-unthemed .fc-today {
+    background: #444;
+}
+.fc-toolbar h2 {
+    color:#fff;
+}
+.fc th, .fc td{
+    color:#fff;
+}
