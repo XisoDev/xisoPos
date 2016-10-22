@@ -143,6 +143,18 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 			});
 	};
 
+	self.allForCooper = function(params){
+		if(params.end_date) {
+			return DB.query("SELECT g.* FROM garage g WHERE g.is_out = 'Y' AND g.is_cancel = 'N' AND g.start_date >= ? AND g.end_date <= ?",
+				[getStartDate(params.start_date), getEndDate(params.end_date)])
+				.then(function (result) {return DB.fetchAll(result);});
+		}else{
+			return DB.query("SELECT g.* FROM garage g WHERE g.is_out = 'Y' AND g.is_cancel = 'N' AND g.start_date >= ? AND g.start_date <= ?",
+				[getStartDate(params.start_date), getEndDate(params.start_date)])
+				.then(function (result) {return DB.fetchAll(result);});
+		}
+	};
+
 	//출차
 	self.outCar = function(garage) {
 		return DB.query("UPDATE garage SET is_out = 'Y', end_date = ?, total_amount = ? WHERE idx = ?",
@@ -202,7 +214,13 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 				return DB.fetchAll(result);
 			});
 	};
-
+	self.allForCalendar = function(start, end) {
+		var qry = "SELECT * FROM month WHERE (start_date BETWEEN ? AND ?) OR (end_date BETWEEN ? AND ?)";
+		return DB.query(qry, [Number(start), Number(end), Number(start), Number(end)])
+			.then(function(result){
+				return DB.fetchAll(result);
+			});
+	};
 	self.getByIdx = function(idx){
 		return DB.query('SELECT * FROM month WHERE idx = ?',[idx])
 			.then(function(result){

@@ -74,6 +74,40 @@ xpos
         return timeString;
     };
 })
+.filter('passTimeSE', function() {
+    return function(garage) {
+        //passTime Start, End
+        var parkSeconds = garage.end_date - garage.start_date;
+
+        var oneSecond = 1000;
+        var oneMinute = oneSecond * 60;
+        var oneHour = oneMinute * 60;
+        var oneDay = oneHour * 24;
+
+        var seconds = Math.floor((parkSeconds % oneMinute) / oneSecond);
+        var minutes = Math.floor((parkSeconds % oneHour) / oneMinute);
+        var hours = Math.floor((parkSeconds % oneDay) / oneHour);
+        var days = Math.floor(parkSeconds / oneDay);
+
+        var timeString = '';
+        if (days !== 0) {
+            timeString += days + ' 일 ';
+        }
+        if (hours !== 0) {
+            timeString += hours + ' 시간 ';
+        }
+        if (minutes !== 0) {
+            timeString += minutes + ' 분 ';
+        }
+        // if (seconds !== 0 || curSeconds < 1000) {
+        //     timeString += seconds + ' 초 ';
+        // }
+
+        if(timeString == '') timeString = '0 분';
+
+        return timeString;
+    };
+})
 .filter('calcu', function() {
     return function(garage) {
         if(!garage) return false;
