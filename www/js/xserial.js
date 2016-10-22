@@ -5,6 +5,9 @@ xpos.factory('xSerial', function($cordovaToast,$ionicLoading) {
         $ionicLoading.show({
             template: message ? message : '단말입력 대기중..'
         });
+        setTimeout(function(){
+            hide();
+        },5000);
     };
     var hide = function(){
         $ionicLoading.hide();
@@ -15,7 +18,7 @@ xpos.factory('xSerial', function($cordovaToast,$ionicLoading) {
     var timeID;
 
     self.init = function(){
-        if (window.cordova) {
+        if (window.cordova && !inited) {
             serial.requestPermission({},
                 function success(success) {
                     console.log(success);
@@ -64,6 +67,8 @@ xpos.factory('xSerial', function($cordovaToast,$ionicLoading) {
                     console.log(error);
                     $cordovaToast.showShortBottom("카드단말기에 접근권한을 부여해야합니다. \n" + error);
                 });
+        }else{
+            $cordovaToast.showShortBottom("이미 단말기가 연결되어 있거나, 단말기를 사용할 수 있는 환경이 아닙니다.");
         }
     }
 
@@ -85,6 +90,32 @@ xpos.factory('xSerial', function($cordovaToast,$ionicLoading) {
             self.write(content);
         }
     };
+
+    self.doPrint = function(date,time,carnum,srl,message){
+        var shopname = "화 진 S";
+        var shopaddr = "중구 부평동 3가 62-2.7.8";
+        var shoptel = "051-333-5646";
+        var str = "\x1D!\x01           [ ";
+        str += shopname;
+        str += " 주 차 영 수 증 ]\x1D!\0\r\n             " + shopaddr;
+        str += "\r\n               (전화) " + shoptel;
+        str += "\r\n 입차년월 : " + date;
+        str += "\r\n\r\n\x1D!\x01  입차시간 :                " + time;
+        str += "\x1D!\0\x1D!\x01  차량번호 :                " + carnum;
+        str += "\x1D!\0\r\n#seq : " + srl;
+        str += "\r\n" + message + "\r\n===============================================\r\n맞춤형 POS,웹/앱 개발,기업 디자인 문의\r\nhttp://xiso.co.kr \r\n\r\n\r\n\r\n\r\n\x1Bi\r\n";
+
+        if(!inited){
+            show("아직 단말기가 연결되지않아 먼저 연결을 시도합니다. 연결이 성공하면 재시도 해주세요.");
+            setTimeout(function(){
+                self.init();
+            },1000);
+            return true;
+        }else{
+            serial.write(str);
+        }
+
+    }
 
     self.write = function(content){
         serial.writeHex(content,

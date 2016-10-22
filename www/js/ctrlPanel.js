@@ -70,6 +70,16 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicModal, $ionicPopup,
         
         Garage.insert(params).then(function(res) {
             console.log("insertId: " + res.insertId);
+
+            date = "2016년 10월 13일 목요일";
+            time = "11시 50분";
+            carnum = params.car_num;
+            srl = res.insertId;
+            message = "* 오늘도 좋은 하루 되세요.";
+            message += "\r\n* 협력업체 방문시 뒷면에 꼭 도장을 받아주세요.";
+            message += "\r\n* 영수중 분실시 차량출고가 불가 할 수 있습니다.";
+            xSerial.doPrint(date,time,carnum,srl,message);
+
             $state.go($state.current, {}, {reload: true});
             $scope.closeCartypeList();
             $cordovaToast.showShortBottom('[ '+ $scope.mainField +' ] - 입차되었습니다');
@@ -199,8 +209,7 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicModal, $ionicPopup,
     }
 
     $scope.doConnect = function(){
-        // $state.go($state.current, {}, {reload: true});
-        // xSerial.init();
-        document.location.reload();
+        $state.go($state.current, {}, {reload: true});
+        xSerial.init();
     }
 });

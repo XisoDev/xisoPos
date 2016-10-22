@@ -287,7 +287,7 @@ public class Serial extends CordovaPlugin {
 				else {
 					try {
 						Log.d(TAG, data);
-						byte[] buffer = data.getBytes();
+						byte[] buffer = data.getBytes("KSC5601");
 						port.write(buffer, 1000);
 						callbackContext.success();
 					}
