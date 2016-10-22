@@ -148,27 +148,59 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicModal, $ionicPopup,
         $scope.modalMonthList.hide();
     };
 
-    $scope.doCard = function(){
-        console.log("doCard function !");
-        xSerial.Sender('02 00 6F 04 FD 44 31 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 30 30 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 31 30 30 34 20 20 20 20 20 20 20 30 20 20 20 20 20 20 39 31 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 03 48 71                                        ');
-
+    $scope.doCard = function(is_cancel){
+        $scope.data = {}
+        //$scope.data.amount = 0;
+        $ionicPopup.show({
+            template: ' 임의결제 금액을 입력합니다. <input type="number" ng-model="data.amount" autofocus="autofocus" style="color:#FFF;background:transparent;font-size:30px;text-align:center;border-bottom:1px solid #aaa;">',
+            title: '카드결제',
+            scope: $scope,
+            buttons: [{
+                text: '취소'
+            }, {
+                text: '<b>결제</b>',
+                type: 'button-positive',
+                onTap: function(e) {
+                    return $scope.amount;
+                }
+            }, ]
+        }).then(function() {
+            if($scope.data.amount > 0){
+                xSerial.payCard($scope.data.amount,is_cancel,0);
+            }
+        });
     }
+
+    $scope.doPayCash = function(cash_type){
+        $scope.data = {}
+        $scope.data.cash_type = cash_type;
+        $ionicPopup.show({
+            template: ' 임의의 현금영수증을 발행합니다. <input type="number" ng-model="data.amount" autofocus="autofocus" style="color:#FFF;background:transparent;font-size:30px;text-align:center;border-bottom:1px solid #aaa;">',
+            title: '현금영수증',
+            scope: $scope,
+            buttons: [{
+                text: '취소'
+            }, {
+                text: '<b>결제</b>',
+                type: 'button-positive',
+                onTap: function(e) {
+                    return $scope.amount;
+                }
+            }, ]
+        }).then(function() {
+            if($scope.data.amount > 0){
+                xSerial.payCash($scope.data.amount, $scope.data.cash_type ,0);
+            }
+        });
+    }
+
     $scope.doCash = function(){
-        console.log("open cash function !");
-        xSerial.Sender('02 00 06 04 FD 43 44 03 9E A6 ');
-
+        xSerial.openCash();
     }
-    // if (MultipleViewsManager.isActive()) {
-    //     MultipleViewsManager.updateView('view-message', { messageId: $scope.selectedMessageId });
-    // }
-    //
-    // $scope.changeMessage = function (message) {
-    //     $scope.selectedMessageId = message.id;
-    //     console.log(MultipleViewsManager.isActive());
-    //     if (MultipleViewsManager.isActive()) {
-    //         MultipleViewsManager.updateView('view-message', { messageId: message.id });
-    //     } else {
-    //         $state.go('viewMessage', { messageId: message.id });
-    //     }
-    // };
+
+    $scope.doConnect = function(){
+        // $state.go($state.current, {}, {reload: true});
+        // xSerial.init();
+        document.location.reload();
+    }
 });

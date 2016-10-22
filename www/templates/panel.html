@@ -34,17 +34,28 @@
 			<li ng-click="addMainField('3')"><span>3</span></li>
 			<li ng-click="addMainField('0')" class="double"><span>0</span></li>
 			<li ng-click="addMainField('-')"><span>-</span></li>
-			<li ng-click="doCard()" class="small"><span>
+			<li ng-click="doCard(false)" class="small"><span>
 					<i class="ion-card"></i><br />
 					카드결제
 			</span></li>
+			<li ng-click="doPayCash('00')" class="small"><span>
+				<i class="ion-document-text"></i><br />
+				현금영수증<br />소비자 소득공제</span></li>
 			<li ng-click="doCash()" class="small"><span>
 					<i class="ion-cash"></i><br />
 					현금함 열기
 				</span></li>
-			<li class="small"><span>
+			<li ng-click="doCard(true)" class="small"><span>
+					<i class="ion-card"></i><br />
+					카드취소
+			</span></li>
+			<li ng-click="doPayCash('01')" class="small"><span>
 				<i class="ion-document-text"></i><br />
-				현금영수증</span></li>
+				현금영수증<br />사업자 지출증빙</span></li>
+			<li ng-click="doConnect()" class="small"><span>
+					<i class="ion-connection-bars"></i><br />
+					카드단말 재접속
+				</span></li>
 			<li class="bottom"></li>
 		</ul>
 	</ion-content>

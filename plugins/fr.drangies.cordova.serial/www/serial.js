@@ -5,7 +5,7 @@ var serial = {
           successCallback = opts;
           opts = {};
         }
-        window.cordova.exec(
+        cordova.exec(
             successCallback,
             errorCallback,
             'Serial',
@@ -14,7 +14,7 @@ var serial = {
         );
     },
     open: function(opts, successCallback, errorCallback) {
-        window.cordova.exec(
+        cordova.exec(
             successCallback,
             errorCallback,
             'Serial',
@@ -23,7 +23,7 @@ var serial = {
         );
     },
     write: function(data, successCallback, errorCallback) {
-        window.cordova.exec(
+        cordova.exec(
             successCallback,
             errorCallback,
             'Serial',
@@ -32,7 +32,7 @@ var serial = {
         );
     },
     writeHex: function(hexString, successCallback, errorCallback) {
-        window.cordova.exec(
+        cordova.exec(
             successCallback,
             errorCallback,
             'Serial',
@@ -40,8 +40,17 @@ var serial = {
             [{'data': hexString}]
         );
     },
+    getCRC: function(hexString, successCallback, errorCallback) {
+        cordova.exec(
+            successCallback,
+            errorCallback,
+            'Serial',
+            'getCRC',
+            [{'data': hexString}]
+        );
+    },
     read: function(successCallback, errorCallback) {
-        window.cordova.exec(
+        cordova.exec(
             successCallback,
             errorCallback,
             'Serial',
@@ -50,7 +59,7 @@ var serial = {
         );
     },
     close: function(successCallback, errorCallback) {
-        window.cordova.exec(
+        cordova.exec(
             successCallback,
             errorCallback,
             'Serial',
@@ -59,7 +68,7 @@ var serial = {
         );
     },
     registerReadCallback: function(successCallback, errorCallback) {
-        window.cordova.exec(
+        cordova.exec(
             successCallback,
             errorCallback,
             'Serial',

@@ -42,7 +42,7 @@
     "ionic-plugin-keyboard": {
         "source": {
             "type": "registry",
-            "id": "ionic-plugin-keyboard"
+            "id": "ionic-plugin-keyboard@~2.2.1"
         },
         "is_top_level": true,
         "variables": {}
@@ -68,16 +68,8 @@
     "fr.drangies.cordova.serial": {
         "source": {
             "type": "git",
-            "url": "https://github.com/xseignard/cordovarduino.git",
+            "url": "https://github.com/stereolux/cordovarduino.git",
             "subdir": "."
-        },
-        "is_top_level": true,
-        "variables": {}
-    },
-    "cordova-plugin-serial": {
-        "source": {
-            "type": "registry",
-            "id": "cordova-plugin-serial"
         },
         "is_top_level": true,
         "variables": {}

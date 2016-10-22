@@ -48,6 +48,7 @@ public class Serial extends CordovaPlugin {
 	private static final String ACTION_READ = "readSerial";
 	private static final String ACTION_WRITE = "writeSerial";
 	private static final String ACTION_WRITE_HEX = "writeSerialHex";
+	private static final String ACTION_GET_CRC = "getCRC";
 	private static final String ACTION_CLOSE = "closeSerial";
 	private static final String ACTION_READ_CALLBACK = "registerReadCallback";
 
@@ -69,10 +70,10 @@ public class Serial extends CordovaPlugin {
 	private boolean setDTR;
 	private boolean setRTS;
 	private boolean sleepOnPause;
-	
+
 	// callback that will be used to send back data to the cordova app
 	private CallbackContext readCallback;
-	
+
 	// I/O manager to handle new incoming serial data
 	private final ExecutorService mExecutor = Executors.newSingleThreadExecutor();
 	private SerialInputOutputManager mSerialIoManager;
@@ -122,6 +123,11 @@ public class Serial extends CordovaPlugin {
 		else if (ACTION_WRITE_HEX.equals(action)) {
 			String data = arg_object.getString("data");
 			writeSerialHex(data, callbackContext);
+			return true;
+		}
+		else if (ACTION_GET_CRC.equals(action)) {
+			String strData = arg_object.getString("data");
+			getCRC(strData, callbackContext);
 			return true;
 		}
 		// read on the serial port
@@ -324,6 +330,49 @@ public class Serial extends CordovaPlugin {
 		});
 	}
 
+private void getCRC(final String strData, final CallbackContext callbackContext){
+       byte[] data;
+       int crc = 0xFFFF;
+       int seed = 0x8005;
+       int temp;
+
+       if(strData.length() > 1){
+              if("$".equals(strData.substring(0, 1))){
+                      data = hexStringToByteArray(strData.substring(1));
+              } else {
+                      data = hexStringToByteArray(strData);
+              }
+       } else {
+              data = hexStringToByteArray(strData);
+       }
+
+       for(int j=0; j< data.length ; j++){
+
+              crc ^= (int)data[j] & 0xFF;
+              temp = crc;
+              for (int i = 8; i != 0; i--) {
+                      if ((crc & 0x0001) != 0) {
+                             crc >>= 1;
+                      crc ^= seed;
+                  } else {
+                      crc >>= 1;
+                  }
+
+              }
+       }
+
+       crc = ~crc;
+       temp = crc;
+       crc = (crc << 8) | ((temp >> 8) & 0xFF);
+
+       String ret = String.format("%02X", crc);
+
+       if(ret.length()>4){
+              ret = ret.substring(ret.length()-4, ret.length());
+       }
+
+		callbackContext.success(ret);
+}
 	/**
 	 * Convert a given string of hexadecimal numbers
 	 * into a byte[] array where every 2 hex chars get packed into
