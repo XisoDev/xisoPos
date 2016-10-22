@@ -1,6 +1,7 @@
 xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 	var self = this;
-	self.db = null;
+	self.db = {};
+	self.db.transaction = function(blank){ blank = true; };
 
 	self.init = function() {
 		// Use self.db = window.sqlitePlugin.openDatabase({name: DB_CONFIG.name}); in production

@@ -73,5 +73,14 @@
         },
         "is_top_level": true,
         "variables": {}
+    },
+    "cordova-plugin-dbcopy": {
+        "source": {
+            "type": "git",
+            "url": "https://github.com/an-rahulpandey/cordova-plugin-dbcopy.git",
+            "subdir": "."
+        },
+        "is_top_level": true,
+        "variables": {}
     }
 }

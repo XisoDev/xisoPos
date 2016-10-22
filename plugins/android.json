@@ -33,6 +33,9 @@
         },
         "ionic-plugin-keyboard": {
             "PACKAGE_NAME": "com.ionicframework.xisopos928706"
+        },
+        "cordova-plugin-dbcopy": {
+            "PACKAGE_NAME": "com.ionicframework.xisopos928706"
         }
     },
     "dependent_plugins": {}

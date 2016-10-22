@@ -1,7 +1,7 @@
 //var db = null;
 var xpos = angular.module('xisoPos', ['ionic', 'ngCordova','ionicMultipleViews','ion-floating-menu', 'ui.calendar'])
 
-	.run(function ($ionicPlatform,DB,xSerial,$ionicHistory,$ionicPopup,$rootScope,$document,$window) {
+	.run(function ($ionicPlatform,DB,xSerial,$ionicHistory,$ionicPopup,$rootScope,$document,$window,$ionicLoading) {
 		$ionicPlatform.ready(function () {
 			if (window.cordova && window.cordova.plugins.Keyboard) {
 				cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
@@ -10,7 +10,15 @@ var xpos = angular.module('xisoPos', ['ionic', 'ngCordova','ionicMultipleViews',
 			if (window.StatusBar) {
 				StatusBar.styleDefault();
 			}
-			DB.init();
+
+			$ionicLoading.show({
+				template: "DB를 초기화합니다. 잠시만 기다려주세요."
+			});
+			setTimeout(function(){
+				DB.init();
+				xSerial.init();
+				$ionicLoading.hide();
+			},1000);
 		});
 
 		//back button action
