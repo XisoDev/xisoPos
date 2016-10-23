@@ -169,9 +169,13 @@
 .ovc_date input[type=date]{
     background-color: #353535;
     border-radius: 4px;
-    height:31px;
+    height:29px;
     color:#fff;
     padding:0 10px;
+}
+.ovc_date_span {
+    padding: 0 7px;
+    font-weight:bold;
 }
 
 .square{

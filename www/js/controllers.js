@@ -488,12 +488,14 @@ xpos
         $scope.status = stat;   //cooper, period, day
         switch(stat){
             case 'period':
-                $scope.start_date = getStartEndDate().start_date;
-                $scope.end_date = getStartEndDate().end_date;
+                $scope.gParams = {};
+                $scope.gParams.start_date = getStartEndDate().start_date;
+                $scope.gParams.end_date = getStartEndDate().end_date;
                 $scope.getGarageList();
                 break;
             case 'day':
-                $scope.start_date = new Date();
+                $scope.gParams = {};
+                $scope.gParams.start_date = new Date();
                 $scope.getGarageList();
                 break;
             default:
@@ -514,14 +516,7 @@ xpos
 
     $scope.getGarageList = function(){
         $scope.garageList = {};
-
-        var params = {};
-        console.log($scope.start_date);
-        console.log($scope.end_date);
-        params.start_date = $scope.start_date;
-        if($scope.status == 'period') params.end_date = $scope.end_date;
-        console.log(params);
-        Garage.allForCooper(params).then(function(result){
+        Garage.allForCooper($scope.gParams).then(function(result){
             if(result.length > 0) $scope.garageList = result;
         });
     };

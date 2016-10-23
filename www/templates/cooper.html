@@ -17,11 +17,11 @@
                 <input type="text" placeholder="업체명으로 필터링" ng-model="search.coop_title">
             </label>
             <label class="item-input ovc_date">
-                <input type="date" ng-model="start_date"/>
+                <input type="date" ng-model="gParams.start_date"/>
             </label>
             <span class="ovc_date_span" ng-if="status=='period'">~</span>
-            <label class="item-input ovc_date">
-                <input type="date" ng-model="end_date" ng-if="status=='period'"/>
+            <label class="item-input ovc_date" style="padding-left:0;">
+                <input type="date" ng-model="gParams.end_date" ng-if="status=='period'"/>
             </label>
             <button class="button button-royal" ng-click="getGarageList()" style="padding:0 8px !important; font-size:13px;">검색</button>
         </div>

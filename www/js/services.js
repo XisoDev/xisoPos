@@ -146,11 +146,11 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 
 	self.allForCooper = function(params){
 		if(params.end_date) {
-			return DB.query("SELECT g.* FROM garage g WHERE g.is_out = 'Y' AND g.is_cancel = 'N' AND g.start_date >= ? AND g.end_date <= ?",
+			return DB.query("SELECT g.*, (select coop_title from cooper where idx=g.cooper_idx) as coop_title FROM garage g WHERE g.is_out = 'Y' AND g.is_cancel = 'N' AND g.start_date >= ? AND g.end_date <= ? AND g.cooper_idx > 0",
 				[getStartDate(params.start_date), getEndDate(params.end_date)])
 				.then(function (result) {return DB.fetchAll(result);});
 		}else{
-			return DB.query("SELECT g.* FROM garage g WHERE g.is_out = 'Y' AND g.is_cancel = 'N' AND g.start_date >= ? AND g.start_date <= ?",
+			return DB.query("SELECT g.*, (select coop_title from cooper where idx=g.cooper_idx) as coop_title FROM garage g WHERE g.is_out = 'Y' AND g.is_cancel = 'N' AND g.start_date >= ? AND g.start_date <= ? and g.cooper_idx > 0",
 				[getStartDate(params.start_date), getEndDate(params.start_date)])
 				.then(function (result) {return DB.fetchAll(result);});
 		}
