@@ -54,6 +54,16 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 		return output;
 	};
 
+	self.fetchAllgdate = function(result) {
+		var output = [];
+
+		for (var i = 0; i < result.rows.length; i++) {
+			output[result.rows.item(i).gdate] = result.rows.item(i);
+		}
+
+		return output;
+	};
+
 	self.fetch = function(result) {
 		if(result.rows.length == 0) return false;
 		return result.rows.item(0);
@@ -154,6 +164,64 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 				[getStartDate(params.start_date), getEndDate(params.start_date)])
 				.then(function (result) {return DB.fetchAll(result);});
 		}
+	};
+
+	self.getInCount = function(params){
+		var qry =
+		"select date(substr(gar.start_date,1,10), 'unixepoch', 'localtime') as gdate, " +
+			"count(*) as inCnt " +
+		"from garage gar " +
+			"WHERE gar.is_cancel = 'N' " +
+			"AND gar.start_date >= ? " +
+			// "AND gar.end_date <= ? " +
+			"AND gar.month_idx == 0 " +
+		"group by date(substr(gar.start_date,1,10), 'unixepoch', 'localtime')";
+		return DB.query(qry, [params.start_date])
+			.then(function (result) {
+				return DB.fetchAllgdate(result);
+			});
+	};
+
+	self.allForCal = function(params){
+		//입차, 출차, 총 매출, 총 할인, 총 미수금
+		var qry =
+		"SELECT " +
+			"count(*) as outCnt, " +
+			"date(substr(gar.end_date,1,10), 'unixepoch', 'localtime') as gdate, " +
+			"(SELECT IFNULL(sum(pay_amount), 0) FROM payment WHERE lookup_idx = gar.idx AND lookup_type='garage' AND is_cancel = 'N') as pay_amounts, " +
+			"IFNULL(sum(gar.total_amount), 0) as total_amounts, " +
+			"IFNULL(sum(gar.discount_cooper), 0) as dc_coopers, " +
+			"IFNULL(sum(gar.discount_self), 0) as dc_selfs " +
+		"FROM garage gar " +
+		"WHERE gar.is_cancel = 'N' " +
+			"AND gar.start_date >= ? " +
+			"AND gar.end_date <= ? " +
+			"AND gar.month_idx == 0 " +
+		"GROUP BY date(substr(gar.end_date,1,10), 'unixepoch', 'localtime')";
+
+		return DB.query(qry,[params.start_date, params.end_date])
+			.then(function (result) {
+				return DB.fetchAllgdate(result);
+			});
+	};
+
+	self.allTotCal = function(params){
+		var qry =
+			"SELECT " +
+			"(SELECT IFNULL(sum(pay_amount), 0) FROM payment WHERE lookup_type='month' AND regdate BETWEEN ? AND ? AND is_cancel = 'N') as month_amounts, " +
+			"(SELECT IFNULL(sum(pay_amount), 0) FROM payment WHERE lookup_idx = gar.idx AND lookup_type='garage' AND is_cancel = 'N') as pay_amounts, " +
+			"IFNULL(sum(gar.total_amount), 0) as total_amounts, " +
+			"IFNULL(sum(gar.discount_cooper), 0) as dc_coopers, " +
+			"IFNULL(sum(gar.discount_self), 0) as dc_selfs " +
+			"FROM garage gar " +
+			"WHERE gar.is_cancel = 'N' " +
+			"AND gar.start_date >= ? " +
+			"AND gar.end_date <= ? " +
+			"AND gar.month_idx == 0 ";
+		return DB.query(qry,[params.start_date, params.end_date, params.start_date, params.end_date])
+			.then(function (result) {
+				return DB.fetch(result);
+			});
 	};
 
 	//출차
