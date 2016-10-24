@@ -71,11 +71,11 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicModal, $ionicPopup,
         Garage.insert(params).then(function(res) {
             console.log("insertId: " + res.insertId);
 
-            date = "2016년 10월 13일 목요일";
-            time = "11시 50분";
-            carnum = params.car_num;
-            srl = res.insertId;
-            message = "* 오늘도 좋은 하루 되세요.";
+            var date = getHanDate(params.start_date);   //"2016년 10월 13일 목요일"
+            var time = getHanTime(params.start_date);   //"11시 50분"
+            var carnum = params.car_num;
+            var srl = res.insertId;
+            var message = "* 오늘도 좋은 하루 되세요.";
             message += "\r\n* 협력업체 방문시 뒷면에 꼭 도장을 받아주세요.";
             message += "\r\n* 영수중 분실시 차량출고가 불가 할 수 있습니다.";
             xSerial.doPrint(date,time,carnum,srl,message);
@@ -278,7 +278,7 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicModal, $ionicPopup,
                 xSerial.payCard($scope.data.amount,is_cancel,0);
             }
         });
-    }
+    };
 
     $scope.doPayCash = function(cash_type){
         $scope.data = {}
@@ -301,14 +301,14 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicModal, $ionicPopup,
                 xSerial.payCash($scope.data.amount, $scope.data.cash_type ,0);
             }
         });
-    }
+    };
 
     $scope.doCash = function(){
         xSerial.openCash();
-    }
+    };
 
     $scope.doConnect = function(){
         $state.go($state.current, {}, {reload: true});
         xSerial.init();
-    }
+    };
 });

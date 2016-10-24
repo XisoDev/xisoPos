@@ -1,7 +1,7 @@
 //-------------------
 //입차목록
 //-------------------
-xpos.controller('currentCtrl', function ($scope, $state, $stateParams, $ionicModal, $ionicPopup, MultipleViewsManager, $cordovaToast, Garage) {
+xpos.controller('currentCtrl', function ($scope, $state, $stateParams, $ionicModal, $ionicPopup, MultipleViewsManager, $cordovaToast, Garage, xSerial, Cooper) {
     $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
         if(toState.name == 'mainLayout.tabs.current'){
             $scope.initCurrent();
@@ -52,6 +52,25 @@ xpos.controller('currentCtrl', function ($scope, $state, $stateParams, $ionicMod
     $scope.closePayInput = function(){
         $scope.modalPayInput.hide();
     };
+
+    // 지정할인 리스트 Modal
+    $ionicModal.fromTemplateUrl('templates/payment.cooper.html', {
+        scope: $scope
+    }).then(function(modal) {
+        $scope.modalCooperList = modal;
+    });
+    $scope.openCooper = function(){
+        Cooper.current().then(function(result){
+            if(result.length > 0) $scope.cooperList = result;
+        });
+        // var pay_money = onum($scope.payGarage.total_amount) - onum($scope.payGarage.pay_amount) - onum($scope.payGarage.discount_cooper) - onum($scope.payGarage.discount_self);
+        // $scope.payGarage.pay_money = pay_money; //결제할 금액 세팅
+
+        $scope.modalCooperList.show();
+    };
+    $scope.closeCooper = function(){
+        $scope.modalCooperList.hide();
+    };
     
 
     //입차목록 초기화
@@ -100,25 +119,31 @@ xpos.controller('currentCtrl', function ($scope, $state, $stateParams, $ionicMod
 
     // 상세정보 Modal - 출차 버튼
     $scope.outCar = function(garage){
+        // 월차 일땐 바로 출차처리
+        if(garage.month_idx > 0) return $scope.monthOutCar(garage);
+
         var tempGarage = angular.copy(garage);
         tempGarage.end_date = new Date().getTime();
         tempGarage.total_amount = cal_garage(tempGarage);
-        // $ionicPopup.confirm({
-        //     title: '출차 - '+tempGarage.car_num,
-        //     template: '요금 : '+ tempGarage.total_amount +' 원<br/>입차시간 : ' + formatted_date(new Date(garage.start_date)) + '<br/>출차시간 : ' + formatted_date(new Date(tempGarage.end_date)) + '<br/>출차 하시겠습니까?'
-        // }).then(function (res) {
-        //     if(res){
+
         $scope.closeGarageView();
         $scope.openDcInput(tempGarage);    // 할인 modal
-            // }else{
-            // }
-        // });
     };
 
-    // 출차 프로세스
+    // 월차일때 바로 출차
+    $scope.monthOutCar = function(garage){
+        var tempGarage = angular.copy(garage);
+        tempGarage.end_date = new Date().getTime();
+        $scope.procOutCar(tempGarage);
+    };
+
+    // 출차 프로세스 (DB에서 출차처리)
     $scope.procOutCar = function(garage){
         Garage.outCar(garage).then(function(res){
             $cordovaToast.showShortBottom('차량번호 [ '+ garage.car_num +' ]의 출차가 완료 되었습니다');
+            $state.go($state.current, {}, {reload: true});
+            $scope.closeGarageView();
+            $scope.closePayInput(); //혹시 열려있을 결제 Modal 닫음
             $scope.initCurrent();
         },function(err){
             console.log(err);
@@ -148,6 +173,18 @@ xpos.controller('currentCtrl', function ($scope, $state, $stateParams, $ionicMod
 
     };
     
+    // 상세정보 Modal - 영수증 재출력 버튼
+    $scope.rePrint = function(garage){
+        var date = getHanDate(garage.start_date);   //"2016년 10월 13일 목요일"
+        var time = getHanTime(garage.start_date);   //"11시 50분"
+        var carnum = garage.car_num;
+        var srl = garage.idx;
+        var message = "* 오늘도 좋은 하루 되세요.";
+        message += "\r\n* 협력업체 방문시 뒷면에 꼭 도장을 받아주세요.";
+        message += "\r\n* 영수중 분실시 차량출고가 불가 할 수 있습니다.";
+        xSerial.doPrint(date,time,carnum,srl,message);
+    };
+    
     // 할인Modal - 임의 할인 버튼
     $scope.selfDc = function(){
         if(!$scope.payGarage.dc_money || $scope.payGarage.dc_money == 0) return $ionicPopup.alert({title:'알림',template:'할인 금액을 입력해주세요.'});
@@ -163,6 +200,8 @@ xpos.controller('currentCtrl', function ($scope, $state, $stateParams, $ionicMod
                         $scope.payGarage.discount_self = $scope.payGarage.discount_self + $scope.payGarage.dc_money;
                         $state.go($state.current, {}, {reload: true});
 
+                        $cordovaToast.showShortBottom('임의 할인이 적용되었습니다');
+
                         $scope.closeDcInput();  //현재 modal 닫음
                         $scope.openPayInput();  //결제화면으로 넘김
                     }
@@ -173,13 +212,69 @@ xpos.controller('currentCtrl', function ($scope, $state, $stateParams, $ionicMod
     
     // 할인Modal - 지정 할인 버튼
     $scope.cooperDc = function(){
-        alert($scope.payGarage.dc_money);
+        $scope.closeDcInput();  //현재 modal 닫음
+        $scope.openCooper();
     };
     
     // 할인Modal - 바로 결제 버튼
     $scope.skipDc = function(){
         $scope.closeDcInput();  //현재 modal 닫음
         $scope.openPayInput();  //결제화면으로 넘김
+    };
+
+    $scope.procCooperDc = function(coop){
+        console.log(coop);
+        console.log($scope.payGarage);
+        // garage 재세팅
+        // cooper_idx
+        // discount_cooper 이거 계산하는거 물어보고 해야됨
+
+
+        // DB에 garage update 완료되면 결제 화면으로 넘어감
+        $scope.closeCooper();
+        $scope.openPayInput();
+    };
+
+    // 결제Modal - 카드 결제 버튼
+    $scope.doCard = function(payGarage){
+        $ionicPopup.confirm({
+            title: '카드 결제',
+            template: payGarage.pay_money.num_format() + '원을 카드 결제 하시겠습니까?'
+        }).then(function (res) {
+            if(res){
+                // 결제 처리
+                console.log(payGarage);
+
+                // 결제 처리 잘되면 $scope.procOutCar(payGarage) 실행해서 출차
+            }
+        });
+    };
+
+    // 결제Modal - 현금 결제 버튼
+    $scope.doCash = function(payGarage){
+        $ionicPopup.confirm({
+            title: '현금 결제',
+            template: payGarage.pay_money.num_format() + '원을 현금 결제 하시겠습니까?'
+        }).then(function (res) {
+            if(res){
+                // 결제 처리
+                console.log(payGarage);
+
+                // 결제 처리 잘되면 $scope.procOutCar(payGarage) 실행해서 출차
+            }
+        });
+    };
+
+    // 결제Modal - 출차 처리 버튼
+    $scope.forceOut = function(payGarage){
+        $ionicPopup.confirm({
+            title: '출차',
+            template: '출차 하시겠습니까?'
+        }).then(function (res) {
+            if(res){
+                $scope.procOutCar(payGarage);
+            }
+        });
     };
 });
 

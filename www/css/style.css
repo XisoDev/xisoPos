@@ -196,6 +196,9 @@
 .square-balanced{
     background:#33cd5f !important;
 }
+.square-assertive{
+    background:#ef473a !important;
+}
 .pay_square{
     width:48%;
     height:120px;
@@ -225,6 +228,9 @@
     color:#fff;
 }
 .square-balanced h4, .square-balanced h5, .square-balanced p{
+    color:#fff;
+}
+.square-assertive h4, .square-assertive h5, .square-assertive p{
     color:#fff;
 }
 

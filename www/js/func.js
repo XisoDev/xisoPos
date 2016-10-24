@@ -1,3 +1,6 @@
+var weeks = new Array('일', '월', '화', '수', '목', '금', '토');
+var weeksLong = new Array('일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일');
+
 function pad(n, width, z) {
     z = z || '0';
     n = n + '';
@@ -78,6 +81,19 @@ function getStartEndDate(dt){
     result.end_date = new Date(getEndDate(temp_ed));
 
     return result;
+}
+
+function getHanDate(millisec){
+    var date = new Date(millisec);
+    var result = date.getFullYear() +"년 "+ pad((date.getMonth()+1), 2) +"월 "+ pad(date.getDate(),2) + "일 "+ weeksLong[date.getDay()];
+    return result;
+}
+
+function getHanTime(millisec){
+    var date = new Date(millisec);
+    var result = pad(date.getHours(),2)+ "시 " +pad(date.getMinutes(),2)+ "분";
+    return result;
+
 }
 
 function createDateAsUTC(date) {

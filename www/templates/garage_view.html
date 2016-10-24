@@ -87,10 +87,10 @@
     <ion-footer-bar class="bar bar-footer bar-dark">
         <div class="button-bar">
             <a class="button button-positive button-large" ng-if="garage.is_out=='N'" ng-click="outCar(garage)">출차</a>
+            <a class="button button-royal button-large" ng-if="garage.is_out=='N'" ng-click="rePrint(garage)">영수증재출력</a>
             <a class="button button-energized button-large" ng-if="garage.is_out=='N'" ng-click="cancelCar(garage)">입차취소</a>
             <a class="button button-balanced button-large" ng-if="garage.is_out=='Y' && (!garage.pay_amount || garage.pay_amount <= garage.total_amount) && garage.month_idx == 0">결제</a>
-            <a class="button button-royal button-large" ng-if="garage.is_out=='Y' && garage.pay_amount">영수증출력</a>
-            <a class="button button-energized button-large" ng-if="garage.is_out=='Y' && garage.is_cancel=='N'">출차취소</a>
+            <a class="button button-energized button-large" ng-if="garage.is_out=='Y' && garage.is_cancel=='N'" ng-click="cancelOutCar(garage)">출차취소</a>
             <a class="button button-light button-large" ng-click="closeGarageView()">닫기</a>
         </div>
     </ion-footer-bar>

@@ -1,19 +1,19 @@
 //-------------------
 //입출차기록
 //-------------------
-xpos.controller('historyCtrl', function ($scope, $stateParams, $ionicModal, Garage, $ionicPopup, $cordovaToast, MultipleViewsManager) {
+xpos.controller('historyCtrl', function ($scope, $state, $stateParams, $ionicModal, Garage, $ionicPopup, $cordovaToast, xSerial, MultipleViewsManager) {
     $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
         if(toState.name == 'mainLayout.tabs.history'){
             $scope.initHistory();
         }
     });
 
+    // 상세정보 Modal
     $ionicModal.fromTemplateUrl('templates/garage_view.html', {
         scope: $scope
     }).then(function(modal) {
         $scope.modalGarageView = modal;
     });
-
     $scope.openGarageView = function(garage){
         $scope.garage = garage;
         $scope.modalGarageView.show();
@@ -79,6 +79,7 @@ xpos.controller('historyCtrl', function ($scope, $stateParams, $ionicModal, Gara
         $scope.getGarageList(true);
     };
 
+    // 탭 변경
     $scope.changeStatus = function(stat){
         $scope.status = stat;   //all, in, out, no_pay, cancel
         $scope.search = {};
@@ -100,7 +101,7 @@ xpos.controller('historyCtrl', function ($scope, $stateParams, $ionicModal, Gara
         }
     };
 
-    //출차 버튼
+    // 상세정보 Modal - 출차 버튼
     $scope.outCar = function(garage){
         var tempGarage = angular.copy(garage);
         tempGarage.end_date = new Date().getTime();
@@ -126,7 +127,7 @@ xpos.controller('historyCtrl', function ($scope, $stateParams, $ionicModal, Gara
         });
     };
 
-    //입차취소 버튼
+    // 상세정보 Modal - 입차취소 버튼
     $scope.cancelCar = function(garage){
         var tempGarage = angular.copy(garage);
         tempGarage.end_date = new Date().getTime();
@@ -147,5 +148,16 @@ xpos.controller('historyCtrl', function ($scope, $stateParams, $ionicModal, Gara
             }
         });
 
+    };
+
+
+
+    // 상세정보 Modal - 출차 취소 버튼
+    $scope.cancelOutCar = function(garage){
+        Garage.cancelOutCar(garage).then(function(res){
+            $cordovaToast.showShortBottom('차량번호 [ '+ garage.car_num +' ]의 출차취소가 완료 되었습니다');
+            $scope.closeGarageView();
+            $state.go($state.current, {}, {reload: true});
+        },function(err){console.log(err);});
     };
 });

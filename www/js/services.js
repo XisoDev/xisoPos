@@ -21,9 +21,9 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 			self.query(query);
 			console.log('Table ' + table.name + ' initialized');
 		});
-		// var qry = 'delete from garage where car_num = "undefined"';
+		// var qry = 'delete from garage where car_num = "7976"';
 		// var qry = 'delete from cooper';
-		// self.query(qry);
+		//  self.query(qry);
 		// var times = new Date().getTime() - (1000 * 60 * 60 * 2 + 1000 * 60 * 1);
 		// var qry = 'update garage set `start_date` = '+times+ ' where car_num="7976"';
 		// self.query(qry);
@@ -244,6 +244,12 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 			[garage.end_date, garage.idx]);
 	};
 
+	//출차취소
+	self.cancelOutCar = function(garage) {
+		return DB.query("UPDATE garage SET is_out = 'N', end_date = null, total_amount = 0 WHERE idx = ?",
+			[garage.idx]);
+	};
+
 
 	self.getByIdx = function(idx){
 		return DB.query("SELECT gar.*, (SELECT IFNULL(sum(pay_amount), 0) FROM payment WHERE lookup_idx = gar.idx AND lookup_type='garage' AND is_cancel = 'N') as pay_amount FROM garage gar WHERE gar.idx = ?",[idx])
@@ -337,6 +343,13 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 
 	self.all = function() {
 		return DB.query('SELECT * FROM cooper')
+			.then(function(result){
+				return DB.fetchAll(result);
+			});
+	};
+
+	self.current = function() {
+		return DB.query("SELECT * FROM cooper WHERE is_end = 'N'")
 			.then(function(result){
 				return DB.fetchAll(result);
 			});
