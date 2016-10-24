@@ -72,7 +72,7 @@ xpos
         tempGarage.total_amount = cal_garage(tempGarage);
         $ionicPopup.confirm({
             title: '출차 - '+tempGarage.car_num,
-            template: '요금 : '+ tempGarage.total_amount +' 원<br/>출차시간 : ' + formatted_date(new Date(tempGarage.end_date)) + '<br/>출차 하시겠습니까?'
+            template: '요금 : '+ tempGarage.total_amount +' 원<br/>입차시간 : ' + formatted_date(new Date(garage.start_date)) + '<br/>출차시간 : ' + formatted_date(new Date(tempGarage.end_date)) + '<br/>출차 하시겠습니까?'
         }).then(function (res) {
             if(res){
                 //

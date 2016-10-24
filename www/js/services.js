@@ -224,6 +224,13 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 			});
 	};
 
+	//panel 출차목록 및 열람
+	self.getCurrentByCarNum = function(car_num) {
+		return DB.query("SELECT * FROM garage WHERE is_out = 'N' AND car_num like ?" ,[car_num]).then(function(result){
+			return DB.fetchAll(result);
+		});
+	};
+
 	//출차
 	self.outCar = function(garage) {
 		return DB.query("UPDATE garage SET is_out = 'Y', end_date = ?, total_amount = ? WHERE idx = ?",
@@ -344,6 +351,31 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 		console.log(params);
 		return DB.query("UPDATE cooper SET coop_title=?, coop_tel=?, coop_address=?, coop_user_name=?, minute_unit=?, minute_free=?, minute_max=?, amount_unit=?, is_end=? WHERE idx = ?",
 			[params.coop_title, params.coop_tel, params.coop_address, params.coop_user_name, params.minute_unit, params.minute_free, params.minute_max, params.amount_unit, params.is_end, params.idx]);
+	};
+
+	return self;
+})
+.factory('Payment', function(DB) {
+	var self = this;
+
+	self.all = function () {
+		return DB.query('SELECT * FROM payment')
+			.then(function (result) {
+				return DB.fetchAll(result);
+			});
+	};
+
+	self.getByIdx = function (idx) {
+		return DB.query('SELECT * FROM payment WHERE idx = ?', [idx])
+			.then(function (result) {
+				return DB.fetch(result);
+			});
+	};
+
+	self.insert = function (params) {
+		// lookup_type : garage, month, cooper / pay_type : cash, card
+		return DB.query('INSERT INTO payment (lookup_idx, lookup_type, pay_type, pay_amount, return_data, regdate) VALUES(?,?,?,?,?,?)',
+			[params.lookup_idx, params.lookup_type, params.pay_type, params.pay_amount, params.return_data, new Date().getTime()]);
 	};
 
 	return self;

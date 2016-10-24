@@ -158,8 +158,107 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicModal, $ionicPopup,
         $scope.modalMonthList.hide();
     };
 
+    //출차 선택 리스트 모달
+    $ionicModal.fromTemplateUrl('templates/panel.outList.html', {
+        scope: $scope
+    }).then(function(modal) {
+        $scope.modalOutList = modal;
+    });
+    $scope.openOutModal = function(){
+        $scope.modalOutList.show();
+    };
+    $scope.closeOutModal = function(){
+        $scope.modalOutList.hide();
+    };
+
+    //입차 열람 모달
+    $ionicModal.fromTemplateUrl('templates/garage_view.html', {
+        scope: $scope
+    }).then(function(modal) {
+        $scope.modalGarageView = modal;
+    });
+    $scope.openGarageView = function(garage){
+        $scope.modalGarageViewList.hide();  //리스트가 열려있을수도 있으므로
+        $scope.garage = garage;
+        $scope.modalGarageView.show();
+    };
+    $scope.closeGarageView = function(){
+        $scope.modalGarageView.hide();
+    };
+
+    //열람 여러개일때 표시 모달
+    $ionicModal.fromTemplateUrl('templates/panel.garageList.html', {
+        scope: $scope
+    }).then(function(modal) {
+        $scope.modalGarageViewList = modal;
+    });
+    $scope.openGarageViewList = function(){
+        $scope.modalGarageViewList.show();
+    };
+    $scope.closeGarageViewList = function(){
+        $scope.modalGarageViewList.hide();
+    };
+
+    // 출차 버튼 클릭
+    $scope.outCarChk = function(){
+        if(!$scope.mainField) return $ionicPopup.alert({title:'알림',template:'출차할 차 번호를 먼저 입력하세요.'});
+        Garage.getCurrentByCarNum($scope.mainField+'%').then(function(result){
+            if(result.length == 1) {
+                $scope.outCar(result[0]);
+            }else if(result.length > 1) {
+                $scope.outList = result;
+                $scope.openOutModal();
+            }else {
+                $ionicPopup.alert({title:'알림',template:'입차된 차중에 [ '+$scope.mainField+' ]로 시작되는 차번호가 없습니다.'});
+            }
+        });
+    };
+
+    //출차처리
+    $scope.outCar = function(garage){
+        var tempGarage = angular.copy(garage);
+        tempGarage.end_date = new Date().getTime();
+        tempGarage.total_amount = cal_garage(tempGarage);
+        $ionicPopup.confirm({
+            title: '출차 - '+tempGarage.car_num,
+            template: '요금 : '+ tempGarage.total_amount +' 원<br/>입차시간 : ' + formatted_date(new Date(garage.start_date)) + '<br/>출차시간 : ' + formatted_date(new Date(tempGarage.end_date)) + '<br/>출차 하시겠습니까?'
+        }).then(function (res) {
+            if(res){
+                //
+                // 이 구문 전체는 결제 프로세스 이후에 동작해야함
+                //
+                Garage.outCar(tempGarage).then(function(res2){
+                    $cordovaToast.showShortBottom('차량번호 [ '+ tempGarage.car_num +' ]의 출차가 완료 되었습니다');
+                    $scope.closeGarageView();
+                    $state.go($state.current, {}, {reload: true});
+                    $scope.mainField = '';
+                },function(err){
+                    console.log(err);
+                });
+            }else{
+
+            }
+        });
+    };
+    
+    //열람 버튼 클릭
+    $scope.openGarageChk = function(){
+        if(!$scope.mainField) return $ionicPopup.alert({title:'알림',template:'열람할 차 번호를 먼저 입력하세요.'});
+        Garage.getCurrentByCarNum($scope.mainField+'%').then(function(result){
+            // console.log(result);
+            if(result.length == 1) {
+                $scope.openGarageView(result[0]);
+            }else if(result.length > 1) {
+                $scope.garageList = result;
+                $scope.openGarageViewList();
+            }else {
+                $ionicPopup.alert({title:'알림',template:'입차된 차중에 [ '+$scope.mainField+' ]로 시작되는 차번호가 없습니다.'});
+            }
+        },function(err){console.log(err);});
+    };
+
     $scope.doCard = function(is_cancel){
-        $scope.data = {}
+        $scope.data = {};
         //$scope.data.amount = 0;
         $ionicPopup.show({
             template: ' 임의결제 금액을 입력합니다. <input type="number" ng-model="data.amount" autofocus="autofocus" style="color:#FFF;background:transparent;font-size:30px;text-align:center;border-bottom:1px solid #aaa;">',

@@ -187,6 +187,9 @@
     height:200px;
     background:#ffc520 !important;
 }
+.square-positive{
+    background:#387ef5 !important;
+}
 .square h4{
     text-align:center;
     font-weight:bold;
@@ -203,6 +206,9 @@
     font-size:16px;
     color:#333;
     font-weight:300;
+}
+.square-positive h4, .square-positive h5, .square-positive p{
+    color:#fff;
 }
 
 /* full calendar overwrite*/

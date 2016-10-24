@@ -6,12 +6,12 @@ function pad(n, width, z) {
 
 function formatted_date(date)
 {
-    date = createDateAsUTC(date);
+    // date = createDateAsUTC(date);
 
     var result="";
     result += date.getFullYear()+"/"+(date.getMonth()+1)+"/"+date.getDate() +
-        " "+ date.getHours()+":"+date.getMinutes()+":"+
-        date.getSeconds();
+        " "+ pad(date.getHours(),2)+ ":" +pad(date.getMinutes(),2)+":"+
+        pad(date.getSeconds(),2);
     return result;
 }
 
@@ -46,22 +46,22 @@ function cal_garage(garage) {
 }
 
 function getStartDate(dt){
-    var date = createDateAsUTC(dt);
-    var month = date.getMonth()+1;
-    var day = date.getDate();
-    var year = date.getFullYear();
+    // dt = createDateAsUTC(dt);
+    var month = dt.getMonth()+1;
+    var day = dt.getDate();
+    var year = dt.getFullYear();
 
     return new Date(month+'-'+day+'-'+year).getTime();  //00시 00분 00초로 맞춤
 }
 function getEndDate(dt){
-    var date = createDateAsUTC(dt);
+    // dt = createDateAsUTC(dt);
     var oneSecond = 1000;
     var oneMinute = oneSecond * 60;
     var oneHour = oneMinute * 60;
 
-    var month = date.getMonth()+1;
-    var day = date.getDate();
-    var year = date.getFullYear();
+    var month = dt.getMonth()+1;
+    var day = dt.getDate();
+    var year = dt.getFullYear();
 
     var last_date = new Date(month+'-'+day+'-'+year).getTime();
     last_date = last_date + (oneHour * 23) + (oneMinute * 59) + (oneSecond * 59) + 999;   //23시 59분 59초로 맞춤
@@ -70,34 +70,13 @@ function getEndDate(dt){
 }
 
 function getStartEndDate(dt){
-    var date = createDateAsUTC(dt);
+    // dt = createDateAsUTC(dt);
+    if(!dt) dt = new Date();
     var result = {};
-    result.start_date = new Date(date.getFullYear(), date.getMonth(), 1);
-    var temp_ed = new Date(date.getFullYear(), date.getMonth()+1, 0);
+    result.start_date = new Date(dt.getFullYear(), dt.getMonth(), 1);
+    var temp_ed = new Date(dt.getFullYear(), dt.getMonth()+1, 0);
     result.end_date = new Date(getEndDate(temp_ed));
 
-    return result;
-}
-
-function getCalObject(dt){  // dt 는 2016.10.01 이런식으로 첫째날이 들어오며 Date 이다
-    var result = [];
-
-    dt = createDateAsUTC(dt);
-
-    var year = dt.getFullYear();
-    var month = dt.getMonth()+1;
-
-    var end_date = new Date(year, month, 0);
-    // console.log(end_date);
-    for(var i=1 ; i <= end_date.getDate() ; i++){ //1~31
-        result[i] = {};
-        var dt2 = new Date(year, end_date.getMonth(), i);
-        result[i].start_date = getStartDate(dt2);
-        result[i].start = new Date(result[i].start_date);
-        result[i].end_date = getEndDate(dt2);
-        result[i].end = new Date(result[i].end_date);
-    }
-    // console.log(result);
     return result;
 }
 
