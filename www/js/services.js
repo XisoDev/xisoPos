@@ -148,7 +148,8 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 	};
 
 	self.allForCurrent = function(limit, offset) {
-		return DB.query("SELECT * FROM garage WHERE is_out = 'N' AND is_cancel = 'N' LIMIT ? OFFSET ?", [limit, offset])
+		return DB.query("SELECT gar.*, (SELECT IFNULL(sum(pay_amount), 0) FROM payment WHERE lookup_idx = gar.idx AND lookup_type='garage' AND is_cancel = 'N') as pay_amount FROM garage gar WHERE gar.is_out = 'N' AND gar.is_cancel = 'N' LIMIT ? OFFSET ?",
+			[limit, offset])
 			.then(function(result){
 				return DB.fetchAll(result);
 			});
@@ -245,7 +246,7 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 
 
 	self.getByIdx = function(idx){
-		return DB.query('SELECT * FROM garage WHERE idx = ?',[idx])
+		return DB.query("SELECT gar.*, (SELECT IFNULL(sum(pay_amount), 0) FROM payment WHERE lookup_idx = gar.idx AND lookup_type='garage' AND is_cancel = 'N') as pay_amount FROM garage gar WHERE gar.idx = ?",[idx])
 			.then(function(result){
 				return DB.fetch(result);
 			});
@@ -261,6 +262,12 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 	self.insert = function(params) {
 		return DB.query('INSERT INTO garage (start_date,car_num,car_type_title,minute_unit,minute_free,amount_unit,basic_amount,basic_minute,month_idx,cooper_idx,discount_cooper,discount_self) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)',
 			[params.start_date, params.car_num, params.car_type_title, params.minute_unit, params.minute_free, params.amount_unit, params.basic_amount, params.basic_minute, params.month_idx, params.cooper_idx, params.discount_cooper, params.discount_self]);
+	};
+
+	//임의할인금액을 더해줌
+	self.selfDiscount = function(garage){
+		return DB.query("UPDATE garage SET discount_self = ? WHERE idx = ?",
+			[Number(garage.discount_self)+Number(garage.dc_money), garage.idx]);
 	};
 
 	// self.update = function(params) {

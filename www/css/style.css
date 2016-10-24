@@ -190,6 +190,16 @@
 .square-positive{
     background:#387ef5 !important;
 }
+.square-royal{
+    background:#886aea !important;
+}
+.square-balanced{
+    background:#33cd5f !important;
+}
+.pay_square{
+    width:48%;
+    height:120px;
+}
 .square h4{
     text-align:center;
     font-weight:bold;
@@ -206,10 +216,19 @@
     font-size:16px;
     color:#333;
     font-weight:300;
+    white-space: normal;
 }
 .square-positive h4, .square-positive h5, .square-positive p{
     color:#fff;
 }
+.square-royal h4, .square-royal h5, .square-royal p{
+    color:#fff;
+}
+.square-balanced h4, .square-balanced h5, .square-balanced p{
+    color:#fff;
+}
+
+
 
 /* full calendar overwrite*/
 .fc-unthemed .fc-today {
