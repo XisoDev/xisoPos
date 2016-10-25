@@ -1,12 +1,20 @@
 //-------------------
 //입차목록
 //-------------------
-xpos.controller('currentCtrl', function ($scope, $state, $stateParams, $ionicModal, $ionicPopup, MultipleViewsManager, $cordovaToast, Garage, xSerial, Cooper) {
+xpos.controller('currentCtrl', function ($scope, $state, $stateParams, $ionicModal, $ionicPopup, MultipleViewsManager, $cordovaToast, Garage, xSerial, Cooper, Payment) {
     $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
         if(toState.name == 'mainLayout.tabs.current'){
             $scope.initCurrent();
         }
     });
+
+    //입차목록 초기화
+    $scope.initCurrent = function(){
+        $scope.garage = '';
+        $scope.offset = 0;
+        $scope.moredata = false;
+        $scope.getGarageList(false);
+    };
 
     // 상세정보 Modal
     $ionicModal.fromTemplateUrl('templates/garage_view.html', {
@@ -72,15 +80,6 @@ xpos.controller('currentCtrl', function ($scope, $state, $stateParams, $ionicMod
         $scope.modalCooperList.hide();
     };
     
-
-    //입차목록 초기화
-    $scope.initCurrent = function(){
-        $scope.garage = '';
-        $scope.offset = 0;
-        $scope.moredata = false;
-        $scope.getGarageList(false);
-    };
-    
     //입차목록 리스트 불러오기
     $scope.getGarageList = function(is_load_more){
         var limit = 100;
@@ -105,13 +104,12 @@ xpos.controller('currentCtrl', function ($scope, $state, $stateParams, $ionicMod
         });
     };
 
-    //새로고침
+    //당겨서 새로고침
     $scope.refresh = function(){
         $scope.offset = 0;
         $scope.moredata = false;
         $scope.getGarageList(false);
     };
-
     //스크롤 내릴시 Load More
     $scope.loadMore = function(){
         $scope.getGarageList(true);
@@ -150,7 +148,7 @@ xpos.controller('currentCtrl', function ($scope, $state, $stateParams, $ionicMod
         });
     };
 
-    // 상세정보 Modal - 입차취소 버튼
+    // 상세정보 Modal - 입차 취소 버튼
     $scope.cancelCar = function(garage){
         var tempGarage = angular.copy(garage);
         tempGarage.end_date = new Date().getTime();
@@ -242,10 +240,26 @@ xpos.controller('currentCtrl', function ($scope, $state, $stateParams, $ionicMod
             template: payGarage.pay_money.num_format() + '원을 카드 결제 하시겠습니까?'
         }).then(function (res) {
             if(res){
-                // 결제 처리
-                console.log(payGarage);
+                var params = {
+                    lookup_idx: payGarage.idx,
+                    lookup_type: 'garage',
+                    pay_type: 'card',
+                    pay_amount: payGarage.pay_money,
+                    return_data: ''
+                };
 
-                // 결제 처리 잘되면 $scope.procOutCar(payGarage) 실행해서 출차
+                // 먼저 저장하고?
+                Payment.insert(params).then(function(res2){
+                    console.log("insertId: " + res2.insertId);
+                    //결제 처리?
+
+                    //실패하면 update? delete?
+
+                    // 결제 처리 잘되면 출차
+                    $scope.procOutCar(payGarage);
+                });
+
+
             }
         });
     };
@@ -257,10 +271,26 @@ xpos.controller('currentCtrl', function ($scope, $state, $stateParams, $ionicMod
             template: payGarage.pay_money.num_format() + '원을 현금 결제 하시겠습니까?'
         }).then(function (res) {
             if(res){
-                // 결제 처리
-                console.log(payGarage);
+                var params = {
+                    lookup_idx: payGarage.idx,
+                    lookup_type: 'garage',
+                    pay_type: 'cash',
+                    pay_amount: payGarage.pay_money,
+                    return_data: ''
+                };
 
-                // 결제 처리 잘되면 $scope.procOutCar(payGarage) 실행해서 출차
+                // 먼저 저장하고?
+                Payment.insert(params).then(function(res2){
+                    console.log("insertId: " + res2.insertId);
+                    //결제 처리?
+
+                    //실패하면 update? delete?
+
+                    // 결제 처리 잘되면 출차
+                    $scope.procOutCar(payGarage);
+                });
+
+
             }
         });
     };

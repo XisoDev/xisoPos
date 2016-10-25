@@ -58,12 +58,15 @@
             </div>
 
             <!--결제-->
-            <div class="col" ng-if="gar.month_idx == 0">
+            <div class="col" ng-if="gar.month_idx == 0 && gar.is_cancel=='N'">
                 <button class="button button-small button-assertive" ng-if="gar.is_paid=='N'">미결제</button>
                 <button class="button button-small" ng-if="gar.is_paid=='Y'">결제완료</button>
             </div>
             <div class="col" ng-if="gar.month_idx > 0">
-                <button class="button button-small button-royal">월차</button>
+                <button class="button button-small button-clear">월차</button>
+            </div>
+            <div class="col" ng-if="gar.is_cancel=='Y'">
+                <button class="button button-small button-clear">입차취소</button>
             </div>
         </div>
         <ion-infinite-scroll

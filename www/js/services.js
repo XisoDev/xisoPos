@@ -22,7 +22,7 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 			console.log('Table ' + table.name + ' initialized');
 		});
 		// var qry = 'delete from garage where car_num = "7976"';
-		// var qry = 'delete from cooper';
+		// var qry = 'delete from payment';
 		//  self.query(qry);
 		// var times = new Date().getTime() - (1000 * 60 * 60 * 2 + 1000 * 60 * 1);
 		// var qry = 'update garage set `start_date` = '+times+ ' where car_num="7976"';
@@ -140,7 +140,7 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 	self.allForHistory = function(limit, offset) {
 		var qry = "SELECT gar.*," +
 			" (SELECT IFNULL(sum(pay_amount), 0) FROM payment WHERE lookup_idx = gar.idx AND lookup_type='garage' AND is_cancel = 'N') as pay_amount " +
-			" FROM garage gar LIMIT ? OFFSET ?";
+			" FROM garage gar ORDER BY idx DESC LIMIT ? OFFSET ?";
 		return DB.query(qry, [limit, offset])
 			.then(function(result){
 				return DB.fetchAll(result);
@@ -385,6 +385,13 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 			});
 	};
 
+	self.allForGarage = function (garage) {
+		return DB.query("SELECT * FROM payment WHERE lookup_idx = ? AND lookup_type = 'garage' AND is_cancel = 'N'", [garage.idx])
+			.then(function (result) {
+				return DB.fetchAll(result);
+			});
+	};
+
 	self.getByIdx = function (idx) {
 		return DB.query('SELECT * FROM payment WHERE idx = ?', [idx])
 			.then(function (result) {
@@ -396,6 +403,11 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 		// lookup_type : garage, month, cooper / pay_type : cash, card
 		return DB.query('INSERT INTO payment (lookup_idx, lookup_type, pay_type, pay_amount, return_data, regdate) VALUES(?,?,?,?,?,?)',
 			[params.lookup_idx, params.lookup_type, params.pay_type, params.pay_amount, params.return_data, new Date().getTime()]);
+	};
+
+	self.cancelPay = function(pay){
+		return DB.query("UPDATE payment SET is_cancel = 'Y' WHERE idx = ?",
+			[pay.idx]);
 	};
 
 	return self;
