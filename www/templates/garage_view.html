@@ -93,7 +93,7 @@
             <a class="button button-energized button-large"
                ng-if="xiso.garage.is_out=='N'" ng-click="xiso.cancelCar()">입차취소</a>
             <a class="button button-balanced button-large"
-               ng-if="xiso.garage.is_out=='Y' && (!xiso.garage.pay_amount || xiso.garage.pay_amount <= xiso.garage.total_amount) && xiso.garage.month_idx == 0"
+               ng-if="xiso.garage.is_out=='Y' && (!xiso.garage.pay_amount || xiso.garage.pay_amount < (xiso.garage.total_amount - xiso.garage.discount_cooper - xiso.garage.discount_self)) && xiso.garage.month_idx == 0"
                ng-click="xiso.outCar()">결제</a>
             <a class="button button-energized button-large"
                ng-if="xiso.garage.is_out=='Y' && xiso.garage.is_cancel=='N'" ng-click="xiso.cancelOutCar()">출차취소</a>

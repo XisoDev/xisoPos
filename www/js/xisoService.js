@@ -526,6 +526,9 @@ xpos
             $state.go($state.current, {}, {reload: true});
 
             $cordovaToast.showShortBottom('[ '+ self.garage.car_num +' ] - 결제가 취소되었습니다');
+
+            self.copyGarage();  //temp garage 를 초기화 함
+
             self.closeModal();
         });
     };
