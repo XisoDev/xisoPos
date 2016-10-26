@@ -87,11 +87,11 @@
     <ion-footer-bar class="bar bar-footer bar-dark">
         <div class="button-bar">
             <a class="button button-positive button-large"
-               ng-if="xiso.garage.is_out=='N'" ng-click="outCar(garage)">출차</a>
+               ng-if="xiso.garage.is_out=='N'" ng-click="xiso.outCar()">출차</a>
             <a class="button button-royal button-large"
-               ng-if="xiso.garage.is_out=='N'" ng-click="rePrint(garage)">영수증재출력</a>
+               ng-if="xiso.garage.is_out=='N'" ng-click="xiso.printInCar()">영수증재출력</a>
             <a class="button button-energized button-large"
-               ng-if="xiso.garage.is_out=='N'" ng-click="cancelCar(garage)">입차취소</a>
+               ng-if="xiso.garage.is_out=='N'" ng-click="xiso.cancelCar(garage)">입차취소</a>
             <a class="button button-balanced button-large"
                ng-if="xiso.garage.is_out=='Y' && (!xiso.garage.pay_amount || xiso.garage.pay_amount <= xiso.garage.total_amount) && xiso.garage.month_idx == 0"
                ng-click="outCar(garage)">결제</a>

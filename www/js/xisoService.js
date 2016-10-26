@@ -1,15 +1,17 @@
 xpos
 
-.factory('xisoService', function($rootScope, $ionicModal, $ionicPopup, $cordovaToast, $state, xSerial, CarType, Month, Garage) {
+.factory('xisoService', function($rootScope, $ionicModal, $ionicPopup, $cordovaToast, $state, xSerial, CarType, Month, Garage, Cooper, Payment) {
     var self = this;
 
     self.mainField = '';
     self.garage = {};
+    self.tempGarage = {};
 
     //lists
     self.monthList = {};
     self.carTypeList = {};
     self.garageList = {};
+    self.cooperList = {};
 
     //modals
     self.mdGarageView = {};
@@ -19,6 +21,7 @@ xpos
     self.mdMonthList = {};
     self.mdGarageList = {};
     self.mdOutList = {};
+    self.mdCooperList = {};
 
     // scope 로 modal initialize
     self.init = function($scope) {
@@ -72,6 +75,13 @@ xpos
         }).then(function(modal) {
             self.mdOutList = modal;
         });
+
+        // 지정할인 리스트 Modal
+        $ionicModal.fromTemplateUrl('templates/payment.cooper.html', {
+            scope: $scope
+        }).then(function(modal) {
+            self.mdCooperList = modal;
+        });
     };
     
     // 모든 modal 을 닫는다
@@ -91,6 +101,14 @@ xpos
     
     self.setGarage = function(garage){
         self.garage = garage;
+    };
+    self.copyGarage = function(){
+        self.tempGarage = angular.copy(self.garage);
+        self.tempGarage.end_date = new Date().getTime();
+    };
+    self.calDiscount = function(){
+        var pay_money = onum(self.tempGarage.total_amount) - onum(self.tempGarage.pay_amount) - onum(self.tempGarage.discount_cooper) - onum(self.tempGarage.discount_self);
+        self.tempGarage.pay_money = pay_money; //결제할 금액 세팅
     };
 
     // 패널 - 입차 버튼 클릭시 체크
@@ -181,30 +199,39 @@ xpos
 
     // 패널 - 월차 선택 화면에서 선택하면 월차로 입차
     self.monthIn = function (month) {
-        self.garage = {
-            start_date: new Date().getTime(),
-            car_num: month.car_num,
-            car_type_title: month.car_type_title,
-            minute_unit: 0,
-            minute_free: 0,
-            amount_unit: 0,
-            basic_amount: 0,
-            basic_minute: 0,
-            month_idx: month.idx,
-            cooper_idx: 0,
-            discount_cooper: 0,
-            discount_self: 0
-        };
+        Garage.getByCarNum(month.car_num).then(function(result){
+            if(result){
+                $ionicPopup.alert({
+                    title: '알림',
+                    template: '같은 차번호가 입차되어있습니다.'
+                });
+            }else{
+                self.garage = {
+                    start_date: new Date().getTime(),
+                    car_num: month.car_num,
+                    car_type_title: month.car_type_title,
+                    minute_unit: 0,
+                    minute_free: 0,
+                    amount_unit: 0,
+                    basic_amount: 0,
+                    basic_minute: 0,
+                    month_idx: month.idx,
+                    cooper_idx: 0,
+                    discount_cooper: 0,
+                    discount_self: 0
+                };
 
-        Garage.insert(self.garage).then(function (result) {
-            // console.log("insertId: " + result.insertId);
-            self.garage.idx = result.insertId;
+                Garage.insert(self.garage).then(function (result) {
+                    // console.log("insertId: " + result.insertId);
+                    self.garage.idx = result.insertId;
 
-            $cordovaToast.showShortBottom('[ '+ month.car_num +' ] - 월차로 입차되었습니다');
-            $state.go($state.current, {}, { reload: true });
-            self.mdMonthList.hide();
-            self.clearMF();
-        }, function (err) { console.error(err); });
+                    $cordovaToast.showShortBottom('[ '+ month.car_num +' ] - 월차로 입차되었습니다');
+                    $state.go($state.current, {}, { reload: true });
+                    self.mdMonthList.hide();
+                    self.clearMF();
+                }, function (err) { console.error(err); });
+            }
+        },function(err){ console.log(err); });
     };
 
     // 입차 영수증 출력
@@ -260,6 +287,183 @@ xpos
             }
         });
     };
+
+    // 공용 - 출차
+    self.outCar = function(){
+        if(self.garage.month_idx > 0) return outCarMonth();
+
+        self.copyGarage();   //tempGarage 에 copy 시 출차시간 찍힘
+        self.tempGarage.total_amount = cal_garage(self.tempGarage);
+
+        self.mdDcInput.show();
+        self.mdGarageView.hide();   //현재창 닫음
+    };
+
+    // 월차일때 바로 출차
+    var outCarMonth = function(){
+        $ionicPopup.confirm({
+            title: '출차 - '+ self.garage.car_num,
+            template: '월차 차량입니다. 출차 하시겠습니까?',
+            okText: '예', cancelText: '아니오'
+        }).then(function (res) {
+            if(res) {
+                self.copyGarage();   //tempGarage 에 copy 시 출차시간 찍힘
+                procOutCar();   //출차처리
+            }
+        });
+    };
+
+    // DB에서 출차처리
+    var procOutCar = function(){
+        Garage.outCar(self.tempGarage).then(function(res){
+            $cordovaToast.showShortBottom('차량번호 [ '+ self.tempGarage.car_num +' ]의 출차가 완료 되었습니다');
+            $state.go($state.current, {}, {reload: true});
+            self.closeModal();  //모든창 닫음
+        },function(err){
+            console.log(err);
+        });
+    };
+
+    // 상세정보 Modal - 입차 취소 버튼
+    self.cancelCar = function(){
+        self.copyGarage();   //tempGarage 에 copy 시 출차시간 찍힘
+
+        $ionicPopup.confirm({
+            title: '입차 취소 - '+ self.tempGarage.car_num,
+            template: '취소시간 : ' + formatted_date(new Date(self.tempGarage.end_date)) + '<br/>입차를 취소 하시겠습니까?',
+            okText: '예', cancelText: '아니오'
+        }).then(function (res) {
+            if(res){
+                Garage.cancelCar(self.tempGarage).then(function(result){
+                    $cordovaToast.showShortBottom('차량번호 [ '+ self.tempGarage.car_num +' ]의 입차취소가 완료 되었습니다');
+                    $state.go($state.current, {}, {reload: true});
+                    self.mdGarageView.hide();
+                },function(err){ console.log(err); });
+            }
+        });
+
+    };
+
+    // 할인 Modal - 바로 결제 버튼
+    self.dcSkip = function(){
+        self.calDiscount();     //결제해야될 금액 계산 (미리세팅용)
+        self.mdPayInput.show(); //결제화면으로 넘김
+        self.mdDcInput.hide();
+    };
+
+    // 할인 Modal - 지정 할인 버튼
+    self.dcCooper = function(){
+        Cooper.current().then(function(result){
+            if(result.length > 0) self.cooperList = result;
+        });
+        self.mdCooperList.show();
+        self.mdDcInput.hide();
+    };
+
+    // 할인 Modal - 임의 할인 버튼
+    self.dcSelf = function(){
+        if(!self.tempGarage.dc_money || self.tempGarage.dc_money == 0) return $ionicPopup.alert({title:'알림',template:'할인 금액을 입력해주세요.'});
+        if(self.tempGarage.dc_money > self.tempGarage.total_amount) return $ionicPopup.alert({title:'알림',template:'할인 금액이 총 금액 보다 큽니다.'});
+
+        $ionicPopup.confirm({
+            title: '할인금액 '+ self.tempGarage.dc_money.num_format() +'원',
+            template: self.tempGarage.dc_money.num_format() +'원을 할인하시겠습니까?',
+            okText: '예',cancelText: '아니오'
+        }).then(function (res) {
+            if(res){
+                self.tempGarage.discount_self = self.tempGarage.discount_self + self.tempGarage.dc_money;
+                $cordovaToast.showShortBottom('임의 할인이 적용되었습니다');
+                self.calDiscount();     //결제해야될 금액 계산 (미리세팅용)
+                self.mdPayInput.show();  //결제화면으로 넘김
+            }
+        });
+    };
+
+    // 결제 Modal - 결제없이 출차 처리 버튼
+    self.forceOut = function(){
+        $ionicPopup.confirm({
+            title: '출차', template: '출차 하시겠습니까?', okText: '예',cancelText: '아니오' 
+        }).then(function (res) {
+            if(res) {
+                // 할인 금액에 변동이 있을 경우 update 후 출차
+                if(self.garage.discount_self != self.tempGarage.discount_self){
+                    Garage.selfDiscount(self.tempGarage).then(function(result){
+                        procOutCar();
+                    });
+                }else{
+                    procOutCar();   //출차
+                }
+            }
+        });
+    };
+
+    // 결제Modal - 카드 결제 버튼
+    self.doCard = function(){
+        $ionicPopup.confirm({
+            title: '카드 결제',
+            template: self.tempGarage.pay_money.num_format() + '원을 카드 결제 하시겠습니까?'
+        }).then(function (res) {
+            if(res){
+                var params = {
+                    lookup_idx: self.tempGarage.idx,
+                    lookup_type: 'garage',
+                    pay_type: 'card',
+                    pay_amount: self.tempGarage.pay_money,
+                    return_data: ''
+                };
+
+                // 먼저 저장하고?
+                Payment.insert(params).then(function(res2){
+                    console.log("insertId: " + res2.insertId);
+                    //결제 처리?
+
+                    //할인 금액에 변동이 있을 경우 update 후 출차
+
+                    //실패하면 update? delete?
+
+                    // 결제 처리 잘되면 출차
+                    procOutCar();
+                });
+
+
+            }
+        });
+    };
+
+    // 결제Modal - 현금 결제 버튼
+    self.doCash = function(){
+        $ionicPopup.confirm({
+            title: '현금 결제',
+            template: self.tempGarage.pay_money.num_format() + '원을 현금 결제 하시겠습니까?'
+        }).then(function (res) {
+            if(res){
+                var params = {
+                    lookup_idx: self.tempGarage.idx,
+                    lookup_type: 'garage',
+                    pay_type: 'cash',
+                    pay_amount: self.tempGarage.pay_money,
+                    return_data: ''
+                };
+
+                // 먼저 저장하고?
+                Payment.insert(params).then(function(res2){
+                    console.log("insertId: " + res2.insertId);
+                    //결제 처리?
+
+                    //할인 금액에 변동이 있을 경우 update 후 출차
+
+                    //실패하면 update? delete?
+
+                    // 결제 처리 잘되면 출차
+                    procOutCar();
+                });
+
+
+            }
+        });
+    };
+    
+    
 
     return self;
 
