@@ -1,0 +1,65 @@
+<ion-modal-view  class="background">
+    <ion-header-bar class="bar-dark">
+        <h1 class="title" style="text-align:center;">할인 - [ 차량번호 : {{payGarage.car_num}} ]</h1>
+    </ion-header-bar>
+
+    <ion-content class="has-header">
+        <ion-list class="background">
+            <ion-item class="square square-positive" style="height:130px" ng-click="skipDc()">
+                <h4 style="padding:10px 0">바로 결제</h4>
+                <p>할인 없이 바로 결제 화면으로 넘어갑니다.</p>
+            </ion-item>
+            <ion-item class="square square-balanced" style="height:130px" ng-click="cooperDc()">
+                <h4 style="padding:10px 0">지정 할인</h4>
+                <p>지정된 업체 선택 화면으로 넘어가서 할인을 적용합니다.</p>
+            </ion-item>
+            <ion-item class="square" style="height:130px" ng-click="selfDc()">
+                <h4 style="padding:10px 0">임의 할인</h4>
+                <p>{{payGarage.dc_money | currency:"":0}}원을 임의 할인을 적용합니다.</p>
+            </ion-item>
+        </ion-list>
+        <div class="list">
+            <label class="item item-input">
+                <span class="input-label">임의 할인 금액 입력 (원)</span>
+                <input type="text" placeholder="임의 할인 금액 (원)" ng-model="payGarage.dc_money" style="font-size:20px">
+                <span style="font-size:15px; padding-right:20px;">(임의 할인 버튼을 누를때만 적용됩니다)</span>
+            </label>
+            <div class="item item-divider" style="text-align: center;">
+                정보
+            </div>
+            <label class="item item-input">
+                <span class="input-label">총 금액 (원)</span>
+                <p>{{payGarage.total_amount | currency:"":0}}원</p>
+            </label>
+            <label class="item item-input">
+                <span class="input-label" style="font-weight: bold;">결제해야될 금액 (원)</span>
+                <p style="font-weight: bold;">{{payGarage.total_amount - payGarage.pay_amount - payGarage.discount_cooper - payGarage.discount_self | currency:"":0}}원</p>
+            </label>
+            <label class="item item-input">
+                <span class="input-label">현재까지 결제된 금액 (원)</span>
+                <p>{{payGarage.pay_amount | currency:"":0}}원</p>
+            </label>
+            <label class="item item-input">
+                <span class="input-label">지정 할인된 금액 (원)</span>
+                <p>{{payGarage.discount_cooper | currency:"":0}}원</p>
+            </label>
+            <label class="item item-input">
+                <span class="input-label">임의 할인된 금액 (원)</span>
+                <p>{{payGarage.discount_self | currency:"":0}}원</p>
+            </label>
+            <label class="item item-input">
+                <span class="input-label">입차시간</span>
+                <p>{{payGarage.start_date | date:'yyyy-MM-dd HH:mm'}}</p>
+            </label>
+            <label class="item item-input">
+                <span class="input-label">출차시간</span>
+                <p>{{payGarage.end_date | date:'yyyy-MM-dd HH:mm'}}</p>
+            </label>
+        </div>
+    </ion-content>
+    <ion-footer-bar class="bar bar-footer bar-dark">
+        <div class="button-bar">
+            <a class="button button-light" ng-click="closeDcInput()">닫기</a>
+        </div>
+    </ion-footer-bar>
+</ion-modal-view>

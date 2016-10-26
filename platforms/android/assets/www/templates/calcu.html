@@ -1,0 +1,24 @@
+<ion-view title="정산">
+    <ion-nav-bar class="bar-calm">
+        <ion-nav-back-button>
+        </ion-nav-back-button>
+    </ion-nav-bar>
+    <ion-content class="has-header">
+        <div ui-calendar="uiConfig.calendar" class="span8 calendar" ng-model="eventSources" ></div>
+        <!--<div class="button-bar">-->
+            <!--<a class="button" ng-click="changeStatus('all')" ng-class="{'button-energized' : status=='all', 'button-dark' : status!='all'}">목록</a>-->
+            <!--<a class="button" ng-click="changeStatus('expired')" ng-class="{'button-energized' : status=='expired', 'button-dark' : status!='expired'}">만료목록</a>-->
+            <!--<a class="button" ng-click="changeStatus('calendar')" ng-class="{'button-energized' : status=='calendar', 'button-dark' : status!='calendar'}">캘린더</a>-->
+        <!--</div>-->
+    </ion-content>
+    <ion-footer-bar align-title="left" class="bar-dark">
+        <div class="row">
+            <div class="col">매출 : {{total.total_amounts | currency:"":0}} 원</div>
+            <div class="col">월차 : {{total.month_amounts | currency:"":0}} 원</div>
+            <div class="col">할인 : {{(total.dc_coopers + total.dc_selfs) | currency:"":0}} 원</div>
+            <div class="col">결제 : {{total.pay_amounts | currency:"":0}} 원</div>
+            <div class="col">미수 : {{(total.total_amounts - total.pay_amounts - total.dc_coopers + total.dc_selfs) | currency:"":0}} 원</div>
+            <div class="col">(입){{total.inCarCount}} / (출){{total.outCarCount}}</div>
+        </div>
+    </ion-footer-bar>
+</ion-view>

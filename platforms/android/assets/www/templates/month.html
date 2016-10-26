@@ -1,0 +1,70 @@
+<ion-view title="월차" ng-init="initMonth()">
+    <ion-nav-bar class="bar-calm">
+        <ion-nav-back-button>
+        </ion-nav-back-button>
+    </ion-nav-bar>
+
+    <div class="content-header">
+        <div class="button-bar">
+            <a class="button" ng-click="changeStatus('all')" ng-class="{'button-energized' : status=='all', 'button-dark' : status!='all'}">목록</a>
+            <a class="button" ng-click="changeStatus('expired')" ng-class="{'button-energized' : status=='expired', 'button-dark' : status!='expired'}">만료목록</a>
+            <a class="button" ng-click="changeStatus('calendar')" ng-class="{'button-energized' : status=='calendar', 'button-dark' : status!='calendar'}">캘린더</a>
+        </div>
+
+        <div class="row header ovc_header" ng-if="status!='calendar'">
+            <div class="col">차량 번호</div>
+            <div class="col">시작일</div>
+            <div class="col">종료일</div>
+            <div class="col">월차금액</div>
+            <div class="col">결제금액</div>
+            <div class="col">미수금액</div>
+            <div class="col">차종</div>
+            <div class="col">구분</div>
+            <div class="col">차주명</div>
+            <div class="col">휴대폰</div>
+            <div class="col">상태</div>
+        </div>
+    </div>
+
+    <ion-floating-button click="openAddMonth()" has-footer="false" button-color="#2AC9AA" icon="ion-plus" iconColor="#fff">
+    </ion-floating-button>
+
+    <ion-content class="has-header">
+        <div class="spacer" style="height:86px" ng-if="status!='calendar'"></div>
+        <ion-refresher
+                ng-if="status!='calendar'"
+                pulling-text="당겨서 새로 고침"
+                on-refresh="getMonthList()" style="top:0px;">
+        </ion-refresher>
+
+        <!--목록/만료목록-->
+        <ion-item class="row item item-dark ovc_item" ng-repeat="mon in monthList" ng-click="openEditMonth(mon)" ng-if="status!='calendar'">
+            <div class="col">{{mon.car_num}}</div>
+            <div class="col">{{mon.start_date | date:'MM-dd HH:mm'}}</div>
+            <div class="col">{{mon.end_date | date:'MM-dd HH:mm'}}</div>
+            <div class="col">{{mon.amount | currency : "" : 0 }} 원</div>
+            <div class="col">{{mon.pay_amount | currency : "" : 0 }} 원</div>
+            <div class="col">{{(mon.amount-mon.pay_amount) | currency : "" : 0 }} 원</div>
+            <div class="col">{{mon.car_name}}</div>
+            <div class="col">{{mon.car_type_title}}</div>
+            <div class="col">{{mon.user_name}}</div>
+            <div class="col">{{mon.mobile}}</div>
+            <div class="col">
+                <button class="button button-small button-positive" ng-if="mon.is_stop=='N'">활성</button>
+                <button class="button button-small button-energized" ng-if="mon.is_stop=='Y'">중단</button>
+            </div>
+        </ion-item>
+
+        <!--캘린더-->
+        <div ng-if="status=='calendar'">
+            <div class="spacer" style="height:56px"></div>
+            <div ui-calendar="uiConfig.calendar" class="span8 calendar" ng-model="eventSources" ></div>
+        </div>
+
+        <ion-infinite-scroll
+                ng-if="status!='calendar' && 0"
+                on-infinite="loadMore()"
+                distance="1%">
+        </ion-infinite-scroll>
+    </ion-content>
+</ion-view>

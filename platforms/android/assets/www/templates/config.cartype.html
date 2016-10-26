@@ -1,0 +1,30 @@
+<ion-view title="차종 설정" ng-init="initCartype()">
+    <ion-nav-bar class="bar-calm">
+        <ion-nav-back-button>
+        </ion-nav-back-button>
+    </ion-nav-bar>
+
+    <ion-nav-buttons side="primary">
+        <button class="button" ng-show="!shouldShowDelete" ng-click="showDelete()">
+            편집
+        </button>
+        <button class="button" ng-show="shouldShowDelete" ng-click="hideDelete()">
+            완료
+        </button>
+    </ion-nav-buttons>
+
+    <ion-floating-button click="openCartype()" has-footer="false" button-color="#2AC9AA" icon="ion-plus" iconColor="#fff">
+    </ion-floating-button>
+
+    <ion-content class="has-header">
+        <ion-list show-delete="shouldShowDelete" can-swipe="listCanSwipe" class="background">
+            <ion-item class="item" ng-repeat="cartype in carTypeList" ng-click="openUpdateCartype(cartype)">
+                {{cartype.car_type_title}}
+
+                <ion-delete-button class="ion-minus-circled"
+                                   ng-click="deleteCartype(cartype.idx)">
+                </ion-delete-button>
+            </ion-item>
+        </ion-list>
+    </ion-content>
+</ion-view>

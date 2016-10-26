@@ -1,0 +1,42 @@
+<ion-modal-view class="background">
+    <ion-header-bar class="bar-dark">
+        <h1 class="title" ng-show="!params.idx" style="text-align:center;">차종 추가</h1>
+        <h1 class="title" ng-show="params.idx">차종 수정</h1>
+    </ion-header-bar>
+    <ion-content padding="true">
+        <div class="list">
+            <label class="item item-input">
+                <span class="input-label">차종 명</span>
+                <input type="text" placeholder="차종 명" ng-model="params.car_type_title">
+            </label>
+            <label class="item item-input">
+                <span class="input-label">최초 무료시간 (분)</span>
+                <input type="number" placeholder="최초 무료시간 (분)" ng-model="params.minute_free">
+            </label>
+            <label class="item item-input">
+                <span class="input-label">기본요금</span>
+                <input type="number" placeholder="기본요금" ng-model="params.basic_amount">
+            </label>
+            <label class="item item-input">
+                <span class="input-label">기본시간 (분)</span>
+                <input type="number" placeholder="기본시간 (분)" ng-model="params.basic_minute">
+            </label>
+            <label class="item item-input">
+                <span class="input-label">추가요금</span>
+                <input type="number" placeholder="추가요금" ng-model="params.amount_unit">
+            </label>
+            <label class="item item-input">
+                <span class="input-label">추가요금 단위 (분)</span>
+                <input type="text" placeholder="추가요금 단위 (분)" ng-model="params.minute_unit">
+            </label>
+            <p class="padding"> <i class="ion-ios-information"></i> ((최종 차량 주차시간 - 최초무료시간 - 기본시간) / 추가요금단위){올림} * 추가요금 + 기본요금 의 요금계산이 적용됩니다.</p>
+        </div>
+    </ion-content>
+    <ion-footer-bar class="bar bar-footer bar-dark">
+        <div class="button-bar">
+            <a class="button button-balanced" ng-click="insertCartype()" ng-show="!params.idx">추가</a>
+            <a class="button button-balanced" ng-click="updateCartype()" ng-show="params.idx">수정</a>
+            <a class="button button-light" ng-click="closeCartype()">닫기</a>
+        </div>
+    </ion-footer-bar>
+</ion-modal-view>

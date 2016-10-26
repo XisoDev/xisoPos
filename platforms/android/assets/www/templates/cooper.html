@@ -1,0 +1,83 @@
+<ion-view title="지정주차" ng-init="initCooper()">
+    <ion-nav-bar class="bar-calm">
+        <ion-nav-back-button>
+        </ion-nav-back-button>
+    </ion-nav-bar>
+
+    <div class="content-header">
+        <div class="button-bar">
+            <a class="button" ng-click="changeStatus('cooper')" ng-class="{'button-energized' : status=='cooper', 'button-dark' : status!='cooper'}">업체목록</a>
+            <a class="button" ng-click="changeStatus('period')" ng-class="{'button-energized' : status=='period', 'button-dark' : status!='period'}">업체별 이용기록(기간)</a>
+            <a class="button" ng-click="changeStatus('day')" ng-class="{'button-energized' : status=='day', 'button-dark' : status!='day'}">업체별 이용기록(일자)</a>
+        </div>
+
+        <div class="bar bar-header item-input-inset bar-dark" ng-if="status!='cooper'">
+            <label class="item-input-wrapper" style="background-color: #333;">
+                <i class="icon ion-search placeholder-icon"></i>
+                <input type="text" placeholder="업체명으로 필터링" ng-model="search.coop_title">
+            </label>
+            <label class="item-input ovc_date">
+                <input type="date" ng-model="gParams.start_date"/>
+            </label>
+            <span class="ovc_date_span" ng-if="status=='period'">~</span>
+            <label class="item-input ovc_date" style="padding-left:0;">
+                <input type="date" ng-model="gParams.end_date" ng-if="status=='period'"/>
+            </label>
+            <button class="button button-royal" ng-click="getGarageList()" style="padding:0 8px !important; font-size:13px;">검색</button>
+        </div>
+
+        <div class="row header ovc_header" ng-if="status=='cooper'">
+            <div class="col">업체명</div>
+            <div class="col">전화번호</div>
+            <div class="col">대표자명</div>
+            <div class="col">무료시간</div>
+            <div class="col">최대지원시간</div>
+            <div class="col">요금</div>
+            <div class="col">상태</div>
+        </div>
+        <div class="row header ovc_header" ng-if="status!='cooper'">
+            <div class="col">업체명</div>
+            <div class="col">입차시간</div>
+            <div class="col">출차시간</div>
+            <div class="col">주차시간</div>
+            <div class="col">할인금액</div>
+        </div>
+    </div>
+
+
+    <ion-floating-button click="openAddCooper()" has-footer="false" button-color="#2AC9AA" icon="ion-plus" iconColor="#fff" ng-show="status=='cooper'">
+    </ion-floating-button>
+
+    <ion-content class="has-header">
+        <div class="spacer" style="height:86px" ng-if="status=='cooper'"></div>
+        <div class="spacer" style="height:130px" ng-if="status!='cooper'"></div>
+        <ion-refresher
+            pulling-text="당겨서 새로 고침"
+            on-refresh="refresh()" style="top:0px;"></ion-refresher>
+
+        <div ng-if="status=='cooper'">
+            <div class="row item item-dark ovc_item" ng-repeat="coop in cooperList" ng-click="openEditCooper(coop)">
+                <div class="col">{{coop.coop_title}}</div>
+                <div class="col">{{coop.coop_tel}}</div>
+                <div class="col">{{coop.coop_user_name}}</div>
+                <div class="col">{{coop.minute_free}}분</div>
+                <div class="col">{{coop.minute_max}}분</div>
+                <div class="col">{{coop.minute_unit}}분당 {{coop.amount_unit}}원</div>
+
+                <!--상태-->
+                <div class="col" ng-if="coop.is_end=='N'">활성</div>
+                <div class="col" ng-if="coop.is_end=='Y'">중단됨</div>
+            </div>
+        </div>
+
+        <div ng-if="status!='cooper'">
+            <div class="row item item-dark ovc_item" ng-repeat="gar in garageList">
+                <div class="col">{{gar.coop_title}}</div>
+                <div class="col">{{gar.start_date | date:'MM-dd HH:mm'}}</div>
+                <div class="col">{{gar.end_date | date:'MM-dd HH:mm'}}</div>
+                <div class="col">{{gar | passTimeSE}}</div>
+                <div class="col">{{gar.discount_cooper | currency : "" : 0}} 원</div>
+            </div>
+        </div>
+    </ion-content>
+</ion-view>

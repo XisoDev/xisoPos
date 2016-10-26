@@ -1,0 +1,63 @@
+<ion-view title="XISOPOS">
+	<div class="bar bar-header bar-calm" style="height:49px; border-bottom:1px solid #FFF;">
+		<h1 class="title">XISO POS</h1>
+	</div>
+	<ion-content class="has-header" scroll="false">
+		<a class="closeButton" ng-click="clearMainField()"><i class="ion-android-close"></i></a>
+		<div class="list card background">
+			<div class="item">
+				<label class="item item-input">
+					<input type="text" placeholder="관리 번호" id="mainField" ng-model="mainField" disabled="disabled" style="background-color: transparent"/>
+				</label>
+			</div>
+		</div>
+		<ul id="numberPad">
+			<li class="small" ng-click="inCarChk()"><span>
+				<i class="ion-ios-cart"></i><br />
+				입차</span></li>
+			<li class="small" ng-click="outCarChk()"><span>
+				<i class="ion-android-car"></i><br />
+				출차</span></li>
+			<li class="small" ng-click="openGarageChk()"><span>
+				<i class="ion-ios-information"></i><br />
+				열람</span></li>
+			<li ng-click="addMainField('7')"><span>7</span></li>
+			<li ng-click="addMainField('8')"><span>8</span></li>
+			<li ng-click="addMainField('9')"><span>9</span></li>
+			<li ng-click="addMainField('4')"><span>4</span></li>
+			<li ng-click="addMainField('5')"><span>5</span></li>
+			<li ng-click="addMainField('6')"><span>6</span></li>
+			<li ng-click="addMainField('1')"><span>1</span></li>
+			<li ng-click="addMainField('2')"><span>2</span></li>
+			<li ng-click="addMainField('3')"><span>3</span></li>
+			<li ng-click="addMainField('0')" class="double"><span>0</span></li>
+			<li ng-click="addMainField('-')"><span>-</span></li>
+			<li ng-click="doCard(false)" class="small"><span>
+					<i class="ion-card"></i><br />
+					카드결제
+			</span></li>
+			<li ng-click="doPayCash('00')" class="small"><span>
+				<i class="ion-document-text"></i><br />
+				현금영수증<br />소비자 소득공제</span></li>
+			<li ng-click="doCash()" class="small"><span>
+					<i class="ion-cash"></i><br />
+					현금함 열기
+				</span></li>
+			<li ng-click="doCard(true)" class="small"><span>
+					<i class="ion-card"></i><br />
+					카드취소
+			</span></li>
+			<li ng-click="doPayCash('01')" class="small"><span>
+				<i class="ion-document-text"></i><br />
+				현금영수증<br />사업자 지출증빙</span></li>
+			<li ng-click="doConnect()" class="small"><span>
+					<i class="ion-connection-bars"></i><br />
+					카드단말 재접속
+				</span></li>
+			<li class="bottom"></li>
+		</ul>
+	</ion-content>
+</ion-view>
+
+
+<!--인풋 필드, 숫자패드 , 입차 , 출차, 금전함 열기, 카드취소, 카드결제, 현금영수증-->

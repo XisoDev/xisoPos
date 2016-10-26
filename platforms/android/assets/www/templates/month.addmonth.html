@@ -1,0 +1,63 @@
+<ion-modal-view class="background">
+    <ion-header-bar class="bar-dark">
+        <h1 class="title" style="text-align:center;" ng-if="!params.idx">월차 추가</h1>
+        <h1 class="title" style="text-align:center;" ng-if="params.idx">월차 수정 - {{params.car_num}}</h1>
+    </ion-header-bar>
+    <ion-content padding="true">
+        <div class="list">
+            <label class="item item-input">
+                <span class="input-label">차량 번호</span>
+                <input type="text" placeholder="차량 식별 번호" ng-model="params.car_num" ng-if="!params.idx">
+                <p ng-if="params.idx">{{params.car_num}}</p>
+            </label>
+            <label class="item item-input">
+                <span class="input-label">차종</span>
+                <input type="text" placeholder="차종 (예: 산타페, 크루즈, 말리부 ... )" ng-model="params.car_name">
+            </label>
+            <label class="item item-input">
+                <span class="input-label">구분</span>
+                <input type="text" placeholder="차종 구분 (예:소형, 중형, 대형 ... )" ng-model="params.car_type_title">
+            </label>
+            <label class="item item-input">
+                <span class="input-label">시작 날짜</span>
+                <input type="date" placeholder="시작 날짜" ng-model="temp_start_date">
+            </label>
+            <label class="item item-input">
+                <span class="input-label">종료 날짜</span>
+                <input type="date" placeholder="종료 날짜" ng-model="temp_end_date">
+            </label>
+            <label class="item item-input">
+                <span class="input-label">월차 금액</span>
+                <input type="number" placeholder="월차 금액" ng-model="params.amount">
+            </label>
+            <label class="item item-input" ng-if="params.idx">
+                <span class="input-label">결제 금액</span>
+                <p ng-if="params.pay_amount">{{params.pay_amount | currency : "" : 0}} 원</p>
+                <p ng-if="!params.pay_amount">0 원</p>
+            </label>
+            <label class="item item-input" ng-if="params.idx">
+                <span class="input-label">미수 금액</span>
+                <p>{{(params.amount-params.pay_amount) | currency : "" : 0}} 원</p>
+            </label>
+            <label class="item item-input">
+                <span class="input-label">차주 명</span>
+                <input type="text" placeholder="차주 명" ng-model="params.user_name">
+            </label>
+            <label class="item item-input">
+                <span class="input-label">연락처</span>
+                <input type="tel" placeholder="연락처" ng-model="params.mobile">
+            </label>
+            <label class="item item-input" ng-if="params.idx">
+                <span class="input-label">중단</span>
+                <ion-toggle ng-model="params.is_stop" toggle-class="toggle-assertive" ng-true-value="'Y'" ng-false-value="'N'"></ion-toggle>
+            </label>
+        </div>
+    </ion-content>
+    <ion-footer-bar class="bar bar-footer bar-dark">
+        <div class="button-bar">
+            <a class="button button-balanced" ng-click="insertMonth()" ng-show="!params.idx">추가</a>
+            <a class="button button-balanced" ng-click="insertMonth()" ng-show="params.idx">수정</a>
+            <a class="button button-light" ng-click="closeMonth()">닫기</a>
+        </div>
+    </ion-footer-bar>
+</ion-modal-view>

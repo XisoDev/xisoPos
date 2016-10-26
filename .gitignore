@@ -9,4 +9,3 @@ xpos.db-journal
 /.vs/config
 *.user
 .gradle
-platforms/

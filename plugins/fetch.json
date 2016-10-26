@@ -67,9 +67,8 @@
     },
     "fr.drangies.cordova.serial": {
         "source": {
-            "type": "git",
-            "url": "https://github.com/stereolux/cordovarduino.git",
-            "subdir": "."
+            "type": "registry",
+            "id": "cordovarduino"
         },
         "is_top_level": true,
         "variables": {}

@@ -34,25 +34,38 @@ xpos.factory('xSerial', function($cordovaToast,$ionicLoading) {
                                 var view = new Uint8Array(data);
                                 if(view.length >= 1) {
                                     clearTimeout(timeID);
-                                    var ksc = new TextDecoder('KSC5601').decode(view);
+                                    var ksc = new TextDecoder("ASCII").decode(view);
                                     receive = receive + ksc.toString();
-
+                                    //receive = encodeURI(receive);
                                     timeID = setTimeout(function(){
                                         //반환되는 전문코드
                                         var code = receive.substr(5,2);
-                                        //승인성공일때
-                                        if(code == "I1"){
-                                            var success_code = receive.substr(86,8);
-                                            var success_date = receive.substr(98,12);
-                                            $cordovaToast.showShortBottom("카드결제 성공 : 승인번호 " + success_code);
-                                        }else if(code == "I2"){
-                                            var success_code = receive.substr(82,8);
-                                            $cordovaToast.showShortBottom("직전거래 취소 : 마지막 결제가 취소되었습니다. / 승인번호 " + success_code);
-                                        }else if(code == "I4"){
-                                            var success_code = receive.substr(86,8);
-                                            $cordovaToast.showShortBottom("거래 취소 : 선택한 거래가 취소되었습니다. / 승인번호 " + success_code);
+                                        var ret_code = receive.substr(7,4);
+                                        var success_code = receive.substr(86,8);
+                                        var success_date = receive.substr(98,12);
+                                        var seq = receive.substr(168,20);
+
+                                        //성공일때
+                                        if(code == "I1" || code == "I2" || code == "I4"){
+                                            if(ret_code == "0000"){
+                                                $cordovaToast.showShortBottom("카드결제 성공 : 승인번호 " + success_code);
+                                                if(code == "I1"){
+                                                }else if(code == "I2"){
+                                                    $cordovaToast.showShortBottom("직전거래 취소 : 마지막 결제가 취소되었습니다. / 승인번호 " + success_code);
+                                                }else if(code == "I4"){
+                                                    $cordovaToast.showShortBottom("거래 취소 : 선택한 거래가 취소되었습니다. / 승인번호 " + success_code);
+                                                }
+                                            }else if(ret_code == "8313"){
+                                                $cordovaToast.showShortBottom("한도초과");
+                                            }else{
+                                                $cordovaToast.showShortBottom("거래실패 : 코드 - " + ret_code);
+                                            }
                                         }
                                         console.log("receive : " + receive);
+                                        console.log("seq : " + seq + "(" + parseInt(seq) + ")");
+                                        console.log("ret_code : " + ret_code);
+                                        console.log("success_code : " + success_code);
+                                        console.log("success_date : " + success_date);
                                         console.log("code : " + code);
                                         receive = "";
                                     },500);

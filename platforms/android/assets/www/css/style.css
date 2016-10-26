@@ -1,0 +1,248 @@
+/* Empty. Add your own CSS if you like */
+.background, .background .pane, .background .item, .background .item-complex .item-content {
+    background-color: #444;
+    color:#FFF;
+}
+
+#mainField{
+    font-size:40px;
+    color:#FFF;
+    height:50px;
+    font-family:arial;
+    font-weight:bold;
+    text-align:right;
+}
+
+.closeButton{
+    position:absolute;
+    right:20px;
+    top:30px;
+    padding:20px;
+    cursor:pointer;
+    z-index:999999;
+}
+
+#numberPad{
+    list-style:none;
+    padding:0;margin:0;
+    height:100%;
+}
+
+#numberPad i{
+    font-size:30px;
+}
+
+#numberPad li{
+    float:left;
+    width: 33.33333%;
+    font-size:35px; text-align:center;
+    font-family:Arial;
+    font-weight:bold;
+    color:#FFF;
+    background:linear-gradient(#444,#333);
+    border-left:1px solid #444;
+    height:12%;
+    position:relative;
+}
+#numberPad li span{
+    position:absolute; top:50%;
+    width:100%;
+    left:0;
+    transform:translateY(-50%);
+}
+#numberPad li:hover,
+#numberPad li:active{
+    background:linear-gradient(#000,#333);
+    color:orange;
+}
+#numberPad li.small{
+    font-size:14px;
+}
+#numberPad li.double{
+    width:66.666666%;
+}
+#numberPad li.bottom{
+    width:100%;
+    background:#333;
+}
+
+.list-inset,
+.list{background:#444; color:#FFF;}
+.list-inset .item,
+.list .item{background:transparent; border-color:#333; font-size:16px; color:#d6d6d6;}
+.list .item-input input{font-size:15px; color:#FFF; padding-top:10px; padding-bottom:10px; height:30px;}
+
+.list .item-divider{color:#11c1f3; background:#555; font-size:16px; font-weight:bold; }
+
+
+/* ionic popup customize*/
+.popup-head {
+    background-color: #444444;
+}
+.popup-title {
+     color: white;
+}
+
+.popup-body{
+    background: #444444;
+    color:#eee;
+}
+.popup-buttons{
+    background: #444444;
+}
+.input-label {
+    color:#eee;
+}
+.item p {
+    color: #fff;
+    font-size: 16px;
+}
+.item .item-toggle{
+    border:none;
+}
+.item .item-toggle .toggle {
+    top: 8px;
+    left: 1px;
+}
+
+.grid_items{
+    width:18% !important;
+    margin:1%;
+    float:left !important;
+    font-size:15px;
+}
+.gar_card{
+    text-align:center;
+    font-size:40px; font-weight:bold;
+    padding:10px 0;
+}
+
+@media (min-width: 680px) {
+    .modal {
+        top: 10%;
+        bottom: 10%;
+    }
+}
+.bar-footer {
+    height: 55px;
+}
+.bar .button, .bar button {
+    padding: 5px 8px !important;
+    font-size: 20px;
+}
+.button.button-energized, .button.button-balanced{
+    color: black;
+}
+.has-footer {
+    bottom: 55px;
+}
+.platform-android .bar .title {
+    font-weight: bold;
+}
+.content-header {
+    position:fixed;
+    left: 0;
+    width:100%;
+    top:127px;
+    z-index: 999999;
+    background: #444;
+    border-bottom: 2px solid #000;
+}
+.spacer {
+    width:100%;
+    display: block;
+    min-height:50px;
+}
+.ovc_header .col, .ovc_item .col{
+    text-align:center;
+}
+.ovc_item .col .button{
+    display: block;
+    margin:0 auto;
+}
+.ovc_item .col.tright{
+    text-align: right;
+}
+.ovc_date{
+    padding-top:4px;
+}
+.ovc_date input[type=date]{
+    background-color: #353535;
+    border-radius: 4px;
+    height:29px;
+    color:#fff;
+    padding:0 10px;
+}
+.ovc_date_span {
+    padding: 0 7px;
+    font-weight:bold;
+}
+
+.square{
+    border-radius:10px;
+    float:left;
+    width:31.33333%;
+    padding:2%;
+    margin:1%;
+    height:200px;
+    background:#ffc520 !important;
+}
+.square-positive{
+    background:#387ef5 !important;
+}
+.square-royal{
+    background:#886aea !important;
+}
+.square-balanced{
+    background:#33cd5f !important;
+}
+.square-assertive{
+    background:#ef473a !important;
+}
+.pay_square{
+    width:48%;
+    height:120px;
+}
+.square h4{
+    text-align:center;
+    font-weight:bold;
+    font-size:30px;
+    padding:20px 0;
+}
+.square h5{
+    text-align:center;
+    font-weight:bold;
+    font-size:20px;
+    padding:0 0 10px;
+}
+.square p{
+    font-size:16px;
+    color:#333;
+    font-weight:300;
+    white-space: normal;
+}
+.square-positive h4, .square-positive h5, .square-positive p{
+    color:#fff;
+}
+.square-royal h4, .square-royal h5, .square-royal p{
+    color:#fff;
+}
+.square-balanced h4, .square-balanced h5, .square-balanced p{
+    color:#fff;
+}
+.square-assertive h4, .square-assertive h5, .square-assertive p{
+    color:#fff;
+}
+
+
+
+/* full calendar overwrite*/
+.fc-unthemed .fc-today {
+    background: #444;
+}
+.fc-toolbar h2 {
+    color:#fff;
+}
+.fc th, .fc td{
+    color:#fff;
+}
