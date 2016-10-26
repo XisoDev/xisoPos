@@ -1,11 +1,11 @@
 <ion-modal-view  class="background">
     <ion-header-bar class="bar-dark">
-        <h1 class="title" style="text-align:center;">지정 할인 선택 - [ 차량번호 : {{payGarage.car_num}} ]</h1>
+        <h1 class="title" style="text-align:center;">지정 할인 선택 - [ 차량번호 : {{xiso.tempGarage.car_num}} ]</h1>
     </ion-header-bar>
 
     <ion-content class="has-header">
         <ion-list class="background">
-            <ion-item class="square" style="height:130px" ng-repeat="coop in cooperList" ng-click="procCooperDc(coop)">
+            <ion-item class="square" style="height:130px" ng-repeat="coop in xiso.cooperList" ng-click="xiso.procCooperDc(coop)">
                 <h4 style="padding:10px 0">{{coop.coop_title}}</h4>
                 <p>무료 {{coop.minute_free}}분 / 최초 {{coop.minute_max}}분 후 {{coop.minute_unit}}분당 {{coop.amount_unit}}원</p>
             </ion-item>
@@ -13,7 +13,7 @@
     </ion-content>
     <ion-footer-bar class="bar bar-footer bar-dark">
         <div class="button-bar">
-            <a class="button button-light" ng-click="closeCooper()">닫기</a>
+            <a class="button button-light" ng-click="xiso.mdCooperList.hide()">닫기</a>
         </div>
     </ion-footer-bar>
 </ion-modal-view>

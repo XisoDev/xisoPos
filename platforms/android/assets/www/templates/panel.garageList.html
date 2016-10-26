@@ -5,7 +5,7 @@
 
     <ion-content class="has-header">
         <ion-list class="background">
-            <ion-item class="square square-positive" ng-repeat="gar in garageList" ng-click="openGarageView(gar)">
+            <ion-item class="square square-positive" ng-repeat="gar in xiso.garageList" ng-click="xiso.openGarageView(gar);">
                 <h4 style="padding:10px 0">{{gar.car_num}}</h4>
                 <h5>요금 : {{gar | calcu | currency : "" : 0}} 원</h5>
                 <p>차종 : {{gar.car_type_title}}</p>
@@ -16,7 +16,7 @@
     </ion-content>
     <ion-footer-bar class="bar bar-footer bar-dark">
         <div class="button-bar">
-            <a class="button button-light" ng-click="closeGarageViewList()">닫기</a>
+            <a class="button button-light" ng-click="xiso.mdGarageList.hide()">닫기</a>
         </div>
     </ion-footer-bar>
 </ion-modal-view>

@@ -393,8 +393,13 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 
 	self.insert = function (params) {
 		// lookup_type : garage, month, cooper / pay_type : cash, card
-		return DB.query('INSERT INTO payment (lookup_idx, lookup_type, pay_type, pay_amount, return_data, regdate) VALUES(?,?,?,?,?,?)',
-			[params.lookup_idx, params.lookup_type, params.pay_type, params.pay_amount, params.return_data, new Date().getTime()]);
+		return DB.query('INSERT INTO payment (lookup_idx, lookup_type, pay_type, pay_amount, regdate) VALUES(?,?,?,?,?)',
+			[params.lookup_idx, params.lookup_type, params.pay_type, params.pay_amount, new Date().getTime()]);
+	};
+
+	self.update = function (params) {
+		return DB.query('UPDATE payment SET lookup_idx=?, lookup_type=?, pay_type=?, pay_amount=?, code=?, ret_code=?, success_code=?, success_date=?',
+			[params.lookup_idx, params.lookup_type, params.pay_type, params.pay_amount, params.code, params.ret_code, params.success_code, params.success_date ]);
 	};
 
 	self.cancelPay = function(pay){

@@ -21,7 +21,10 @@ xpos
                 {name: "lookup_type", type: "TEXT NOT NULL"},
                 {name: "pay_type", type: "TEXT"},
                 {name: "pay_amount", type: "INTEGER DEFAULT 0"},
-                {name: "return_data", type: "TEXT"},
+                {name: "code", type: "TEXT"},
+                {name: "ret_code", type: "TEXT"},
+                {name: "success_code", type: "TEXT"},
+                {name: "success_date", type: "TEXT"},
                 {name: "regdate", type: "INTEGER"},
                 {name: "is_cancel", type: "TEXT NOT NULL DEFAULT 'N'"}
             ]
@@ -74,7 +77,6 @@ xpos
                 {name: "coop_address", type: "TEXT"},
                 {name: "coop_user_name", type: "TEXT"},
                 {name: "minute_unit", type: "INTEGER DEFAULT 0"},
-                {name: "minute_free", type: "INTEGER DEFAULT 0"},
                 {name: "minute_max", type: "INTEGER DEFAULT 0"},
                 {name: "amount_unit", type: "INTEGER DEFAULT 0"},
                 {name: "regdate", type: "INTEGER"},

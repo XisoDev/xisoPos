@@ -1,7 +1,7 @@
 //-------------------
 // 패널
 //-------------------
-xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xSerial, xisoService) {
+xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xisoService) {
 
     $scope.xiso = xisoService;
     $scope.xiso.init($scope);
@@ -24,7 +24,7 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xSerial, xis
             }, ]
         }).then(function() {
             if($scope.data.amount > 0){
-                xSerial.payCard($scope.data.amount,is_cancel,0);
+                $scope.xiso.payCard($scope.data.amount,is_cancel,0);
             }
         });
     };
@@ -47,25 +47,25 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xSerial, xis
             }, ]
         }).then(function() {
             if($scope.data.amount > 0){
-                xSerial.payCash($scope.data.amount, $scope.data.cash_type ,0);
+                $scope.xiso.payCash($scope.data.amount, $scope.data.cash_type ,0);
             }
         });
     };
 
     $scope.doCash = function(){
-        xSerial.openCash();
+        $scope.xiso.openCash();
     };
 
     $scope.doConnect = function(){
         $state.go($state.current, {}, {reload: true});
-        xSerial.init();
+        $scope.xiso.initX();
     };
 })
 
 //-------------------
 // 입차목록
 //-------------------
-.controller('currentCtrl', function ($scope, $state, $stateParams, Garage, xSerial, xisoService) {
+.controller('currentCtrl', function ($scope, $state, $stateParams, Garage, xisoService) {
     $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
         if(toState.name == 'mainLayout.tabs.current'){
             $scope.initCurrent();
@@ -124,7 +124,7 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xSerial, xis
 //-------------------
 //입출차기록
 //-------------------
-.controller('historyCtrl', function ($scope, $state, $stateParams, Garage, xSerial, xisoService) {
+.controller('historyCtrl', function ($scope, $state, $stateParams, Garage, xisoService) {
     $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
         if(toState.name == 'mainLayout.tabs.history'){
             $scope.initHistory();
@@ -226,7 +226,7 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xSerial, xis
 //-------------------
 // 월차
 //-------------------
-.controller('monthCtrl', function ($scope, $state,$stateParams,$ionicModal,$ionicPopup, Month, xSerial, $compile, uiCalendarConfig, xisoService, Payment, $cordovaToast) {
+.controller('monthCtrl', function ($scope, $state,$stateParams,$ionicModal,$ionicPopup, Month, $compile, uiCalendarConfig, xisoService, Payment, $cordovaToast) {
     $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
         if(toState.name == 'mainLayout.tabs.month'){
             $scope.initMonth();
@@ -424,6 +424,7 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xSerial, xis
         $scope.modalMonthPay = modal;
     });
     $scope.openPayMonth = function(){
+        if(!$scope.params.pay_amount) $scope.params.pay_amount = 0;
         $scope.params.pay_money = $scope.params.amount - $scope.params.pay_amount;
         $scope.modalMonthPay.show();
         $scope.modalMonth.hide();
@@ -849,7 +850,7 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xSerial, xis
         if(!$scope.defaultParams.shop_name) return $ionicPopup.alert({title: '알림',template: '주차장명을 입력하지 않았습니다.'});
         if(!$scope.defaultParams.mobile) return $ionicPopup.alert({title: '알림',template: '휴대전화를 입력하지 않았습니다.'});
         if(!$scope.defaultParams.tel) return $ionicPopup.alert({title: '알림',template: '유선전화를 입력하지 않았습니다.'});
-        if(!$scope.defaultParams.fax) return $ionicPopup.alert({title: '알림',template: 'FAX를 입력하지 않았습니다.'});
+        // if(!$scope.defaultParams.fax) return $ionicPopup.alert({title: '알림',template: 'FAX를 입력하지 않았습니다.'});
         if(!$scope.defaultParams.user_name) return $ionicPopup.alert({title: '알림',template: '대표자 명을 입력하지 않았습니다.'});
         if(!$scope.defaultParams.address) return $ionicPopup.alert({title: '알림',template: '주소를 입력하지 않았습니다.'});
 

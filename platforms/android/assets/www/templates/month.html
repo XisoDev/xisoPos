@@ -1,4 +1,4 @@
-<ion-view title="월차" ng-init="initMonth()">
+<ion-view title="월차">
     <ion-nav-bar class="bar-calm">
         <ion-nav-back-button>
         </ion-nav-back-button>
@@ -8,6 +8,7 @@
         <div class="button-bar">
             <a class="button" ng-click="changeStatus('all')" ng-class="{'button-energized' : status=='all', 'button-dark' : status!='all'}">목록</a>
             <a class="button" ng-click="changeStatus('expired')" ng-class="{'button-energized' : status=='expired', 'button-dark' : status!='expired'}">만료목록</a>
+            <a class="button" ng-click="changeStatus('wait')" ng-class="{'button-energized' : status=='wait', 'button-dark' : status!='wait'}">대기목록</a>
             <a class="button" ng-click="changeStatus('calendar')" ng-class="{'button-energized' : status=='calendar', 'button-dark' : status!='calendar'}">캘린더</a>
         </div>
 
@@ -22,7 +23,7 @@
             <div class="col">구분</div>
             <div class="col">차주명</div>
             <div class="col">휴대폰</div>
-            <div class="col">상태</div>
+            <div class="col">결제</div>
         </div>
     </div>
 
@@ -38,7 +39,7 @@
         </ion-refresher>
 
         <!--목록/만료목록-->
-        <ion-item class="row item item-dark ovc_item" ng-repeat="mon in monthList" ng-click="openEditMonth(mon)" ng-if="status!='calendar'">
+        <ion-item class="row item item-dark ovc_item" ng-repeat="mon in monthList | filter:search:strict" ng-click="openEditMonth(mon)" ng-if="status!='calendar'">
             <div class="col">{{mon.car_num}}</div>
             <div class="col">{{mon.start_date | date:'MM-dd HH:mm'}}</div>
             <div class="col">{{mon.end_date | date:'MM-dd HH:mm'}}</div>
@@ -49,9 +50,11 @@
             <div class="col">{{mon.car_type_title}}</div>
             <div class="col">{{mon.user_name}}</div>
             <div class="col">{{mon.mobile}}</div>
+
+            <!--결제-->
             <div class="col">
-                <button class="button button-small button-positive" ng-if="mon.is_stop=='N'">활성</button>
-                <button class="button button-small button-energized" ng-if="mon.is_stop=='Y'">중단</button>
+                <button class="button button-small button-assertive" ng-show="mon.amount > mon.pay_amount">미결제</button>
+                <button class="button button-small button-light" ng-show="mon.amount <= mon.pay_amount">결제완료</button>
             </div>
         </ion-item>
 

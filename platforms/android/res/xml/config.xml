@@ -38,7 +38,7 @@
     <author email="xiso@xiso.co.kr" href="http://xiso.co.kr/">
       XISO
     </author>
-    <content original-src="index.html" src="http://172.30.1.40:8100" />
+    <content original-src="index.html" src="http://172.30.1.27:8100" />
     <access origin="*" />
     <icon src="resources/android/icon/drawable-xhdpi-icon.png" />
     <icon density="ldpi" src="resources/android/icon/drawable-ldpi-icon.png" />

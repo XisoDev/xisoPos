@@ -1,7 +1,7 @@
 //var db = null;
 var xpos = angular.module('xisoPos', ['ionic', 'ngCordova','ionicMultipleViews','ion-floating-menu', 'ui.calendar'])
 
-	.run(function ($ionicPlatform,DB,xSerial,$ionicHistory,$ionicPopup,$rootScope,$document,$window,$ionicLoading) {
+	.run(function ($ionicPlatform,DB,$ionicHistory,$ionicPopup,$rootScope,$document,$window,$ionicLoading,xisoService) {
 		$ionicPlatform.ready(function () {
 			if (window.cordova && window.cordova.plugins.Keyboard) {
 				cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
@@ -16,7 +16,8 @@ var xpos = angular.module('xisoPos', ['ionic', 'ngCordova','ionicMultipleViews',
 				template: "DB를 초기화합니다. 잠시만 기다려주세요."
 			});
 			setTimeout(function(){
-				xSerial.init();
+				// xSerial.init();
+				xisoService.initX();
 				$ionicLoading.hide();
 			},1000);
 		});
@@ -41,7 +42,7 @@ var xpos = angular.module('xisoPos', ['ionic', 'ngCordova','ionicMultipleViews',
 		        }
 		      ]
 		    });
-		  }
+		  };
 
 		  if ($ionicHistory.backView().stateName ==  'mainLayout.tabs.current'){
 			  $rootScope.exitApp();
