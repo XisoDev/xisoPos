@@ -1,7 +1,7 @@
 //-------------------
 //입차목록
 //-------------------
-xpos.controller('currentCtrl', function ($scope, $state, $stateParams, $ionicModal, $ionicPopup, MultipleViewsManager, $cordovaToast, Garage, xSerial, Cooper, Payment, xisoService) {
+xpos.controller('currentCtrl', function ($scope, $state, $stateParams, Garage, xSerial, xisoService) {
     $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
         if(toState.name == 'mainLayout.tabs.current'){
             $scope.initCurrent();

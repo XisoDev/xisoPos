@@ -39,7 +39,7 @@
                 </label>
                 <label class="item item-input">
                     <span class="input-label">결제된 금액</span>
-                    <p>{{xiso.garage.pay_amount | currency : "" : 0}} 원&nbsp;&nbsp;&nbsp;<button class="button button-assertive button-small" ng-show="xiso.garage.pay_amount > 0" ng-click="openPayCancel(garage)">결제취소</button></p>
+                    <p>{{xiso.garage.pay_amount | currency : "" : 0}} 원&nbsp;&nbsp;&nbsp;<button class="button button-assertive button-small" ng-show="xiso.garage.pay_amount > 0" ng-click="xiso.openPayCancel()">결제취소</button></p>
                 </label>
             </div>
             <div class="item item-divider" style="text-align: center;">
@@ -91,12 +91,12 @@
             <a class="button button-royal button-large"
                ng-if="xiso.garage.is_out=='N'" ng-click="xiso.printInCar()">영수증재출력</a>
             <a class="button button-energized button-large"
-               ng-if="xiso.garage.is_out=='N'" ng-click="xiso.cancelCar(garage)">입차취소</a>
+               ng-if="xiso.garage.is_out=='N'" ng-click="xiso.cancelCar()">입차취소</a>
             <a class="button button-balanced button-large"
                ng-if="xiso.garage.is_out=='Y' && (!xiso.garage.pay_amount || xiso.garage.pay_amount <= xiso.garage.total_amount) && xiso.garage.month_idx == 0"
-               ng-click="outCar(garage)">결제</a>
+               ng-click="xiso.outCar()">결제</a>
             <a class="button button-energized button-large"
-               ng-if="xiso.garage.is_out=='Y' && xiso.garage.is_cancel=='N'" ng-click="cancelOutCar(garage)">출차취소</a>
+               ng-if="xiso.garage.is_out=='Y' && xiso.garage.is_cancel=='N'" ng-click="xiso.cancelOutCar()">출차취소</a>
             <a class="button button-light button-large" ng-click="xiso.mdGarageView.hide()">닫기</a>
         </div>
     </ion-footer-bar>

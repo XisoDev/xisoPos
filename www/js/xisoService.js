@@ -12,6 +12,7 @@ xpos
     self.carTypeList = {};
     self.garageList = {};
     self.cooperList = {};
+    self.payList = {};
 
     //modals
     self.mdGarageView = {};
@@ -22,6 +23,7 @@ xpos
     self.mdGarageList = {};
     self.mdOutList = {};
     self.mdCooperList = {};
+    self.mdPayCancel = {};
 
     // scope 로 modal initialize
     self.init = function($scope) {
@@ -82,6 +84,13 @@ xpos
         }).then(function(modal) {
             self.mdCooperList = modal;
         });
+
+        // 결제취소 Modal - (상세정보 Modal - 결제 취소 버튼)
+        $ionicModal.fromTemplateUrl('templates/payment.cancel.html', {
+            scope: $scope
+        }).then(function(modal) {
+            self.mdPayCancel = modal;
+        });
     };
     
     // 모든 modal 을 닫는다
@@ -89,6 +98,12 @@ xpos
         self.mdGarageView.hide();
         self.mdDcInput.hide();
         self.mdPayInput.hide();
+        self.mdCarTypeList.hide();
+        self.mdMonthList.hide();
+        self.mdGarageList.hide();
+        self.mdOutList.hide();
+        self.mdCooperList.hide();
+        self.mdPayCancel.hide();
     };
     
     self.addMF = function(str){
@@ -104,7 +119,6 @@ xpos
     };
     self.copyGarage = function(){
         self.tempGarage = angular.copy(self.garage);
-        self.tempGarage.end_date = new Date().getTime();
     };
     self.calDiscount = function(){
         var pay_money = onum(self.tempGarage.total_amount) - onum(self.tempGarage.pay_amount) - onum(self.tempGarage.discount_cooper) - onum(self.tempGarage.discount_self);
@@ -292,8 +306,13 @@ xpos
     self.outCar = function(){
         if(self.garage.month_idx > 0) return outCarMonth();
 
-        self.copyGarage();   //tempGarage 에 copy 시 출차시간 찍힘
-        self.tempGarage.total_amount = cal_garage(self.tempGarage);
+        self.copyGarage();   //garage 를 tempGarage 에 copy
+        
+        // 이미 출차된 차량이 아닐때만 출차시간 및 가격 세팅
+        if(self.tempGarage.is_out=='N') {
+            self.tempGarage.end_date = new Date().getTime();
+            self.tempGarage.total_amount = cal_garage(self.tempGarage);
+        }
 
         self.mdDcInput.show();
         self.mdGarageView.hide();   //현재창 닫음
@@ -307,7 +326,8 @@ xpos
             okText: '예', cancelText: '아니오'
         }).then(function (res) {
             if(res) {
-                self.copyGarage();   //tempGarage 에 copy 시 출차시간 찍힘
+                self.copyGarage();   //garage 를 tempGarage 에 copy
+                self.tempGarage.end_date = new Date().getTime();
                 procOutCar();   //출차처리
             }
         });
@@ -326,16 +346,14 @@ xpos
 
     // 상세정보 Modal - 입차 취소 버튼
     self.cancelCar = function(){
-        self.copyGarage();   //tempGarage 에 copy 시 출차시간 찍힘
-
         $ionicPopup.confirm({
-            title: '입차 취소 - '+ self.tempGarage.car_num,
-            template: '취소시간 : ' + formatted_date(new Date(self.tempGarage.end_date)) + '<br/>입차를 취소 하시겠습니까?',
+            title: '입차 취소 - '+ self.garage.car_num,
+            template: '입차를 취소 하시겠습니까?',
             okText: '예', cancelText: '아니오'
         }).then(function (res) {
             if(res){
-                Garage.cancelCar(self.tempGarage).then(function(result){
-                    $cordovaToast.showShortBottom('차량번호 [ '+ self.tempGarage.car_num +' ]의 입차취소가 완료 되었습니다');
+                Garage.cancelCar(self.garage).then(function(result){
+                    $cordovaToast.showShortBottom('차량번호 [ '+ self.garage.car_num +' ]의 입차취소가 완료 되었습니다');
                     $state.go($state.current, {}, {reload: true});
                     self.mdGarageView.hide();
                 },function(err){ console.log(err); });
@@ -463,6 +481,43 @@ xpos
         });
     };
     
+    // 상세정보 Modal - 결제 취소 버튼 
+    self.openPayCancel = function(){
+        Payment.allForGarage(self.garage).then(function(result){
+            if(result.length > 0) {
+                self.payList = result; 
+                self.mdPayCancel.show();
+            }else{
+                $ionicPopup.alert({title:'알림',template:'결제내역이 존재하지 않습니다.'});
+            }
+        },function(err){console.log(err);});
+    };
+
+    // 상세정보 Modal - 출차 취소 버튼
+    self.cancelOutCar = function(){
+        Garage.cancelOutCar(self.garage).then(function(result){
+            $cordovaToast.showShortBottom('차량번호 [ '+ self.garage.car_num +' ]의 출차취소가 완료 되었습니다');
+            
+            $state.go($state.current, {}, {reload: true});
+            self.mdGarageView.hide();
+        },function(err){console.log(err);});
+    };
+
+    // 결체 취소 리스트에서 선택했을때 DB에서 결제취소
+    self.procPayCancel = function(pay){
+        Payment.cancelPay(pay).then(function(result){
+            if(pay.pay_type == 'card'){
+                //카드일때 카드 처리
+
+            }else{
+                //현금일때 돈통 열어줌
+            }
+            $state.go($state.current, {}, {reload: true});
+
+            $cordovaToast.showShortBottom('[ '+ self.garage.car_num +' ] - 결제가 취소되었습니다');
+            self.closeModal();
+        });
+    };
     
 
     return self;
