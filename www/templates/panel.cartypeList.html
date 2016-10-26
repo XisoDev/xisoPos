@@ -5,7 +5,7 @@
 
     <ion-content class="has-header">
         <ion-list class="background">
-            <ion-item class="square" ng-repeat="cartype in carTypeList" ng-click="selectCartype(cartype)">
+            <ion-item class="square" ng-repeat="cartype in xiso.carTypeList" ng-click="xiso.inCar(cartype)">
                 <h4>{{cartype.car_type_title}}</h4>
                 <p ng-show="cartype.minute_free > 0">최초 {{cartype.minute_free}}분 무료</p>
                 <p ng-show="cartype.basic_minute > 0">기본 {{cartype.basic_minute}}분까지  {{cartype.basic_amount | currency : "" : 0 }}원</p>
@@ -19,7 +19,7 @@
     </ion-content>
     <ion-footer-bar class="bar bar-footer bar-dark">
         <div class="button-bar">
-            <a class="button button-light" ng-click="closeCartypeList()">닫기</a>
+            <a class="button button-light" ng-click="xiso.mdCarTypeList.hide()">닫기</a>
         </div>
     </ion-footer-bar>
 </ion-modal-view>

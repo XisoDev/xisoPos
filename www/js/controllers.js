@@ -1,12 +1,15 @@
 //-------------------
 //입차목록
 //-------------------
-xpos.controller('currentCtrl', function ($scope, $state, $stateParams, $ionicModal, $ionicPopup, MultipleViewsManager, $cordovaToast, Garage, xSerial, Cooper, Payment) {
+xpos.controller('currentCtrl', function ($scope, $state, $stateParams, $ionicModal, $ionicPopup, MultipleViewsManager, $cordovaToast, Garage, xSerial, Cooper, Payment, xisoService) {
     $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
         if(toState.name == 'mainLayout.tabs.current'){
             $scope.initCurrent();
         }
     });
+
+    $scope.xiso = xisoService;
+    $scope.xiso.init($scope);
 
     //입차목록 초기화
     $scope.initCurrent = function(){
@@ -17,25 +20,12 @@ xpos.controller('currentCtrl', function ($scope, $state, $stateParams, $ionicMod
     };
 
     // 상세정보 Modal
-    $ionicModal.fromTemplateUrl('templates/garage_view.html', {
-        scope: $scope
-    }).then(function(modal) {
-        $scope.modalGarageView = modal;
-    });
     $scope.openGarageView = function(garage){
-        $scope.garage = garage;
-        $scope.modalGarageView.show();
-    };
-    $scope.closeGarageView = function(){
-        $scope.modalGarageView.hide();
+        $scope.xiso.setGarage(garage);
+        $scope.xiso.mdGarageView.show();
     };
 
     // 할인하기 Modal
-    $ionicModal.fromTemplateUrl('templates/payment.discount.html', {
-        scope: $scope
-    }).then(function(modal) {
-        $scope.modalDcInput = modal;
-    });
     $scope.openDcInput = function(garage){
         $scope.payGarage = garage;  //출차버튼 누른순간부터 가지고 있음 (출차시간과 총금액이 만들어져있음)
         $scope.payGarage.dc_money = 0;    //할인금액 기본값세팅
@@ -46,11 +36,6 @@ xpos.controller('currentCtrl', function ($scope, $state, $stateParams, $ionicMod
     };
 
     // 결제하기 Modal
-    $ionicModal.fromTemplateUrl('templates/payment.input.html', {
-        scope: $scope
-    }).then(function(modal) {
-        $scope.modalPayInput = modal;
-    });
     $scope.openPayInput = function(){
         var pay_money = onum($scope.payGarage.total_amount) - onum($scope.payGarage.pay_amount) - onum($scope.payGarage.discount_cooper) - onum($scope.payGarage.discount_self);
         $scope.payGarage.pay_money = pay_money; //결제할 금액 세팅
@@ -173,14 +158,7 @@ xpos.controller('currentCtrl', function ($scope, $state, $stateParams, $ionicMod
     
     // 상세정보 Modal - 영수증 재출력 버튼
     $scope.rePrint = function(garage){
-        var date = getHanDate(garage.start_date);   //"2016년 10월 13일 목요일"
-        var time = getHanTime(garage.start_date);   //"11시 50분"
-        var carnum = garage.car_num;
-        var srl = garage.idx;
-        var message = "* 오늘도 좋은 하루 되세요.";
-        message += "\r\n* 협력업체 방문시 뒷면에 꼭 도장을 받아주세요.";
-        message += "\r\n* 영수중 분실시 차량출고가 불가 할 수 있습니다.";
-        xSerial.doPrint(date,time,carnum,srl,message);
+        
     };
     
     // 할인Modal - 임의 할인 버튼

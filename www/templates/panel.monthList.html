@@ -5,7 +5,7 @@
 
     <ion-content class="has-header">
         <ion-list class="background">
-            <ion-item class="square" ng-repeat="mon in monthList" ng-click="monthIn(mon)">
+            <ion-item class="square" ng-repeat="mon in xiso.monthList" ng-click="xiso.monthIn(mon)">
                 <h4 style="padding:10px 0">{{mon.car_num}}</h4>
                 <h5>({{mon.car_name}} / {{mon.car_type_title}})</h5>
                 <p>{{mon.start_date | date:'yyyy-MM-dd'}} ~ {{mon.end_date | date:'yyyy-MM-dd'}}</p>
@@ -16,7 +16,7 @@
     </ion-content>
     <ion-footer-bar class="bar bar-footer bar-dark">
         <div class="button-bar">
-            <a class="button button-light" ng-click="closeMonthModal()">닫기</a>
+            <a class="button button-light" ng-click="xiso.mdMonthList.hide()">닫기</a>
         </div>
     </ion-footer-bar>
 </ion-modal-view>
