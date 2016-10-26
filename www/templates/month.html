@@ -1,4 +1,4 @@
-<ion-view title="월차" ng-init="initMonth()">
+<ion-view title="월차">
     <ion-nav-bar class="bar-calm">
         <ion-nav-back-button>
         </ion-nav-back-button>
@@ -38,7 +38,7 @@
         </ion-refresher>
 
         <!--목록/만료목록-->
-        <ion-item class="row item item-dark ovc_item" ng-repeat="mon in monthList" ng-click="openEditMonth(mon)" ng-if="status!='calendar'">
+        <ion-item class="row item item-dark ovc_item" ng-repeat="mon in monthList | filter:search:strict" ng-click="openEditMonth(mon)" ng-if="status!='calendar'">
             <div class="col">{{mon.car_num}}</div>
             <div class="col">{{mon.start_date | date:'MM-dd HH:mm'}}</div>
             <div class="col">{{mon.end_date | date:'MM-dd HH:mm'}}</div>

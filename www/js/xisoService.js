@@ -6,6 +6,7 @@ xpos
     self.mainField = '';
     self.garage = {};
     self.tempGarage = {};
+    self.dates = {};    // 단순히 start_date, end_date 검색을 위해서 씀
 
     //lists
     self.monthList = {};

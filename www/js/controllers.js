@@ -225,12 +225,40 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xSerial, xis
 //-------------------
 // 월차
 //-------------------
-.controller('monthCtrl', function ($scope, $state,$stateParams,$ionicModal,$ionicPopup, Month, xSerial, $compile, uiCalendarConfig) {
+.controller('monthCtrl', function ($scope, $state,$stateParams,$ionicModal,$ionicPopup, Month, xSerial, $compile, uiCalendarConfig, xisoService) {
     $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
         if(toState.name == 'mainLayout.tabs.month'){
             $scope.initMonth();
         }
     });
+
+    $scope.xiso = xisoService;
+    $scope.xiso.dates = {};
+
+    setTimeout(function(){
+        $scope.initMonth();
+    },1100);
+
+    $scope.initMonth = function(){
+        $scope.status = 'all';
+        $scope.search = {};
+        $scope.search.is_expired = 'N';
+
+        Month.all().then(function(result){
+            if(result.length > 0) {
+                var msec = new Date().getTime();  // 현재 시간
+                for(var key in result){
+                    // 만료 설정
+                    if(msec > result[key].end_date || result[key].is_stop == 'Y') {
+                        result[key].is_expired = 'Y';
+                    }else{
+                        result[key].is_expired = 'N';
+                    }
+                }
+                $scope.monthList = result;
+            }
+        });
+    };
 
     /* Start Of Calendar */
     //달력의 등록된 일정클릭
@@ -319,17 +347,19 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xSerial, xis
     };
     /* End Of Calendar */
 
-    $scope.initMonth = function(){
-        $scope.status = 'all';
-
-        Month.all().then(function(result){
-            if(result.length > 0) $scope.monthList = result;
-        });
-    };
-
     $scope.changeStatus = function(stat){
         $scope.status = stat;   //all, expired, calendar
-        if(stat=='calendar') $scope.eventSources = [];
+
+        switch(stat){
+            case 'all':
+                $scope.search.is_expired = 'N';
+                break;
+            case 'expired':
+                $scope.search.is_expired = 'Y';
+                break;
+            default:
+                $scope.eventSources = [];
+        }
     };
 
     //월차 추가 Modal
@@ -340,8 +370,8 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xSerial, xis
     });
     $scope.openAddMonth = function(){
         $scope.params = {};
-        $scope.temp_start_date = new Date();
-        $scope.temp_end_date = new Date(Date.parse($scope.temp_start_date) + 30 * 1000 * 60 * 60 * 24);
+        $scope.xiso.month.start_date = new Date();
+        $scope.xiso.month.end_date = new Date(Date.parse($scope.xiso.month.start_date) + 30 * 1000 * 60 * 60 * 24);
 
         $scope.modalMonth.show();
     };
@@ -352,16 +382,16 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xSerial, xis
 
     $scope.openEditMonth = function(month){
         $scope.params = month;
-        $scope.temp_start_date = new Date(month.start_date);
-        $scope.temp_end_date = new Date(month.end_date);
+        $scope.xiso.month.start_date = new Date(month.start_date);
+        $scope.xiso.month.end_date = new Date(month.end_date);
 
         $scope.modalMonth.show();
     };
     //달력에서 빈칸을 클릭했을때 등록화면으로
     $scope.openAddMonthCal = function(start_date){
         $scope.params = {};
-        $scope.temp_start_date = new Date(start_date);
-        $scope.temp_end_date = new Date(Date.parse($scope.temp_start_date) + 30 * 1000 * 60 * 60 * 24);
+        $scope.xiso.month.start_date = new Date(start_date);
+        $scope.xiso.month.end_date = new Date(Date.parse($scope.xiso.month.start_date) + 30 * 1000 * 60 * 60 * 24);
 
         $scope.modalMonth.show();
     };
@@ -370,8 +400,8 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xSerial, xis
         Month.getByIdx(idx).then(function(result){
             if(result) {
                 $scope.params = result;
-                $scope.temp_start_date = new Date(result.start_date);
-                $scope.temp_end_date = new Date(result.end_date);
+                $scope.xiso.month.start_date = new Date(result.start_date);
+                $scope.xiso.month.end_date = new Date(result.end_date);
 
                 $scope.modalMonth.show();
             }
@@ -380,11 +410,9 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xSerial, xis
 
     //월차 등록, 수정
     $scope.insertMonth = function(){
-        var start_date = angular.copy($scope.temp_start_date);
-        var end_date  = angular.copy($scope.temp_end_date);
 
-        $scope.params.start_date = getStartDate(start_date);    //시작일 00:00:00
-        $scope.params.end_date = getEndDate(end_date);          //종료일 23:59:59
+        $scope.params.start_date = getStartDate($scope.xiso.dates.start_date);    //시작일 00:00:00
+        $scope.params.end_date = getEndDate($scope.xiso.dates.end_date);          //종료일 23:59:59
 
         if(!$scope.params.car_num) return $ionicPopup.alert({title: '알림',template: '차량번호를 입력하지 않았습니다.'});
         if(!$scope.params.car_name) return $ionicPopup.alert({title: '알림',template: '차종을 입력하지 않았습니다.'});
@@ -420,12 +448,19 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xSerial, xis
 //-------------------
 // 지정주차
 //-------------------
-.controller('cooperCtrl', function ($scope, $state, $stateParams, $ionicModal, $ionicPopup, Cooper, Garage, MultipleViewsManager) {
+.controller('cooperCtrl', function ($scope, $state, $stateParams, $ionicModal, $ionicPopup, Cooper, Garage, xisoService) {
     $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
         if(toState.name == 'mainLayout.tabs.cooper'){
             $scope.initCooper();
         }
     });
+
+    $scope.xiso = xisoService;
+    $scope.xiso.dates = {};
+
+    setTimeout(function(){
+        $scope.initCooper();
+    },1100);
 
     $scope.initCooper = function(){
         $scope.status = 'cooper';
@@ -435,14 +470,14 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xSerial, xis
         $scope.status = stat;   //cooper, period, day
         switch(stat){
             case 'period':
-                $scope.gParams = {};
-                $scope.gParams.start_date = getStartEndDate().start_date;
-                $scope.gParams.end_date = getStartEndDate().end_date;
+                $scope.xiso.dates = {};
+                $scope.xiso.dates.start_date = getStartEndDate().start_date;
+                $scope.xiso.dates.end_date = getStartEndDate().end_date;
                 $scope.getGarageList();
                 break;
             case 'day':
-                $scope.gParams = {};
-                $scope.gParams.start_date = new Date();
+                $scope.xiso.dates = {};
+                $scope.xiso.dates.start_date = new Date();
                 $scope.getGarageList();
                 break;
             default:
@@ -463,7 +498,8 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xSerial, xis
 
     $scope.getGarageList = function(){
         $scope.garageList = {};
-        Garage.allForCooper($scope.gParams).then(function(result){
+        // console.log($scope.xiso.dates);
+        Garage.allForCooper($scope.xiso.dates).then(function(result){
             if(result.length > 0) $scope.garageList = result;
         });
     };
@@ -535,6 +571,10 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xSerial, xis
     });
 
     $scope.eventSources = [];
+
+    setTimeout(function(){
+        $scope.initCalcu();
+    },1100);
 
     $scope.initCalcu = function(){
         $scope.makeEvents();
@@ -684,18 +724,6 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xSerial, xis
         $scope.initCartype();
         $scope.addCartypeWindow.hide();
     };
-    // Cleanup the modal when we're done with it!
-    $scope.$on('$destroy', function() {
-        $scope.addCartypeWindow.remove();
-    });
-    // Execute action on hide modal
-    $scope.$on('addCartypeWindow.hidden', function() {
-        console.log('hidden cartype');
-    });
-    // Execute action on remove modal
-    $scope.$on('addCartypeWindowZ.removed', function() {
-        console.log('removed cartype');
-    });
 
     $scope.insertShopInfo = function(){
         if(!$scope.defaultParams.shop_name) return $ionicPopup.alert({title: '알림',template: '주차장명을 입력하지 않았습니다.'});
