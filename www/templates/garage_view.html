@@ -1,6 +1,6 @@
 <ion-modal-view class="background">
     <ion-header-bar class="bar-dark">
-        <h1 class="title" style="text-align:center;">입출차 정보 열람 - [ 차량번호 : {{garage.car_num}} ]</h1>
+        <h1 class="title" style="text-align:center;">입출차 정보 열람 - [ 차량번호 : {{xiso.garage.car_num}} ]</h1>
     </ion-header-bar>
     <ion-content padding="true">
         <div class="list">
@@ -9,37 +9,37 @@
             </div>
             <label class="item item-input">
                 <span class="input-label">입차시간</span>
-                <p>{{garage.start_date | date : 'yyyy-MM-dd HH:mm'}}</p>
+                <p>{{xiso.garage.start_date | date : 'yyyy-MM-dd HH:mm'}}</p>
             </label>
             <label class="item item-input">
                 <span class="input-label">출차시간</span>
-                <p>{{garage.end_date | date : 'yyyy-MM-dd HH:mm'}}</p>
+                <p>{{xiso.garage.end_date | date : 'yyyy-MM-dd HH:mm'}}</p>
             </label>
             <label class="item item-input">
                 <span class="input-label">월차 구분</span>
-                <p ng-if="garage.month_idx == 0">일반 고객</p>
-                <p ng-if="garage.month_idx > 0">월차 고객</p>
+                <p ng-if="xiso.garage.month_idx == 0">일반 고객</p>
+                <p ng-if="xiso.garage.month_idx > 0">월차 고객</p>
             </label>
-            <div class="item item-divider" style="text-align: center;" ng-if="garage.month_idx == 0">
+            <div class="item item-divider" style="text-align: center;" ng-if="xiso.garage.month_idx == 0">
                 결제 정보
             </div>
-            <div ng-if="garage.month_idx == 0">
+            <div ng-if="xiso.garage.month_idx == 0">
                 <label class="item item-input">
                     <span class="input-label">이용 요금</span>
-                    <p ng-if="!garage.end_date">{{garage | calcu | currency : "" : 0}} 원</p>
-                    <p ng-if="garage.end_date">{{garage.total_amount | currency : "" : 0}} 원</p>
+                    <p ng-if="!xiso.garage.end_date">{{xiso.garage | calcu | currency : "" : 0}} 원</p>
+                    <p ng-if="xiso.garage.end_date">{{xiso.garage.total_amount | currency : "" : 0}} 원</p>
                 </label>
                 <label class="item item-input">
                     <span class="input-label">할인된 금액 (지정주차)</span>
-                    <p>{{garage.discount_cooper | currency : "" : 0}} 원</p>
+                    <p>{{xiso.garage.discount_cooper | currency : "" : 0}} 원</p>
                 </label>
                 <label class="item item-input">
                     <span class="input-label">할인된 금액 (기타)</span>
-                    <p>{{garage.discount_self | currency : "" : 0}} 원</p>
+                    <p>{{xiso.garage.discount_self | currency : "" : 0}} 원</p>
                 </label>
                 <label class="item item-input">
                     <span class="input-label">결제된 금액</span>
-                    <p>{{garage.pay_amount | currency : "" : 0}} 원&nbsp;&nbsp;&nbsp;<button class="button button-assertive button-small" ng-show="garage.pay_amount > 0" ng-click="openPayCancel(garage)">결제취소</button></p>
+                    <p>{{xiso.garage.pay_amount | currency : "" : 0}} 원&nbsp;&nbsp;&nbsp;<button class="button button-assertive button-small" ng-show="xiso.garage.pay_amount > 0" ng-click="xiso.openPayCancel()">결제취소</button></p>
                 </label>
             </div>
             <div class="item item-divider" style="text-align: center;">
@@ -47,53 +47,57 @@
             </div>
             <label class="item item-input">
                 <span class="input-label">차종 명</span>
-                <p>{{garage.car_type_title}}</p>
+                <p>{{xiso.garage.car_type_title}}</p>
             </label>
             <label class="item item-input">
                 <span class="input-label">최초 무료시간 (분)</span>
-                <p>{{garage.minute_free}} 분</p>
+                <p>{{xiso.garage.minute_free}} 분</p>
             </label>
             <label class="item item-input">
                 <span class="input-label">기본요금</span>
-                <p>{{garage.basic_amount | currency : "" : 0}} 원</p>
+                <p>{{xiso.garage.basic_amount | currency : "" : 0}} 원</p>
             </label>
             <label class="item item-input">
                 <span class="input-label">기본시간 (분)</span>
-                <p>{{garage.basic_minute}} 분</p>
+                <p>{{xiso.garage.basic_minute}} 분</p>
             </label>
             <label class="item item-input">
                 <span class="input-label">추가요금</span>
-                <p>{{garage.amount_unit | currency : "" : 0}} 원</p>
+                <p>{{xiso.garage.amount_unit | currency : "" : 0}} 원</p>
             </label>
             <label class="item item-input">
                 <span class="input-label">추가요금 단위 (분)</span>
-                <p>{{garage.minute_unit}} 분</p>
+                <p>{{xiso.garage.minute_unit}} 분</p>
             </label>
             <div class="item item-divider" style="text-align: center;">
                 상태 정보
             </div>
             <label class="item item-input">
                 <span class="input-label">입/출차 상태</span>
-                <p ng-if="garage.is_out=='Y'">출차됨</p>
-                <p ng-if="garage.is_out=='N'">입차중</p>
+                <p ng-if="xiso.garage.is_out=='Y'">출차됨</p>
+                <p ng-if="xiso.garage.is_out=='N'">입차중</p>
             </label>
             <label class="item item-input">
                 <span class="input-label">입차 취소 여부</span>
-                <p ng-if="garage.is_cancel=='Y'">취소됨</p>
-                <p ng-if="garage.is_cancel=='N'">아니오</p>
+                <p ng-if="xiso.garage.is_cancel=='Y'">취소됨</p>
+                <p ng-if="xiso.garage.is_cancel=='N'">아니오</p>
             </label>
         </div>
     </ion-content>
     <ion-footer-bar class="bar bar-footer bar-dark">
         <div class="button-bar">
-            <a class="button button-positive button-large" ng-if="garage.is_out=='N'" ng-click="outCar(garage)">출차</a>
-            <a class="button button-royal button-large" ng-if="garage.is_out=='N'" ng-click="rePrint(garage)">영수증재출력</a>
-            <a class="button button-energized button-large" ng-if="garage.is_out=='N'" ng-click="cancelCar(garage)">입차취소</a>
+            <a class="button button-positive button-large"
+               ng-if="xiso.garage.is_out=='N'" ng-click="xiso.outCar()">출차</a>
+            <a class="button button-royal button-large"
+               ng-if="xiso.garage.is_out=='N'" ng-click="xiso.printInCar()">영수증재출력</a>
+            <a class="button button-energized button-large"
+               ng-if="xiso.garage.is_out=='N'" ng-click="xiso.cancelCar()">입차취소</a>
             <a class="button button-balanced button-large"
-               ng-if="garage.is_out=='Y' && (!garage.pay_amount || garage.pay_amount <= garage.total_amount) && garage.month_idx == 0"
-               ng-click="outCar(garage)">결제</a>
-            <a class="button button-energized button-large" ng-if="garage.is_out=='Y' && garage.is_cancel=='N'" ng-click="cancelOutCar(garage)">출차취소</a>
-            <a class="button button-light button-large" ng-click="closeGarageView()">닫기</a>
+               ng-if="xiso.garage.is_out=='Y' && (!xiso.garage.pay_amount || xiso.garage.pay_amount < (xiso.garage.total_amount - xiso.garage.discount_cooper - xiso.garage.discount_self)) && xiso.garage.month_idx == 0"
+               ng-click="xiso.outCar()">결제</a>
+            <a class="button button-energized button-large"
+               ng-if="xiso.garage.is_out=='Y' && xiso.garage.is_cancel=='N'" ng-click="xiso.cancelOutCar()">출차취소</a>
+            <a class="button button-light button-large" ng-click="xiso.mdGarageView.hide()">닫기</a>
         </div>
     </ion-footer-bar>
 </ion-modal-view>

@@ -3,35 +3,35 @@
 		<h1 class="title">XISO POS</h1>
 	</div>
 	<ion-content class="has-header" scroll="false">
-		<a class="closeButton" ng-click="clearMainField()"><i class="ion-android-close"></i></a>
+		<a class="closeButton" ng-click="xiso.clearMF()"><i class="ion-android-close"></i></a>
 		<div class="list card background">
 			<div class="item">
 				<label class="item item-input">
-					<input type="text" placeholder="관리 번호" id="mainField" ng-model="mainField" disabled="disabled" style="background-color: transparent"/>
+					<input type="text" placeholder="관리 번호" id="mainField" ng-model="xiso.mainField" style="background-color: transparent"/>
 				</label>
 			</div>
 		</div>
 		<ul id="numberPad">
-			<li class="small" ng-click="inCarChk()"><span>
+			<li class="small" ng-click="xiso.inCarChk()"><span>
 				<i class="ion-ios-cart"></i><br />
 				입차</span></li>
-			<li class="small" ng-click="outCarChk()"><span>
+			<li class="small" ng-click="xiso.outCarChk()"><span>
 				<i class="ion-android-car"></i><br />
 				출차</span></li>
-			<li class="small" ng-click="openGarageChk()"><span>
+			<li class="small" ng-click="xiso.openGarageChk()"><span>
 				<i class="ion-ios-information"></i><br />
 				열람</span></li>
-			<li ng-click="addMainField('7')"><span>7</span></li>
-			<li ng-click="addMainField('8')"><span>8</span></li>
-			<li ng-click="addMainField('9')"><span>9</span></li>
-			<li ng-click="addMainField('4')"><span>4</span></li>
-			<li ng-click="addMainField('5')"><span>5</span></li>
-			<li ng-click="addMainField('6')"><span>6</span></li>
-			<li ng-click="addMainField('1')"><span>1</span></li>
-			<li ng-click="addMainField('2')"><span>2</span></li>
-			<li ng-click="addMainField('3')"><span>3</span></li>
-			<li ng-click="addMainField('0')" class="double"><span>0</span></li>
-			<li ng-click="addMainField('-')"><span>-</span></li>
+			<li ng-click="xiso.addMF('7')"><span>7</span></li>
+			<li ng-click="xiso.addMF('8')"><span>8</span></li>
+			<li ng-click="xiso.addMF('9')"><span>9</span></li>
+			<li ng-click="xiso.addMF('4')"><span>4</span></li>
+			<li ng-click="xiso.addMF('5')"><span>5</span></li>
+			<li ng-click="xiso.addMF('6')"><span>6</span></li>
+			<li ng-click="xiso.addMF('1')"><span>1</span></li>
+			<li ng-click="xiso.addMF('2')"><span>2</span></li>
+			<li ng-click="xiso.addMF('3')"><span>3</span></li>
+			<li ng-click="xiso.addMF('0')" class="double"><span>0</span></li>
+			<li ng-click="xiso.addMF('-')"><span>-</span></li>
 			<li ng-click="doCard(false)" class="small"><span>
 					<i class="ion-card"></i><br />
 					카드결제

@@ -1,4 +1,4 @@
-<ion-view title="입출차기록" ng-init="initHistory()">
+<ion-view title="입출차기록">
     <ion-nav-bar class="bar-calm">
         <ion-nav-back-button>
         </ion-nav-back-button>
@@ -33,7 +33,7 @@
                 on-refresh="refresh()" style="top:0px;">
         </ion-refresher>
 
-        <div class="row item item-dark ovc_item" ng-repeat="gar in garageList | filter:search:strict" ng-click="openGarageView(gar)">
+        <div class="row item item-dark ovc_item" ng-repeat="gar in garageList | filter:search:strict" ng-click="xiso.openGarageView(gar)">
             <div class="col">{{gar.car_num}}</div>
             <div class="col">{{gar.start_date | date:'MM-dd HH:mm'}}</div>
             <div class="col">{{gar.end_date | date:'MM-dd HH:mm'}}</div>
@@ -52,9 +52,9 @@
 
             <!--입차구분-->
             <div class="col">
-                <button class="button button-small button-positive" ng-if="!gar.end_date">입차중</button>
-                <button class="button button-small button-balanced" ng-if="gar.is_out=='Y'&&gar.is_cancel=='N'">출차완료</button>
-                <button class="button button-small button-energized" ng-if="gar.is_out=='Y'&&gar.is_cancel=='Y'">입차취소</button>
+                <button class="button button-small button-positive" ng-if="!gar.end_date && gar.is_cancel=='N'">입차중</button>
+                <button class="button button-small button-balanced" ng-if="gar.is_out=='Y' && gar.is_cancel=='N'">출차완료</button>
+                <button class="button button-small button-energized" ng-if="gar.is_out=='Y' && gar.is_cancel=='Y'">입차취소</button>
             </div>
 
             <!--결제-->
@@ -62,7 +62,7 @@
                 <button class="button button-small button-assertive" ng-if="gar.is_paid=='N'">미결제</button>
                 <button class="button button-small" ng-if="gar.is_paid=='Y'">결제완료</button>
             </div>
-            <div class="col" ng-if="gar.month_idx > 0">
+            <div class="col" ng-if="gar.month_idx > 0 && gar.is_cancel=='N'">
                 <button class="button button-small button-clear">월차</button>
             </div>
             <div class="col" ng-if="gar.is_cancel=='Y'">
