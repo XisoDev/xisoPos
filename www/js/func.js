@@ -26,8 +26,8 @@ function cal_garage(garage) {
 
     // ((최종 차량 주차시간 - 최초 무료시간 - 기본시간) / 추가요금단위_올림) * 추가요금 + 기본요금
     var park_min = Math.floor((garage.end_date - garage.start_date) / oneMinute);  // 주차한 시간 (분)
-    var free_min = Number(garage.minute_free); // 최초 무료시간 (분)
-    var basic_min = Number(garage.basic_minute); // 기본시간 (분)
+    var free_min = onum(garage.minute_free); // 최초 무료시간 (분)
+    var basic_min = onum(garage.basic_minute); // 기본시간 (분)
 
     // 무료시간을 초과했으면
     if(park_min - free_min > 0){
@@ -35,17 +35,47 @@ function cal_garage(garage) {
         //기본 시간을 초과했으면 추가 요금도 부과한다 : (이용시간 / 추가요금 단위) * 추가요금 + 기본료
         if(park_min - free_min - basic_min > 0){
             //추가 시간을 추가요금 단위로 나눈다
-            var added_min = Math.ceil((park_min - free_min - basic_min) / Number(garage.minute_unit));
-            result_charge = Number(garage.basic_amount) + (added_min * Number(garage.amount_unit));
+            var added_min = Math.ceil((park_min - free_min - basic_min) / onum(garage.minute_unit));
+            result_charge = onum(garage.basic_amount) + (added_min * onum(garage.amount_unit));
         }
         //기본 시간 이내에 나갈경우
         else{
             //기본 요금만 부과한다
-            result_charge = Number(garage.basic_amount);
+            result_charge = onum(garage.basic_amount);
         }
     }
 
     return result_charge;
+}
+
+function cal_cooper(garage, cooper) {
+    var result = {
+        total_amount : 0,
+        discount_cooper : 0
+    };
+
+    var oneSecond = 1000;
+    var oneMinute = oneSecond * 60;
+
+    var park_min = Math.floor((garage.end_date - garage.start_date) / oneMinute);  // 주차한 시간 (분)
+    var max_min = cooper.minute_max;
+
+    var garageCharge = 0;
+
+    // 주차한 시간이 업체에서 제공하는 시간을 넘으면
+    if(park_min > max_min){
+        // 40분일때 30분당 500원 ( 40 / 30 * 500)
+        result.discount_cooper = Math.ceil(onum(cooper.minute_max) / onum(cooper.minute_unit)) * onum(cooper.amount_unit);
+        result.total_amount = result.discount_cooper;
+
+        park_min = park_min - onum(cooper.minute_max);  // 주차한 시간 = 주차한 시간 - 최대제공시간
+        result.total_amount += (Math.ceil(park_min / onum(garage.minute_unit)) * onum(garage.amount_unit));
+    }else{
+        result.discount_cooper = Math.ceil(onum(park_min) / onum(cooper.minute_unit)) * onum(cooper.amount_unit);
+        result.total_amount = result.discount_cooper;
+    }
+
+    return result;
 }
 
 function getStartDate(dt){

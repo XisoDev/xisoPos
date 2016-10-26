@@ -52,9 +52,9 @@
 
             <!--입차구분-->
             <div class="col">
-                <button class="button button-small button-positive" ng-if="!gar.end_date">입차중</button>
-                <button class="button button-small button-balanced" ng-if="gar.is_out=='Y'&&gar.is_cancel=='N'">출차완료</button>
-                <button class="button button-small button-energized" ng-if="gar.is_out=='Y'&&gar.is_cancel=='Y'">입차취소</button>
+                <button class="button button-small button-positive" ng-if="!gar.end_date && gar.is_cancel=='N'">입차중</button>
+                <button class="button button-small button-balanced" ng-if="gar.is_out=='Y' && gar.is_cancel=='N'">출차완료</button>
+                <button class="button button-small button-energized" ng-if="gar.is_out=='Y' && gar.is_cancel=='Y'">입차취소</button>
             </div>
 
             <!--결제-->

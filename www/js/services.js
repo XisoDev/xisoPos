@@ -234,8 +234,8 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 
 	//출차
 	self.outCar = function(garage) {
-		return DB.query("UPDATE garage SET is_out = 'Y', end_date = ?, total_amount = ? WHERE idx = ?",
-			[garage.end_date, garage.total_amount, garage.idx]);
+		return DB.query("UPDATE garage SET is_out = 'Y', end_date = ?, cooper_idx = ?, discount_cooper = ?, discount_self = ?, total_amount = ? WHERE idx = ?",
+			[garage.end_date, garage.cooper_idx, garage.discount_cooper, garage.discount_self, garage.total_amount, garage.idx]);
 	};
 
 	//입차취소
@@ -246,7 +246,7 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 
 	//출차취소
 	self.cancelOutCar = function(garage) {
-		return DB.query("UPDATE garage SET is_out = 'N', end_date = null, total_amount = 0 WHERE idx = ?",
+		return DB.query("UPDATE garage SET is_out = 'N', end_date = null, total_amount = 0, cooper_idx = 0, discount_cooper = 0, discount_self = 0 WHERE idx = ?",
 			[garage.idx]);
 	};
 
@@ -269,21 +269,6 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 		return DB.query('INSERT INTO garage (start_date,car_num,car_type_title,minute_unit,minute_free,amount_unit,basic_amount,basic_minute,month_idx,cooper_idx,discount_cooper,discount_self) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)',
 			[params.start_date, params.car_num, params.car_type_title, params.minute_unit, params.minute_free, params.amount_unit, params.basic_amount, params.basic_minute, params.month_idx, params.cooper_idx, params.discount_cooper, params.discount_self]);
 	};
-
-	//임의할인금액을 더해줌
-	self.selfDiscount = function(garage){
-		return DB.query("UPDATE garage SET discount_self = ? WHERE idx = ?",
-			[Number(garage.discount_self)+Number(garage.dc_money), garage.idx]);
-	};
-
-	// self.update = function(params) {
-	// 	return DB.query('UPDATE car_type SET car_type_title = ?,minute_unit = ?,minute_free = ?,amount_unit = ?,basic_amount = ?,basic_minute = ? WHERE idx = ?',
-	// 		[params.car_type_title, params.minute_unit, params.minute_free, params.amount_unit, params.basic_amount, params.basic_minute, params.idx]);
-	// };
-    //
-	// self.delete = function(idx) {
-	// 	return DB.query('DELETE FROM car_type WHERE idx = ?', [idx]);
-	// };
 
 	return self;
 })
@@ -363,14 +348,14 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 	};
 
 	self.insert = function(params) {
-		return DB.query('INSERT INTO cooper (coop_title, coop_tel, coop_address, coop_user_name, minute_unit, minute_free, minute_max, amount_unit, regdate) VALUES(?,?,?,?,?,?,?,?,?)',
-			[params.coop_title, params.coop_tel, params.coop_address, params.coop_user_name, params.minute_unit, params.minute_free, params.minute_max, params.amount_unit, new Date().getTime()]);
+		return DB.query('INSERT INTO cooper (coop_title, coop_tel, coop_address, coop_user_name, minute_unit, minute_max, amount_unit, regdate) VALUES(?,?,?,?,?,?,?,?)',
+			[params.coop_title, params.coop_tel, params.coop_address, params.coop_user_name, params.minute_unit, params.minute_max, params.amount_unit, new Date().getTime()]);
 	};
 
 	self.update = function(params) {
 		console.log(params);
-		return DB.query("UPDATE cooper SET coop_title=?, coop_tel=?, coop_address=?, coop_user_name=?, minute_unit=?, minute_free=?, minute_max=?, amount_unit=?, is_end=? WHERE idx = ?",
-			[params.coop_title, params.coop_tel, params.coop_address, params.coop_user_name, params.minute_unit, params.minute_free, params.minute_max, params.amount_unit, params.is_end, params.idx]);
+		return DB.query("UPDATE cooper SET coop_title=?, coop_tel=?, coop_address=?, coop_user_name=?, minute_unit=?, minute_max=?, amount_unit=?, is_end=? WHERE idx = ?",
+			[params.coop_title, params.coop_tel, params.coop_address, params.coop_user_name, params.minute_unit, params.minute_max, params.amount_unit, params.is_end, params.idx]);
 	};
 
 	return self;

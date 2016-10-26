@@ -74,7 +74,6 @@ xpos
                 {name: "coop_address", type: "TEXT"},
                 {name: "coop_user_name", type: "TEXT"},
                 {name: "minute_unit", type: "INTEGER DEFAULT 0"},
-                {name: "minute_free", type: "INTEGER DEFAULT 0"},
                 {name: "minute_max", type: "INTEGER DEFAULT 0"},
                 {name: "amount_unit", type: "INTEGER DEFAULT 0"},
                 {name: "regdate", type: "INTEGER"},

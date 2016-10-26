@@ -329,17 +329,17 @@ xpos
             if(res) {
                 self.copyGarage();   //garage 를 tempGarage 에 copy
                 self.tempGarage.end_date = new Date().getTime();
-                procOutCar();   //출차처리
+                self.procOutCar();   //출차처리
             }
         });
     };
 
     // DB에서 출차처리
-    var procOutCar = function(){
+    self.procOutCar = function(){
         Garage.outCar(self.tempGarage).then(function(res){
             $cordovaToast.showShortBottom('차량번호 [ '+ self.tempGarage.car_num +' ]의 출차가 완료 되었습니다');
-            $state.go($state.current, {}, {reload: true});
             self.closeModal();  //모든창 닫음
+            $state.go($state.current, {}, {reload: true});
         },function(err){
             console.log(err);
         });
@@ -398,20 +398,30 @@ xpos
         });
     };
 
+    // 지정 할인 선택 Modal - 업체 선택 클릭
+    self.procCooperDc = function(coop){
+        var result = cal_cooper(self.tempGarage, coop);
+        self.tempGarage.total_amount = result.total_amount;
+        self.tempGarage.discount_cooper = result.discount_cooper;
+        if(result.discount_cooper < result.total_amount){
+            // 남은 금액 결제
+            self.calDiscount();     //결제해야될 금액 계산 (미리세팅용)
+            self.mdPayInput.show();
+            self.mdDcInput.hide();
+        }else{
+            // 바로 출차
+            self.procOutCar();
+            self.mdDcInput.hide();
+        }
+    };
+
     // 결제 Modal - 결제없이 출차 처리 버튼
     self.forceOut = function(){
         $ionicPopup.confirm({
             title: '출차', template: '출차 하시겠습니까?', okText: '예',cancelText: '아니오' 
         }).then(function (res) {
             if(res) {
-                // 할인 금액에 변동이 있을 경우 update 후 출차
-                if(self.garage.discount_self != self.tempGarage.discount_self){
-                    Garage.selfDiscount(self.tempGarage).then(function(result){
-                        procOutCar();
-                    });
-                }else{
-                    procOutCar();   //출차
-                }
+                self.procOutCar();   //출차
             }
         });
     };
@@ -441,7 +451,7 @@ xpos
                     //실패하면 update? delete?
 
                     // 결제 처리 잘되면 출차
-                    procOutCar();
+                    self.procOutCar();
                 });
 
 
@@ -474,7 +484,7 @@ xpos
                     //실패하면 update? delete?
 
                     // 결제 처리 잘되면 출차
-                    procOutCar();
+                    self.procOutCar();
                 });
 
 

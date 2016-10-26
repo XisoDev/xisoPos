@@ -162,6 +162,7 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xSerial, xis
                 break;
             case 'no_pay':  //미결제
                 $scope.search.is_out = 'Y';
+                $scope.search.is_cancel = 'N';
                 $scope.search.is_paid = 'N';
                 break;
             case 'cancel':  //입차취소
@@ -534,7 +535,6 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xSerial, xis
         if(!$scope.params.coop_tel) return $ionicPopup.alert({title: '알림',template: '전화번호를 입력하지 않았습니다.'});
         if(!$scope.params.coop_address) return $ionicPopup.alert({title: '알림',template: '주소를 입력하지 않았습니다.'});
         if(!$scope.params.coop_user_name) return $ionicPopup.alert({title: '알림',template: '대표자 명을 입력하지 않았습니다.'});
-        if(!$scope.params.minute_free && $scope.params.minute_free!==0) return $ionicPopup.alert({title: '알림',template: '무료 시간을 입력하지않았습니다.'});
         if(!$scope.params.minute_max && $scope.params.minute_max!==0) return $ionicPopup.alert({title: '알림',template: '최대 지원 시간을 입력하지않았습니다.'});
         if(!$scope.params.amount_unit && $scope.params.amount_unit!==0) return $ionicPopup.alert({title: '알림',template: '추가요금을 입력하지않았습니다.'});
         if(!$scope.params.minute_unit && $scope.params.minute_unit!==0) return $ionicPopup.alert({title: '알림',template: '추가요금 단위를 입력하지않았습니다.'});
