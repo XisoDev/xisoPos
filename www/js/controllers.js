@@ -226,7 +226,7 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xSerial, xis
 //-------------------
 // 월차
 //-------------------
-.controller('monthCtrl', function ($scope, $state,$stateParams,$ionicModal,$ionicPopup, Month, xSerial, $compile, uiCalendarConfig, xisoService) {
+.controller('monthCtrl', function ($scope, $state,$stateParams,$ionicModal,$ionicPopup, Month, xSerial, $compile, uiCalendarConfig, xisoService, Payment, $cordovaToast) {
     $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
         if(toState.name == 'mainLayout.tabs.month'){
             $scope.initMonth();
@@ -235,6 +235,8 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xSerial, xis
 
     $scope.xiso = xisoService;
     $scope.xiso.dates = {};
+
+    $scope.eventSources = [];
 
     setTimeout(function(){
         $scope.initMonth();
@@ -245,6 +247,28 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xSerial, xis
         $scope.search = {};
         $scope.search.is_expired = 'N';
 
+        $scope.getMonthList();
+    };
+
+    $scope.changeStatus = function(stat){
+        $scope.status = stat;   //all, expired, calendar
+
+        switch(stat){
+            case 'all':
+                $scope.search.is_expired = 'N';
+                break;
+            case 'expired':
+                $scope.search.is_expired = 'Y';
+                break;
+            case 'wait':
+                $scope.search.is_expired = 'W';
+                break;
+            default:
+                $scope.eventSources = [];
+        }
+    };
+
+    $scope.getMonthList = function(){
         Month.all().then(function(result){
             if(result.length > 0) {
                 var msec = new Date().getTime();  // 현재 시간
@@ -253,7 +277,11 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xSerial, xis
                     if(msec > result[key].end_date || result[key].is_stop == 'Y') {
                         result[key].is_expired = 'Y';
                     }else{
-                        result[key].is_expired = 'N';
+                        if(msec < result[key].start_date) {
+                            result[key].is_expired = 'W';
+                        }else{
+                            result[key].is_expired = 'N';
+                        }
                     }
                 }
                 $scope.monthList = result;
@@ -291,8 +319,6 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xSerial, xis
         }
 
     };
-
-    $scope.eventSources = [];
 
     // 캘린더 변동 이벤트 발생시 달력에 월차 데이터를 뿌려줌
     $scope.makeEvents = function(start,end){
@@ -348,21 +374,6 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xSerial, xis
     };
     /* End Of Calendar */
 
-    $scope.changeStatus = function(stat){
-        $scope.status = stat;   //all, expired, calendar
-
-        switch(stat){
-            case 'all':
-                $scope.search.is_expired = 'N';
-                break;
-            case 'expired':
-                $scope.search.is_expired = 'Y';
-                break;
-            default:
-                $scope.eventSources = [];
-        }
-    };
-
     //월차 추가 Modal
     $ionicModal.fromTemplateUrl('templates/month.addmonth.html', {
         scope: $scope
@@ -371,28 +382,125 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xSerial, xis
     });
     $scope.openAddMonth = function(){
         $scope.params = {};
-        $scope.xiso.month.start_date = new Date();
-        $scope.xiso.month.end_date = new Date(Date.parse($scope.xiso.month.start_date) + 30 * 1000 * 60 * 60 * 24);
+        $scope.xiso.dates.start_date = new Date();
+        $scope.xiso.dates.end_date = new Date(Date.parse($scope.xiso.dates.start_date) + 30 * 1000 * 60 * 60 * 24);
 
         $scope.modalMonth.show();
     };
     $scope.closeMonth = function(){
-        $scope.params = {};
         $scope.modalMonth.hide();
     };
 
+    //월차 수정
     $scope.openEditMonth = function(month){
-        $scope.params = month;
-        $scope.xiso.month.start_date = new Date(month.start_date);
-        $scope.xiso.month.end_date = new Date(month.end_date);
+        $scope.params = angular.copy(month);
+        $scope.before_is_stop = month.is_stop;
+        $scope.xiso.dates.start_date = new Date($scope.params.start_date);
+        $scope.xiso.dates.end_date = new Date($scope.params.end_date);
 
         $scope.modalMonth.show();
     };
+
+    //월차 연장
+    $scope.openExtMonth = function(){
+        delete $scope.params.idx;
+        $scope.params.is_ext = true;
+
+        var end_date = $scope.params.end_date;
+        if(getStartDate(new Date(end_date)) < getStartDate(new Date())){
+            $scope.xiso.dates.start_date = new Date();
+            $scope.xiso.dates.end_date = new Date(Date.parse($scope.xiso.dates.start_date) + 30 * 1000 * 60 * 60 * 24);
+        }else{
+            $scope.xiso.dates.start_date = new Date(end_date + 1000 * 60 * 60 * 24);
+            $scope.xiso.dates.end_date = new Date(Date.parse($scope.xiso.dates.start_date) + 30 * 1000 * 60 * 60 * 24);
+        }
+    };
+    
+
+    //월차 결제 Modal
+    $ionicModal.fromTemplateUrl('templates/month.pay.html', {
+        scope: $scope
+    }).then(function(modal) {
+        $scope.modalMonthPay = modal;
+    });
+    $scope.openPayMonth = function(){
+        $scope.params.pay_money = $scope.params.amount - $scope.params.pay_amount;
+        $scope.modalMonthPay.show();
+        $scope.modalMonth.hide();
+    };
+    $scope.closePayMonth = function(){
+        $scope.modalMonthPay.hide();
+        $scope.params = {};
+        $state.go($state.current, {}, {reload: true});
+    };
+
+    //카드 결제
+    $scope.doCard = function(){
+        $ionicPopup.confirm({
+            title: '카드 결제',
+            template: $scope.params.pay_money.num_format() + '원을 카드 결제 하시겠습니까?'
+        }).then(function (res) {
+            if(res){
+                var params = {
+                    lookup_idx: $scope.params.idx,
+                    lookup_type: 'month',
+                    pay_type: 'card',
+                    pay_amount: $scope.params.pay_money,
+                    return_data: ''
+                };
+
+                // 먼저 저장하고?
+                Payment.insert(params).then(function(res2){
+                    console.log("insertId: " + res2.insertId);
+                    //결제 처리?
+
+                    //할인 금액에 변동이 있을 경우 update 후 출차
+
+                    //실패하면 update? delete?
+
+                    $scope.closePayMonth();
+                });
+
+
+            }
+        });
+    };
+    //현금 결제
+    $scope.doCash = function(){
+        $ionicPopup.confirm({
+            title: '현금 결제',
+            template: $scope.params.pay_money.num_format() + '원을 현금 결제 하시겠습니까?'
+        }).then(function (res) {
+            if(res){
+                var params = {
+                    lookup_idx: $scope.params.idx,
+                    lookup_type: 'month',
+                    pay_type: 'cash',
+                    pay_amount: $scope.params.pay_money,
+                    return_data: ''
+                };
+
+                // 먼저 저장하고?
+                Payment.insert(params).then(function(res2){
+                    console.log("insertId: " + res2.insertId);
+                    //결제 처리?
+
+                    //할인 금액에 변동이 있을 경우 update 후 출차
+
+                    //실패하면 update? delete?
+
+                    $scope.closePayMonth();
+                });
+            }
+        });
+    };
+
+
     //달력에서 빈칸을 클릭했을때 등록화면으로
     $scope.openAddMonthCal = function(start_date){
         $scope.params = {};
-        $scope.xiso.month.start_date = new Date(start_date);
-        $scope.xiso.month.end_date = new Date(Date.parse($scope.xiso.month.start_date) + 30 * 1000 * 60 * 60 * 24);
+        $scope.xiso.dates.start_date = new Date(start_date);
+        $scope.xiso.dates.end_date = new Date(Date.parse($scope.xiso.dates.start_date) + 30 * 1000 * 60 * 60 * 24);
 
         $scope.modalMonth.show();
     };
@@ -400,9 +508,9 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xSerial, xis
     $scope.openEditMonthCal = function(idx){
         Month.getByIdx(idx).then(function(result){
             if(result) {
-                $scope.params = result;
-                $scope.xiso.month.start_date = new Date(result.start_date);
-                $scope.xiso.month.end_date = new Date(result.end_date);
+                $scope.params = angular.copy(result);
+                $scope.xiso.dates.start_date = new Date($scope.params.start_date);
+                $scope.xiso.dates.end_date = new Date($scope.params.end_date);
 
                 $scope.modalMonth.show();
             }
@@ -429,15 +537,27 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xSerial, xis
         if(!$scope.params.idx) {
             Month.insert($scope.params).then(function (res) {
                 console.log("insertId: " + res.insertId);
+                $scope.params.idx = res.insertId;
                 $state.go($state.current, {}, {reload: true});
                 $scope.closeMonth();
+                if(!$scope.params.is_ext){
+                    $cordovaToast.showShortBottom("차량번호 ["+ $scope.params.car_num +"] 새로운 월차가 추가되었습니다.");
+                }else{
+                    $cordovaToast.showShortBottom("차량번호 ["+ $scope.params.car_num +"] 연장된 월차가 추가되었습니다.");
+                }
+                $scope.openPayMonth();
             }, function (err) {
                 console.log(err);
             });
         }else{
+            if($scope.before_is_stop=='N' && $scope.params.is_stop=='Y'){
+                $scope.params.stop_date = new Date().getTime();
+            }
             Month.update($scope.params).then(function(res){
                 $state.go($state.current, {}, {reload: true});
                 $scope.closeMonth();
+                $cordovaToast.showShortBottom("차량번호 ["+ $scope.params.car_num +"] 월차가 수정되었습니다.");
+                $state.go($state.current, {}, {reload: true});
             },function(err){
                 console.log(err);
             });
@@ -648,7 +768,7 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xSerial, xis
 
         calendar:{
             titleFormat : 'YYYY 년 MMMM',
-            height: 600,
+            height: 750,
             header:{
                 left: 'title',
                 center: '',

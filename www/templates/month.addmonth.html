@@ -7,8 +7,7 @@
         <div class="list">
             <label class="item item-input">
                 <span class="input-label">차량 번호</span>
-                <input type="text" placeholder="차량 식별 번호" ng-model="params.car_num" ng-if="!params.idx">
-                <p ng-if="params.idx">{{params.car_num}}</p>
+                <input type="text" placeholder="차량 식별 번호" ng-model="params.car_num" ng-disabled="params.idx" style="background-color: inherit;">
             </label>
             <label class="item item-input">
                 <span class="input-label">차종</span>
@@ -20,11 +19,11 @@
             </label>
             <label class="item item-input">
                 <span class="input-label">시작 날짜</span>
-                <input type="date" placeholder="시작 날짜" ng-model="xiso.dates.start_date">
+                <input type="date" placeholder="시작 날짜" ng-model="xiso.dates.start_date" ng-disabled="params.is_expired=='Y' && !params.is_ext" style="background-color: inherit;">
             </label>
             <label class="item item-input">
                 <span class="input-label">종료 날짜</span>
-                <input type="date" placeholder="종료 날짜" ng-model="xiso.dates.end_date">
+                <input type="date" placeholder="종료 날짜" ng-model="xiso.dates.end_date" ng-disabled="params.is_expired=='Y' && !params.is_ext" style="background-color: inherit;">
             </label>
             <label class="item item-input">
                 <span class="input-label">월차 금액</span>
@@ -55,8 +54,11 @@
     </ion-content>
     <ion-footer-bar class="bar bar-footer bar-dark">
         <div class="button-bar">
-            <a class="button button-balanced" ng-click="insertMonth()" ng-show="!params.idx">추가</a>
-            <a class="button button-balanced" ng-click="insertMonth()" ng-show="params.idx">수정</a>
+            <a class="button button-positive" ng-click="insertMonth()" ng-show="!params.idx && !params.is_ext">추가</a>
+            <a class="button button-positive" ng-click="insertMonth()" ng-show="params.idx && !params.is_ext">수정</a>
+            <a class="button button-balanced" ng-click="insertMonth()" ng-show="!params.idx && params.is_ext">연장</a>
+            <a class="button button-balanced" ng-click="openExtMonth()" ng-show="params.idx">연장하기</a>
+            <a class="button button-royal" ng-click="openPayMonth()" ng-show="params.idx && params.amount > params.pay_amount">결제</a>
             <a class="button button-light" ng-click="closeMonth()">닫기</a>
         </div>
     </ion-footer-bar>

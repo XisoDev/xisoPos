@@ -277,7 +277,7 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 	var self = this;
 
 	self.all = function() {
-		return DB.query("SELECT mon.*, (SELECT IFNULL(sum(pay_amount), 0) FROM payment WHERE lookup_idx = mon.idx AND lookup_type='month' AND is_cancel = 'N') as pay_amount FROM month mon")
+		return DB.query("SELECT mon.*, (SELECT IFNULL(sum(pay_amount), 0) FROM payment WHERE lookup_idx = mon.idx AND lookup_type='month' AND is_cancel = 'N') as pay_amount FROM month mon LIMIT 1000 OFFSET 0")
 			.then(function(result){
 				return DB.fetchAll(result);
 			});
@@ -316,8 +316,8 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 
 	self.update = function(params) {
 		console.log(params);
-		return DB.query("UPDATE month SET start_date=?, end_date=?, amount=?, car_num=?, car_name=?, car_type_title=?, user_name=?, mobile=? WHERE idx = ?",
-			[params.start_date, params.end_date, params.amount, params.car_num, params.car_name, params.car_type_title, params.user_name, params.mobile, params.idx]);
+		return DB.query("UPDATE month SET start_date=?, end_date=?, amount=?, car_num=?, car_name=?, car_type_title=?, user_name=?, mobile=?, is_stop=?, stop_date=? WHERE idx = ?",
+			[params.start_date, params.end_date, params.amount, params.car_num, params.car_name, params.car_type_title, params.user_name, params.mobile, params.is_stop, params.stop_date, params.idx]);
 	};
 
 	return self;
@@ -372,6 +372,13 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 
 	self.allForGarage = function (garage) {
 		return DB.query("SELECT * FROM payment WHERE lookup_idx = ? AND lookup_type = 'garage' AND is_cancel = 'N'", [garage.idx])
+			.then(function (result) {
+				return DB.fetchAll(result);
+			});
+	};
+
+	self.getMonthPayMoney = function(month) {
+		return DB.query("SELECT sum(pay_amount) as pay_amount FROM payment WHERE lookup_idx = ? AND lookup_type = 'month' AND is_cancel = 'N'", [month.idx])
 			.then(function (result) {
 				return DB.fetchAll(result);
 			});
