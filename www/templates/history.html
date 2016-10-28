@@ -11,7 +11,12 @@
             <a class="button" ng-click="changeStatus('out')" ng-class="{'button-energized' : status=='out', 'button-dark' : status!='out'}">정상출차</a>
             <a class="button" ng-click="changeStatus('no_pay')" ng-class="{'button-energized' : status=='no_pay', 'button-dark' : status!='no_pay'}">미결제</a>
             <a class="button" ng-click="changeStatus('cancel')" ng-class="{'button-energized' : status=='cancel', 'button-dark' : status!='cancel'}">입차취소</a>
-            <input class="item-input" type="text" ng-model="search.car_num" placeholder="차량번호로 검색" />
+        </div>
+        <div class="bar bar-header item-input-inset bar-dark">
+            <label class="item-input-wrapper" style="background-color: #333;">
+                <i class="icon ion-search placeholder-icon"></i>
+                <input type="text" placeholder="차량 번호로 필터링" ng-model="search.car_num" style="color:white;">
+            </label>
         </div>
 
         <div class="row header ovc_header">
@@ -27,7 +32,7 @@
     </div>
 
     <ion-content class="has-header">
-        <div class="spacer" style="height:86px"></div>
+        <div class="spacer" style="height:130px"></div>
         <ion-refresher
                 pulling-text="당겨서 새로 고침"
                 on-refresh="refresh()" style="top:0px;">
