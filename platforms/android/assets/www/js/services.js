@@ -19,14 +19,21 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 
 			var query = 'CREATE TABLE IF NOT EXISTS ' + table.name + ' (' + columns.join(',') + ')';
 			self.query(query);
-			console.log('Table ' + table.name + ' initialized');
+			// console.log('Table ' + table.name + ' initialized');
 		});
-		// var qry = 'delete from garage where car_num = "7976"';
-		// var qry = 'delete from payment';
-		//  self.query(qry);
-		// var times = new Date().getTime() - (1000 * 60 * 60 * 2 + 1000 * 60 * 1);
-		// var qry = 'update garage set `start_date` = '+times+ ' where car_num="7976"';
-		// self.query(qry);
+
+		// 상점 정보가 없으면 기본 세팅
+		self.query('SELECT * FROM shop_info').then(function(res1){
+			var res2 = self.fetchAll(res1);
+			if(res2.length <= 0){
+				self.query("insert into shop_info (shop_name,tel,address) values('화진 S', '051-333-5646', '중구 부평동 3가 62-2.7.8')").then(function(res3){
+					console.log('insert shop_info complete!!');
+				},function(err){ console.log(err); });
+			}
+		});
+
+		// 임시
+		// self.query("delete from payment");
 	};
 
 	self.query = function(query, bindings) {
@@ -97,7 +104,14 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 	var self = this;
 
 	self.all = function() {
-		return DB.query('SELECT * FROM car_type')
+		return DB.query("SELECT * FROM car_type WHERE is_daycar = 'N'")
+			.then(function(result){
+				return DB.fetchAll(result);
+			});
+	};
+
+	self.allDayCar = function(){
+		return DB.query("SELECT * FROM car_type WHERE is_daycar = 'Y'")
 			.then(function(result){
 				return DB.fetchAll(result);
 			});
@@ -111,8 +125,8 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 	};
 
 	self.insert = function(params) {
-		return DB.query('INSERT INTO car_type (car_type_title,minute_unit,minute_free,amount_unit,basic_amount,basic_minute) VALUES(?,?,?,?,?,?)',
-			[params.car_type_title, params.minute_unit, params.minute_free, params.amount_unit, params.basic_amount, params.basic_minute]);
+		return DB.query("INSERT INTO car_type (car_type_title,minute_unit,minute_free,amount_unit,basic_amount,basic_minute,is_daycar) VALUES(?,?,?,?,?,?,?)",
+			[params.car_type_title, params.minute_unit, params.minute_free, params.amount_unit, params.basic_amount, params.basic_minute, params.is_daycar]);
 	};
 
 	self.update = function(params) {
@@ -241,7 +255,7 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 	//입차취소
 	self.cancelCar = function(garage) {
 		return DB.query("UPDATE garage SET is_cancel = 'Y', is_out = 'Y', end_date = ?, total_amount = 0 WHERE idx = ?",
-			[garage.end_date, garage.idx]);
+			[new Date().getTime(), garage.idx]);
 	};
 
 	//출차취소
@@ -303,7 +317,7 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 	};
 
 	self.getByCarNum = function(car_num) {
-		return DB.query("SELECT * FROM month WHERE car_num like ? AND is_stop='N' AND end_date > ?", [car_num+'%', new Date().getTime()])
+		return DB.query("SELECT * FROM month WHERE car_num like ? AND is_stop='N' AND end_date > ? AND start_date < ?", [car_num+'%', new Date().getTime(), new Date().getTime()])
 			.then(function(result){
 				return DB.fetchAll(result);
 			});
@@ -315,7 +329,7 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 	};
 
 	self.update = function(params) {
-		console.log(params);
+		// console.log(params);
 		return DB.query("UPDATE month SET start_date=?, end_date=?, amount=?, car_num=?, car_name=?, car_type_title=?, user_name=?, mobile=?, is_stop=?, stop_date=? WHERE idx = ?",
 			[params.start_date, params.end_date, params.amount, params.car_num, params.car_name, params.car_type_title, params.user_name, params.mobile, params.is_stop, params.stop_date, params.idx]);
 	};
@@ -353,7 +367,7 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 	};
 
 	self.update = function(params) {
-		console.log(params);
+		// console.log(params);
 		return DB.query("UPDATE cooper SET coop_title=?, coop_tel=?, coop_address=?, coop_user_name=?, minute_unit=?, minute_max=?, amount_unit=?, is_end=? WHERE idx = ?",
 			[params.coop_title, params.coop_tel, params.coop_address, params.coop_user_name, params.minute_unit, params.minute_max, params.amount_unit, params.is_end, params.idx]);
 	};
@@ -371,14 +385,29 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 	};
 
 	self.allForGarage = function (garage) {
-		return DB.query("SELECT * FROM payment WHERE lookup_idx = ? AND lookup_type = 'garage' AND is_cancel = 'N'", [garage.idx])
+		return DB.query("SELECT * FROM payment WHERE lookup_idx = ? AND lookup_type = 'garage' AND is_cancel = 'N' ORDER BY idx DESC", [garage.idx])
+			.then(function (result) {
+				return DB.fetchAll(result);
+			});
+	};
+
+	self.allForMonth = function (month) {
+		return DB.query("SELECT * FROM payment WHERE lookup_idx = ? AND lookup_type = 'month' AND is_cancel = 'N' ORDER BY idx DESC", [month.idx])
+			.then(function (result) {
+				return DB.fetchAll(result);
+			});
+	};
+
+	self.allForTemp = function () {
+		// 최근 20 개만 보여줌
+		return DB.query("SELECT * FROM payment WHERE lookup_type = 'temp' AND is_cancel = 'N' ORDER BY idx DESC LIMIT 20 OFFSET 0")
 			.then(function (result) {
 				return DB.fetchAll(result);
 			});
 	};
 
 	self.getMonthPayMoney = function(month) {
-		return DB.query("SELECT sum(pay_amount) as pay_amount FROM payment WHERE lookup_idx = ? AND lookup_type = 'month' AND is_cancel = 'N'", [month.idx])
+		return DB.query("SELECT sum(pay_amount) as pay_amount FROM payment WHERE lookup_idx = ? AND lookup_type = 'month' AND is_cancel = 'N' ORDER BY idx DESC", [month.idx])
 			.then(function (result) {
 				return DB.fetchAll(result);
 			});
@@ -393,13 +422,26 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 
 	self.insert = function (params) {
 		// lookup_type : garage, month, cooper / pay_type : cash, card
-		return DB.query('INSERT INTO payment (lookup_idx, lookup_type, pay_type, pay_amount, return_data, regdate) VALUES(?,?,?,?,?,?)',
-			[params.lookup_idx, params.lookup_type, params.pay_type, params.pay_amount, params.return_data, new Date().getTime()]);
+		return DB.query('INSERT INTO payment (lookup_idx, lookup_type, pay_type, pay_amount, regdate) VALUES(?,?,?,?,?)',
+			[params.lookup_idx, params.lookup_type, params.pay_type, params.pay_amount, new Date().getTime()]);
+	};
+	
+	// 최초로 결제 생성
+	self.insertFirst = function(pay) {
+		return DB.query("INSERT INTO payment (lookup_idx, lookup_type, pay_type, is_cancel) VALUES(?,?,?,'Y')",
+			[pay.lookup_idx, pay.lookup_type, pay.pay_type]);
 	};
 
+	// 결제 성공시 업데이트
+	self.update = function (params) {
+		return DB.query('UPDATE payment SET lookup_idx=?, lookup_type=?, pay_type=?, pay_amount=?, code=?, ret_code=?, success_code=?, success_date=?, is_cancel=?, regdate=? WHERE idx = ?',
+			[params.lookup_idx, params.lookup_type, params.pay_type, params.pay_amount, params.code, params.ret_code, params.success_code, params.success_date, params.is_cancel, new Date().getTime(), params.idx ]);
+	};
+
+	// 결제 취소시 업데이트
 	self.cancelPay = function(pay){
-		return DB.query("UPDATE payment SET is_cancel = 'Y' WHERE idx = ?",
-			[pay.idx]);
+		return DB.query("UPDATE payment SET is_cancel = 'Y', cancel_date = ? WHERE idx = ?",
+			[new Date().getTime(), Number(pay.idx)]);
 	};
 
 	return self;

@@ -5,15 +5,19 @@
 
     <ion-content class="has-header">
         <ion-list class="background">
-            <ion-item class="square square-positive" style="height:130px" ng-click="xiso.dcSkip()">
+            <ion-item class="square square-positive dc_square" ng-click="xiso.dcSkip()">
                 <h4 style="padding:10px 0">바로 결제</h4>
                 <p>할인 없이 바로 결제 화면으로 넘어갑니다.</p>
             </ion-item>
-            <ion-item class="square square-balanced" style="height:130px" ng-click="xiso.dcCooper()">
+            <ion-item class="square square-balanced dc_square" ng-click="xiso.dcCooper()">
                 <h4 style="padding:10px 0">지정 할인</h4>
                 <p>지정된 업체 선택 화면으로 넘어가서 할인을 적용합니다.</p>
             </ion-item>
-            <ion-item class="square" style="height:130px" ng-click="xiso.dcSelf()">
+            <ion-item class="square square-royal dc_square" ng-click="xiso.dcDayCar()">
+                <h4 style="padding:10px 0">일차로 변경</h4>
+                <p>설정해둔 일차 요금으로 대체 할 수 있습니다.</p>
+            </ion-item>
+            <ion-item class="square dc_square" ng-click="xiso.dcSelf()">
                 <h4 style="padding:10px 0">임의 할인</h4>
                 <p>{{xiso.tempGarage.dc_money | currency:"":0}}원을 임의 할인을 적용합니다.</p>
             </ion-item>
@@ -21,7 +25,7 @@
         <div class="list">
             <label class="item item-input">
                 <span class="input-label">임의 할인 금액 입력 (원)</span>
-                <input type="number" placeholder="여기에 할인 금액을 입력하세요" ng-model="xiso.tempGarage.dc_money" style="font-size:20px">
+                <input type="number" placeholder="여기에 할인 금액을 입력하세요" ng-model="xiso.tempGarage.dc_money" style="font-size:20px" autofocus>
                 <span style="font-size:15px; padding-right:20px;">(임의 할인 버튼을 누를때만 적용됩니다)</span>
             </label>
             <div class="item item-divider" style="text-align: center;">

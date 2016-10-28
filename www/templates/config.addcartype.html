@@ -1,13 +1,17 @@
 <ion-modal-view class="background">
     <ion-header-bar class="bar-dark">
-        <h1 class="title" ng-show="!params.idx" style="text-align:center;">차종 추가</h1>
-        <h1 class="title" ng-show="params.idx">차종 수정</h1>
+        <h1 class="title" ng-show="!params.idx && params.is_daycar=='N'" style="text-align:center;">차종 추가</h1>
+        <h1 class="title" ng-show="params.idx && params.is_daycar=='N'">차종 수정</h1>
+        <h1 class="title" ng-show="!params.idx && params.is_daycar=='Y'">일차 추가</h1>
+        <h1 class="title" ng-show="params.idx && params.is_daycar=='Y'">일차 수정</h1>
     </ion-header-bar>
     <ion-content padding="true">
         <div class="list">
             <label class="item item-input">
-                <span class="input-label">차종 명</span>
-                <input type="text" placeholder="차종 명" ng-model="params.car_type_title">
+                <span class="input-label" ng-show="params.is_daycar=='N'">차종 명</span>
+                <span class="input-label" ng-show="params.is_daycar=='Y'">일차 명</span>
+                <input type="text" placeholder="차종 명" ng-model="params.car_type_title" ng-show="params.is_daycar=='N'">
+                <input type="text" placeholder="일차 명" ng-model="params.car_type_title" ng-show="params.is_daycar=='Y'">
             </label>
             <label class="item item-input">
                 <span class="input-label">최초 무료시간 (분)</span>
@@ -19,7 +23,7 @@
             </label>
             <label class="item item-input">
                 <span class="input-label">기본시간 (분)</span>
-                <input type="number" placeholder="기본시간 (분)" ng-model="params.basic_minute">
+                <input type="number" placeholder="기본시간 (분) (한시간 : 60, 12시간 : 720, 24시간 : 1440)" ng-model="params.basic_minute">
             </label>
             <label class="item item-input">
                 <span class="input-label">추가요금</span>

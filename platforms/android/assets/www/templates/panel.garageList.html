@@ -7,7 +7,8 @@
         <ion-list class="background">
             <ion-item class="square square-positive" ng-repeat="gar in xiso.garageList" ng-click="xiso.openGarageView(gar);">
                 <h4 style="padding:10px 0">{{gar.car_num}}</h4>
-                <h5>요금 : {{gar | calcu | currency : "" : 0}} 원</h5>
+                <h5 ng-show="gar.month_idx == 0">요금 : {{gar | calcu | currency : "" : 0}} 원</h5>
+                <h5 ng-show="gar.month_idx > 0">월차 차량</h5>
                 <p>차종 : {{gar.car_type_title}}</p>
                 <p>입차 : {{gar.start_date | date:'yyyy-MM-dd HH:mm'}}</p>
                 <p>{{gar.start_date | passTime}}</p>

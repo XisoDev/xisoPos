@@ -8,7 +8,7 @@
 				pulling-text="당겨서 새로 고침"
 				on-refresh="getGarageList()">
 		</ion-refresher>
-		<ion-item class="card grid_items button button-positive" ng-repeat="gar in garageList" ng-click="xiso.openGarageView(gar)">
+		<ion-item class="card grid_items button" ng-class="{'button-positive' : gar.month_idx == 0, 'button-energized' : gar.month_idx > 0}" ng-repeat="gar in garageList" ng-click="xiso.openGarageView(gar)">
 			<div ng-if="gar.month_idx > 0">
 				{{gar.car_type_title}} / 월차
 			</div>

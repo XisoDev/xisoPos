@@ -27,7 +27,7 @@
         </div>
     </div>
 
-    <ion-floating-button click="openAddMonth()" has-footer="false" button-color="#2AC9AA" icon="ion-plus" iconColor="#fff">
+    <ion-floating-button click="xiso.openAddMonth()" has-footer="false" button-color="#2AC9AA" icon="ion-plus" iconColor="#fff">
     </ion-floating-button>
 
     <ion-content class="has-header">
@@ -39,7 +39,7 @@
         </ion-refresher>
 
         <!--목록/만료목록-->
-        <ion-item class="row item item-dark ovc_item" ng-repeat="mon in monthList | filter:search:strict" ng-click="openEditMonth(mon)" ng-if="status!='calendar'">
+        <ion-item class="row item item-dark ovc_item" ng-repeat="mon in monthList | filter:search:strict" ng-click="xiso.openEditMonth(mon)" ng-if="status!='calendar'">
             <div class="col">{{mon.car_num}}</div>
             <div class="col">{{mon.start_date | date:'MM-dd HH:mm'}}</div>
             <div class="col">{{mon.end_date | date:'MM-dd HH:mm'}}</div>

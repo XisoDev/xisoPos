@@ -1,13 +1,17 @@
 <ion-modal-view  class="background">
     <ion-header-bar class="bar-dark">
-        <h1 class="title" style="text-align:center;">취소할 결제건을 선택하세요 - [ 차량번호 : {{xiso.garage.car_num}} ]</h1>
+        <h1 class="title" style="text-align:center;" ng-show="xiso.garage.car_num">취소할 결제건을 선택하세요 - [ 차량번호 : {{xiso.garage.car_num}} ]</h1>
+        <h1 class="title" style="text-align:center;" ng-show="xiso.month.car_num">취소할 월차 결제건을 선택하세요 - [ 차량번호 : {{xiso.month.car_num}} ]</h1>
+        <h1 class="title" style="text-align:center;" ng-show="!xiso.garage.car_num && !xiso.month.car_num">취소할 임의 결제건을 선택하세요</h1>
     </ion-header-bar>
 
     <ion-content class="has-header">
         <ion-list class="background">
-            <ion-item class="square" style="height:130px" ng-repeat="pay in xiso.payList" ng-click="xiso.procPayCancel(pay)">
+            <ion-item class="square" style="height:auto" ng-repeat="pay in xiso.payList" ng-click="xiso.procPayCancel(pay)">
                 <h4 style="padding:10px 0">{{pay.pay_amount | currency:"":0}}원</h4>
                 <h5>{{pay.pay_type == 'card' ? '카드' : '현금'}} 취소</h5>
+                <p>결제일시 : {{pay.regdate | date:'MM-dd HH:mm' }}</p>
+                <p ng-show="pay.success_code">승인번호 : {{pay.success_code}}</p>
             </ion-item>
         </ion-list>
     </ion-content>

@@ -6,7 +6,7 @@ xpos
             name: "shop_info",
             columns: [
                 {name: "shop_name", type: "TEXT NOT NULL"},
-                {name: "mobile", type: "TEXT NOT NULL"},
+                {name: "mobile", type: "TEXT"},
                 {name: "tel", type: "TEXT"},
                 {name: "fax", type: "TEXT"},
                 {name: "user_name", type: "TEXT"},
@@ -26,6 +26,7 @@ xpos
                 {name: "success_code", type: "TEXT"},
                 {name: "success_date", type: "TEXT"},
                 {name: "regdate", type: "INTEGER"},
+                {name: "cancel_date", type: "INTEGER"},
                 {name: "is_cancel", type: "TEXT NOT NULL DEFAULT 'N'"}
             ]
         },
@@ -92,7 +93,8 @@ xpos
                 {name: "minute_free", type: "INTEGER DEFAULT 0"},
                 {name: "amount_unit", type: "INTEGER DEFAULT 0"},
                 {name: "basic_amount", type: "INTEGER DEFAULT 0"},
-                {name: "basic_minute", type: "INTEGER DEFAULT 0"}
+                {name: "basic_minute", type: "INTEGER DEFAULT 0"},
+                {name: "is_daycar", type: "TEXT NOT NULL DEFAULT 'N'"}
             ]
         }
 

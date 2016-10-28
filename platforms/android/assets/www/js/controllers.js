@@ -1,12 +1,12 @@
 //-------------------
 // 패널
 //-------------------
-xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xisoService) {
+xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xisoService, $cordovaToast, Payment) {
 
     $scope.xiso = xisoService;
     $scope.xiso.init($scope);
 
-    $scope.doCard = function(is_cancel){
+    $scope.doCard = function(){
         $scope.data = {};
         //$scope.data.amount = 0;
         $ionicPopup.show({
@@ -17,20 +17,24 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xisoService)
                 text: '취소'
             }, {
                 text: '<b>결제</b>',
-                type: 'button-positive',
-                onTap: function(e) {
-                    return $scope.amount;
-                }
-            }, ]
+                type: 'button-positive'
+            }]
         }).then(function() {
             if($scope.data.amount > 0){
-                $scope.xiso.payCard($scope.data.amount,is_cancel,0);
+                $scope.xiso.payCard(0, 'temp', $scope.data.amount, 'temp');
+            }else{
+                $cordovaToast.showLongBottom('결제 금액을 정확히 입력해주세요.');
             }
         });
     };
+    
+    $scope.cancelCard = function(){
+        // 임의 결제 리스트 Modal을 띄운담에 골라서 취소
+        $scope.xiso.openPayCancel('temp');
+    };
 
     $scope.doPayCash = function(cash_type){
-        $scope.data = {}
+        $scope.data = {};
         $scope.data.cash_type = cash_type;
         $ionicPopup.show({
             template: ' 임의의 현금영수증을 발행합니다. <input type="number" ng-model="data.amount" autofocus="autofocus" style="color:#FFF;background:transparent;font-size:30px;text-align:center;border-bottom:1px solid #aaa;">',
@@ -40,20 +44,13 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xisoService)
                 text: '취소'
             }, {
                 text: '<b>결제</b>',
-                type: 'button-positive',
-                onTap: function(e) {
-                    return $scope.amount;
-                }
-            }, ]
+                type: 'button-positive'
+            }]
         }).then(function() {
             if($scope.data.amount > 0){
                 $scope.xiso.payCash($scope.data.amount, $scope.data.cash_type ,0);
             }
         });
-    };
-
-    $scope.doCash = function(){
-        $scope.xiso.openCash();
     };
 
     $scope.doConnect = function(){
@@ -303,7 +300,7 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xisoService)
 
         calendar:{
             titleFormat : 'YYYY 년 MMMM',
-            height: 700,
+            height: 735,
             header:{
                 left: 'title',
                 center: '',
@@ -374,195 +371,28 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xisoService)
     };
     /* End Of Calendar */
 
-    //월차 추가 Modal
-    $ionicModal.fromTemplateUrl('templates/month.addmonth.html', {
-        scope: $scope
-    }).then(function(modal) {
-        $scope.modalMonth = modal;
-    });
-    $scope.openAddMonth = function(){
-        $scope.params = {};
-        $scope.xiso.dates.start_date = new Date();
-        $scope.xiso.dates.end_date = new Date(Date.parse($scope.xiso.dates.start_date) + 30 * 1000 * 60 * 60 * 24);
-
-        $scope.modalMonth.show();
-    };
-    $scope.closeMonth = function(){
-        $scope.modalMonth.hide();
-    };
-
-    //월차 수정
-    $scope.openEditMonth = function(month){
-        $scope.params = angular.copy(month);
-        $scope.before_is_stop = month.is_stop;
-        $scope.xiso.dates.start_date = new Date($scope.params.start_date);
-        $scope.xiso.dates.end_date = new Date($scope.params.end_date);
-
-        $scope.modalMonth.show();
-    };
-
-    //월차 연장
-    $scope.openExtMonth = function(){
-        delete $scope.params.idx;
-        $scope.params.is_ext = true;
-
-        var end_date = $scope.params.end_date;
-        if(getStartDate(new Date(end_date)) < getStartDate(new Date())){
-            $scope.xiso.dates.start_date = new Date();
-            $scope.xiso.dates.end_date = new Date(Date.parse($scope.xiso.dates.start_date) + 30 * 1000 * 60 * 60 * 24);
-        }else{
-            $scope.xiso.dates.start_date = new Date(end_date + 1000 * 60 * 60 * 24);
-            $scope.xiso.dates.end_date = new Date(Date.parse($scope.xiso.dates.start_date) + 30 * 1000 * 60 * 60 * 24);
-        }
-    };
-    
-
-    //월차 결제 Modal
-    $ionicModal.fromTemplateUrl('templates/month.pay.html', {
-        scope: $scope
-    }).then(function(modal) {
-        $scope.modalMonthPay = modal;
-    });
-    $scope.openPayMonth = function(){
-        $scope.params.pay_money = $scope.params.amount - $scope.params.pay_amount;
-        $scope.modalMonthPay.show();
-        $scope.modalMonth.hide();
-    };
-    $scope.closePayMonth = function(){
-        $scope.modalMonthPay.hide();
-        $scope.params = {};
-        $state.go($state.current, {}, {reload: true});
-    };
-
-    //카드 결제
-    $scope.doCard = function(){
-        $ionicPopup.confirm({
-            title: '카드 결제',
-            template: $scope.params.pay_money.num_format() + '원을 카드 결제 하시겠습니까?'
-        }).then(function (res) {
-            if(res){
-                var params = {
-                    lookup_idx: $scope.params.idx,
-                    lookup_type: 'month',
-                    pay_type: 'card',
-                    pay_amount: $scope.params.pay_money,
-                    return_data: ''
-                };
-
-                // 먼저 저장하고?
-                Payment.insert(params).then(function(res2){
-                    console.log("insertId: " + res2.insertId);
-                    //결제 처리?
-
-                    //할인 금액에 변동이 있을 경우 update 후 출차
-
-                    //실패하면 update? delete?
-
-                    $scope.closePayMonth();
-                });
-
-
-            }
-        });
-    };
-    //현금 결제
-    $scope.doCash = function(){
-        $ionicPopup.confirm({
-            title: '현금 결제',
-            template: $scope.params.pay_money.num_format() + '원을 현금 결제 하시겠습니까?'
-        }).then(function (res) {
-            if(res){
-                var params = {
-                    lookup_idx: $scope.params.idx,
-                    lookup_type: 'month',
-                    pay_type: 'cash',
-                    pay_amount: $scope.params.pay_money,
-                    return_data: ''
-                };
-
-                // 먼저 저장하고?
-                Payment.insert(params).then(function(res2){
-                    console.log("insertId: " + res2.insertId);
-                    //결제 처리?
-
-                    //할인 금액에 변동이 있을 경우 update 후 출차
-
-                    //실패하면 update? delete?
-
-                    $scope.closePayMonth();
-                });
-            }
-        });
-    };
-
-
     //달력에서 빈칸을 클릭했을때 등록화면으로
     $scope.openAddMonthCal = function(start_date){
-        $scope.params = {};
+        $scope.xiso.month = {};
         $scope.xiso.dates.start_date = new Date(start_date);
         $scope.xiso.dates.end_date = new Date(Date.parse($scope.xiso.dates.start_date) + 30 * 1000 * 60 * 60 * 24);
 
-        $scope.modalMonth.show();
+        $scope.xiso.mdMonth.show();
     };
     //달력에서 일정을 클릭했을때 수정화면으로
     $scope.openEditMonthCal = function(idx){
         Month.getByIdx(idx).then(function(result){
             if(result) {
-                $scope.params = angular.copy(result);
-                $scope.xiso.dates.start_date = new Date($scope.params.start_date);
-                $scope.xiso.dates.end_date = new Date($scope.params.end_date);
+                $scope.xiso.month = angular.copy(result);
+                $scope.xiso.dates.start_date = new Date($scope.xiso.month.start_date);
+                $scope.xiso.dates.end_date = new Date($scope.xiso.month.end_date);
 
-                $scope.modalMonth.show();
+                $scope.xiso.mdMonth.show();
             }
         });
     };
 
-    //월차 등록, 수정
-    $scope.insertMonth = function(){
-
-        $scope.params.start_date = getStartDate($scope.xiso.dates.start_date);    //시작일 00:00:00
-        $scope.params.end_date = getEndDate($scope.xiso.dates.end_date);          //종료일 23:59:59
-
-        if(!$scope.params.car_num) return $ionicPopup.alert({title: '알림',template: '차량번호를 입력하지 않았습니다.'});
-        if(!$scope.params.car_name) return $ionicPopup.alert({title: '알림',template: '차종을 입력하지 않았습니다.'});
-        if(!$scope.params.car_type_title) return $ionicPopup.alert({title: '알림',template: '구분을 입력하지 않았습니다.'});
-        if(!$scope.params.start_date) return $ionicPopup.alert({title: '알림',template: '시작날짜를 입력하지 않았습니다.'});
-        if(!$scope.params.end_date) return $ionicPopup.alert({title: '알림',template: '종료날짜를 입력하지 않았습니다.'});
-        if($scope.params.start_date >= $scope.params.end_date)
-            return $ionicPopup.alert({title: '알림',template: '시작날짜가 종료날짜보다 크거나 같을 수 없습니다.'});
-        if(!$scope.params.amount) return $ionicPopup.alert({title: '알림',template: '월차금액을 입력하지 않았습니다.'});
-        if(!$scope.params.user_name) return $ionicPopup.alert({title: '알림',template: '차주명을 입력하지 않았습니다.'});
-        if(!$scope.params.mobile) return $ionicPopup.alert({title: '알림',template: '연락처를 입력하지 않았습니다.'});
-
-        if(!$scope.params.idx) {
-            Month.insert($scope.params).then(function (res) {
-                console.log("insertId: " + res.insertId);
-                $scope.params.idx = res.insertId;
-                $state.go($state.current, {}, {reload: true});
-                $scope.closeMonth();
-                if(!$scope.params.is_ext){
-                    $cordovaToast.showShortBottom("차량번호 ["+ $scope.params.car_num +"] 새로운 월차가 추가되었습니다.");
-                }else{
-                    $cordovaToast.showShortBottom("차량번호 ["+ $scope.params.car_num +"] 연장된 월차가 추가되었습니다.");
-                }
-                $scope.openPayMonth();
-            }, function (err) {
-                console.log(err);
-            });
-        }else{
-            if($scope.before_is_stop=='N' && $scope.params.is_stop=='Y'){
-                $scope.params.stop_date = new Date().getTime();
-            }
-            Month.update($scope.params).then(function(res){
-                $state.go($state.current, {}, {reload: true});
-                $scope.closeMonth();
-                $cordovaToast.showShortBottom("차량번호 ["+ $scope.params.car_num +"] 월차가 수정되었습니다.");
-                $state.go($state.current, {}, {reload: true});
-            },function(err){
-                console.log(err);
-            });
-        }
-    };
+    
 
 })
 
@@ -768,7 +598,7 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xisoService)
 
         calendar:{
             titleFormat : 'YYYY 년 MMMM',
-            height: 750,
+            height: 800,
             header:{
                 left: 'title',
                 center: '',
@@ -792,12 +622,6 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xisoService)
 
     $scope.initConfigParams = function(){
         $scope.defaultParams = {};
-        $scope.defaultParams.shop_name = "";
-        $scope.defaultParams.mobile = "";
-        $scope.defaultParams.tel = "";
-        $scope.defaultParams.fax = "";
-        $scope.defaultParams.user_name = "";
-        $scope.defaultParams.address = "";
     };
     $scope.initConfigDefault = function(){
         $scope.initConfigParams();
@@ -821,6 +645,15 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xisoService)
 
         console.log('Car Type loaded!!');
     };
+    $scope.initDayCar = function(){
+        $scope.initCartypeParams();
+        
+        CarType.allDayCar().then(function(result){
+            if(result.length > 0) $scope.carTypeList = result;
+        });
+
+        console.log('Day Car loaded!!');
+    };
 
     $scope.shouldShowDelete = false;
     $scope.showDelete = function(){
@@ -836,8 +669,9 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xisoService)
     }).then(function(modal) {
         $scope.addCartypeWindow = modal;
     });
-    $scope.openCartype = function() {
+    $scope.openCartype = function(is_daycar) {
         $scope.params = {};
+        $scope.params.is_daycar = is_daycar;
         $scope.addCartypeWindow.show();
     };
     $scope.closeCartype = function() {
@@ -849,7 +683,7 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xisoService)
         if(!$scope.defaultParams.shop_name) return $ionicPopup.alert({title: '알림',template: '주차장명을 입력하지 않았습니다.'});
         if(!$scope.defaultParams.mobile) return $ionicPopup.alert({title: '알림',template: '휴대전화를 입력하지 않았습니다.'});
         if(!$scope.defaultParams.tel) return $ionicPopup.alert({title: '알림',template: '유선전화를 입력하지 않았습니다.'});
-        if(!$scope.defaultParams.fax) return $ionicPopup.alert({title: '알림',template: 'FAX를 입력하지 않았습니다.'});
+        // if(!$scope.defaultParams.fax) return $ionicPopup.alert({title: '알림',template: 'FAX를 입력하지 않았습니다.'});
         if(!$scope.defaultParams.user_name) return $ionicPopup.alert({title: '알림',template: '대표자 명을 입력하지 않았습니다.'});
         if(!$scope.defaultParams.address) return $ionicPopup.alert({title: '알림',template: '주소를 입력하지 않았습니다.'});
 

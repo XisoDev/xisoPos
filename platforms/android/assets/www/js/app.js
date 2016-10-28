@@ -44,7 +44,7 @@ var xpos = angular.module('xisoPos', ['ionic', 'ngCordova','ionicMultipleViews',
 		    });
 		  };
 
-		  if ($ionicHistory.backView().stateName ==  'mainLayout.tabs.current'){
+		  if ($ionicHistory.backView() && $ionicHistory.backView().stateName ==  'mainLayout.tabs.current'){
 			  $rootScope.exitApp();
 		  } else {
 			$ionicHistory.goBack();
@@ -164,6 +164,15 @@ var xpos = angular.module('xisoPos', ['ionic', 'ngCordova','ionicMultipleViews',
 				views: {
 					'tab-config': {
 						templateUrl: 'templates/config.cartype.html',
+						controller: 'configCtrl'
+					}
+				}
+			})
+			.state('mainLayout.tabs.configDayCar', {
+				url: '/configDayCar',
+				views: {
+					'tab-config': {
+						templateUrl: 'templates/config.daycar.html',
 						controller: 'configCtrl'
 					}
 				}
