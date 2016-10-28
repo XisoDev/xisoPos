@@ -528,6 +528,7 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xisoService,
     };
 
     $scope.makeEvents = function(dt){
+
         if(!dt) dt = new Date();
         var tmpParams = getStartEndDate(dt);
         var params = {};
@@ -535,10 +536,10 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xisoService,
         params.end_date = new Date(tmpParams.end_date).getTime();
 
         Garage.allForCal(params).then(function(result){
-            if(result.length > 0){
+            if(result){
                 Garage.getInCount(params).then(function(result2){
                     // console.log(result2);
-                    if(result2.length > 0){
+                    if(result2){
                         for(var key in result2){
                             result[key].inCnt = result2[key].inCnt;
                         }
