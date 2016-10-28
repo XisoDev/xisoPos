@@ -454,10 +454,15 @@ xpos
     // 할인 Modal - 지정 할인 버튼
     self.dcCooper = function(){
         Cooper.current().then(function(result){
-            if(result.length > 0) self.cooperList = result;
+            if(result.length > 0) {
+                self.cooperList = result;
+
+                self.mdCooperList.show();
+                self.mdDcInput.hide();
+            }else{
+                $cordovaToast.showShortBottom('지정 할인 업체가 등록되어 있지 않습니다.');
+            }
         });
-        self.mdCooperList.show();
-        self.mdDcInput.hide();
     };
 
     // 할인 Modal - 임의 할인 버튼
@@ -771,9 +776,12 @@ xpos
 
     // 상세정보 Modal - 출차 취소 버튼
     self.cancelOutCar = function(){
-        Garage.cancelOutCar(self.garage).then(function(result){
+        var params = angular.copy(self.garage);
+        Garage.cancelOutCar(params).then(function(result){
             $cordovaToast.showShortBottom('차량번호 [ '+ self.garage.car_num +' ]의 출차취소가 완료 되었습니다');
-            
+
+            self.garage = {};
+
             reload();
             self.mdGarageView.hide();
         },function(err){console.log(err);});
