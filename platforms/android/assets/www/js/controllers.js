@@ -68,12 +68,12 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xisoService,
             $scope.initCurrent();
         }
     });
+
     setTimeout(function(){
         $scope.initCurrent();
-    },1100);
-
-    $scope.xiso = xisoService;
-    $scope.xiso.init($scope);
+        $scope.xiso = xisoService;
+        $scope.xiso.init($scope);
+    },700);
 
     //입차목록 초기화
     $scope.initCurrent = function(){
@@ -130,10 +130,9 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xisoService,
 
     setTimeout(function(){
         $scope.initHistory();
-    },1100);
-
-    $scope.xiso = xisoService;
-    $scope.xiso.init($scope);
+        $scope.xiso = xisoService;
+        $scope.xiso.init($scope);
+    },700);
 
     $scope.initHistory = function(){
         $scope.status = 'all';
@@ -230,14 +229,13 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xisoService,
         }
     });
 
-    $scope.xiso = xisoService;
-    $scope.xiso.dates = {};
-
     $scope.eventSources = [];
 
     setTimeout(function(){
         $scope.initMonth();
-    },1100);
+        $scope.xiso = xisoService;
+        $scope.xiso.dates = {};
+    },700);
 
     $scope.initMonth = function(){
         $scope.status = 'all';
@@ -406,12 +404,11 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xisoService,
         }
     });
 
-    $scope.xiso = xisoService;
-    $scope.xiso.dates = {};
-
     setTimeout(function(){
         $scope.initCooper();
-    },1100);
+        $scope.xiso = xisoService;
+        $scope.xiso.dates = {};
+    },700);
 
     $scope.initCooper = function(){
         $scope.status = 'cooper';
@@ -524,13 +521,14 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xisoService,
 
     setTimeout(function(){
         $scope.initCalcu();
-    },1100);
+    },700);
 
     $scope.initCalcu = function(){
         $scope.makeEvents();
     };
 
     $scope.makeEvents = function(dt){
+
         if(!dt) dt = new Date();
         var tmpParams = getStartEndDate(dt);
         var params = {};
@@ -618,7 +616,7 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xisoService,
 //-------------------
 // 설정
 //-------------------
-.controller('configCtrl', function ($scope, $ionicModal, ShopInfo, CarType,$ionicPopup,$cordovaToast) {
+.controller('configCtrl', function ($scope, $ionicModal, ShopInfo, CarType,$ionicPopup,$cordovaToast, DB, $http) {
 
     $scope.initConfigParams = function(){
         $scope.defaultParams = {};
@@ -675,7 +673,11 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xisoService,
         $scope.addCartypeWindow.show();
     };
     $scope.closeCartype = function() {
-        $scope.initCartype();
+        if($scope.params.is_daycar == 'N') {
+            $scope.initCartype();
+        }else{
+            $scope.initDayCar();
+        }
         $scope.addCartypeWindow.hide();
     };
 
@@ -714,7 +716,11 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xisoService,
             console.log("insertId: " + res.insertId);
 
             $scope.closeCartype();
-            $scope.initCartype();
+            if($scope.params.is_daycar == 'N') {
+                $scope.initCartype();
+            }else{
+                $scope.initDayCar();
+            }
         }, function (err) {
             console.error(err);
         });
@@ -723,8 +729,6 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xisoService,
     $scope.openUpdateCartype = function(cartype){
         $scope.openCartype();
         $scope.params = cartype;
-
-
     };
 
     $scope.updateCartype = function(){
@@ -760,4 +764,46 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xisoService,
             }
         });
     };
+/*
+    // DB 백업
+    $scope.backup = function(){
+        var successFn = function(json, count){
+            console.log("Exported JSON: "+json);
+            console.log("Exported JSON contains equivalent of "+count+" SQL statements");
+
+            $http({
+                method: 'POST',
+                url: 'http://xpos.xiso.co.kr/proc.php?mClass=hwajin&act=procInsert',
+                data: {
+                    pos_json : json
+                },
+                headers: {
+                    'Content-Type': 'application/json; charset=utf-8',
+                    'Accept': 'application/json'
+                }
+            })
+            .success(function (responsive, status, headers, config) {
+                console.log('success');
+                console.log(responsive);
+            })
+            .error(function (data, status, headers, config) {
+                console.log('error');
+                console.log(data);
+                console.log(status);
+                console.log(headers);
+                $scope.print_r(config.data.pos_json.data.inserts);
+            });
+
+        };
+        cordova.plugins.sqlitePorter.exportDbToJson(DB.db, {
+            successFn: successFn
+        });
+    };
+
+    // DB 복구
+    $scope.restore = function(){
+
+    };
+*/
+
 });

@@ -36,6 +36,9 @@
         },
         "fr.drangies.cordova.serial": {
             "PACKAGE_NAME": "com.ionicframework.xisopos928706"
+        },
+        "uk.co.workingedge.cordova.plugin.sqliteporter": {
+            "PACKAGE_NAME": "com.ionicframework.xisopos928706"
         }
     },
     "dependent_plugins": {}

@@ -176,6 +176,15 @@ var xpos = angular.module('xisoPos', ['ionic', 'ngCordova','ionicMultipleViews',
 						controller: 'configCtrl'
 					}
 				}
+			})
+			.state('mainLayout.tabs.configDatabase', {
+				url: '/configDatabase',
+				views: {
+					'tab-config': {
+						templateUrl: 'templates/config.db.html',
+						controller: 'configCtrl'
+					}
+				}
 			});
 
 		$urlRouterProvider.otherwise('/mainLayout/tabs/current');

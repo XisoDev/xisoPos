@@ -19,7 +19,7 @@ var xpos = angular.module('xisoPos', ['ionic', 'ngCordova','ionicMultipleViews',
 				// xSerial.init();
 				xisoService.initX();
 				$ionicLoading.hide();
-			},1000);
+			},500);
 		});
 
 		//back button action
@@ -176,7 +176,7 @@ var xpos = angular.module('xisoPos', ['ionic', 'ngCordova','ionicMultipleViews',
 						controller: 'configCtrl'
 					}
 				}
-			});
+			});z
 
 		$urlRouterProvider.otherwise('/mainLayout/tabs/current');
 	});

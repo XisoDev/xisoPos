@@ -73,7 +73,7 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xisoService,
         $scope.initCurrent();
         $scope.xiso = xisoService;
         $scope.xiso.init($scope);
-    },700);
+    },1000);
 
     //입차목록 초기화
     $scope.initCurrent = function(){
@@ -129,10 +129,10 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xisoService,
     });
 
     setTimeout(function(){
-        $scope.initHistory();
         $scope.xiso = xisoService;
         $scope.xiso.init($scope);
-    },700);
+        $scope.initHistory();
+    },1000);
 
     $scope.initHistory = function(){
         $scope.status = 'all';
@@ -235,7 +235,7 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xisoService,
         $scope.initMonth();
         $scope.xiso = xisoService;
         $scope.xiso.dates = {};
-    },700);
+    },1000);
 
     $scope.initMonth = function(){
         $scope.status = 'all';
@@ -408,7 +408,7 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xisoService,
         $scope.initCooper();
         $scope.xiso = xisoService;
         $scope.xiso.dates = {};
-    },700);
+    },1000);
 
     $scope.initCooper = function(){
         $scope.status = 'cooper';
@@ -521,7 +521,7 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xisoService,
 
     setTimeout(function(){
         $scope.initCalcu();
-    },700);
+    },1000);
 
     $scope.initCalcu = function(){
         $scope.makeEvents();
@@ -616,7 +616,7 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xisoService,
 //-------------------
 // 설정
 //-------------------
-.controller('configCtrl', function ($scope, $ionicModal, ShopInfo, CarType,$ionicPopup,$cordovaToast) {
+.controller('configCtrl', function ($scope, $ionicModal, ShopInfo, CarType,$ionicPopup,$cordovaToast, DB, $http) {
 
     $scope.initConfigParams = function(){
         $scope.defaultParams = {};
@@ -764,4 +764,46 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xisoService,
             }
         });
     };
+/*
+    // DB 백업
+    $scope.backup = function(){
+        var successFn = function(json, count){
+            console.log("Exported JSON: "+json);
+            console.log("Exported JSON contains equivalent of "+count+" SQL statements");
+
+            $http({
+                method: 'POST',
+                url: 'http://xpos.xiso.co.kr/proc.php?mClass=hwajin&act=procInsert',
+                data: {
+                    pos_json : json
+                },
+                headers: {
+                    'Content-Type': 'application/json; charset=utf-8',
+                    'Accept': 'application/json'
+                }
+            })
+            .success(function (responsive, status, headers, config) {
+                console.log('success');
+                console.log(responsive);
+            })
+            .error(function (data, status, headers, config) {
+                console.log('error');
+                console.log(data);
+                console.log(status);
+                console.log(headers);
+                $scope.print_r(config.data.pos_json.data.inserts);
+            });
+
+        };
+        cordova.plugins.sqlitePorter.exportDbToJson(DB.db, {
+            successFn: successFn
+        });
+    };
+
+    // DB 복구
+    $scope.restore = function(){
+
+    };
+*/
+
 });

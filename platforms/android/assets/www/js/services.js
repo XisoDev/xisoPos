@@ -283,6 +283,11 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 		return DB.query('INSERT INTO garage (start_date,car_num,car_type_title,minute_unit,minute_free,amount_unit,basic_amount,basic_minute,month_idx,cooper_idx,discount_cooper,discount_self) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)',
 			[params.start_date, params.car_num, params.car_type_title, params.minute_unit, params.minute_free, params.amount_unit, params.basic_amount, params.basic_minute, params.month_idx, params.cooper_idx, params.discount_cooper, params.discount_self]);
 	};
+	
+	self.updateDayCar = function(garage) {
+		return DB.query("UPDATE garage SET car_type_title=?, minute_unit=?, minute_free=?, amount_unit=?, basic_amount=?, basic_minute=? WHERE idx = ?",
+			[garage.car_type_title, garage.minute_unit, garage.minute_free, garage.amount_unit, garage.basic_amount, garage.basic_minute, garage.idx]);
+	};
 
 	return self;
 })

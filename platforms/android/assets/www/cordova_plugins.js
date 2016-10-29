@@ -69,6 +69,14 @@ module.exports = [
         "clobbers": [
             "window.serial"
         ]
+    },
+    {
+        "id": "uk.co.workingedge.cordova.plugin.sqliteporter.sqlitePorter",
+        "file": "plugins/uk.co.workingedge.cordova.plugin.sqliteporter/www/sqlitePorter.js",
+        "pluginId": "uk.co.workingedge.cordova.plugin.sqliteporter",
+        "clobbers": [
+            "cordova.plugins.sqlitePorter"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -83,7 +91,8 @@ module.exports.metadata =
     "cordova-plugin-x-toast": "2.5.2",
     "ionic-plugin-keyboard": "2.2.1",
     "cordova-sqlite-storage": "1.4.8",
-    "fr.drangies.cordova.serial": "0.0.7"
+    "fr.drangies.cordova.serial": "0.0.7",
+    "uk.co.workingedge.cordova.plugin.sqliteporter": "0.1.1"
 };
 // BOTTOM OF METADATA
 });

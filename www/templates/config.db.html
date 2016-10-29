@@ -1,0 +1,21 @@
+<ion-view title="데이터베이스 관리" ng-init="">
+    <ion-nav-bar class="bar-calm">
+        <ion-nav-back-button>
+        </ion-nav-back-button>
+    </ion-nav-bar>
+    <ion-content class="has-header">
+        <ion-list class="background">
+            <ion-item class="square square-positive" ng-click="backup()">
+                <h4>데이터 베이스 백업하기</h4>
+                <p>현재의 데이터베이스를 서버에 저장합니다.</p>
+            </ion-item>
+            <ion-item class="square" ng-click="restore()">
+                <h4>데이터 베이스 복구하기</h4>
+                <p>마지막으로 서버에 저장된 데이터베이스로 복구합니다.</p>
+            </ion-item>
+            <ion-item>
+            db = {{db}}
+            </ion-item>
+        </ion-list>
+    </ion-content>
+</ion-view>
