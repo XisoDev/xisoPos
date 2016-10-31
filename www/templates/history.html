@@ -38,7 +38,7 @@
                 on-refresh="refresh()" style="top:0px;">
         </ion-refresher>
 
-        <div class="row item item-dark ovc_item" ng-repeat="gar in garageList | filter:search:strict" ng-click="xiso.openGarageView(gar)">
+        <div class="row item item-dark ovc_item" ng-repeat="gar in xiso.vHistoryList | filter:search:strict" ng-click="xiso.openGarageView(gar)">
             <div class="col">{{gar.car_num}}</div>
             <div class="col">{{gar.start_date | date:'MM-dd HH:mm'}}</div>
             <div class="col">{{gar.end_date | date:'MM-dd HH:mm'}}</div>
@@ -77,7 +77,7 @@
         <ion-infinite-scroll
                 on-infinite="loadMore()"
                 distance="1%"
-                ng-if="moredata">
+                ng-if="xiso.moredata">
         </ion-infinite-scroll>
     </ion-content>
 </ion-view>

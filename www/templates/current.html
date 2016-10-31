@@ -6,9 +6,9 @@
 	<ion-content class="has-header">
 		<ion-refresher
 				pulling-text="당겨서 새로 고침"
-				on-refresh="getGarageList()">
+				on-refresh="refresh()">
 		</ion-refresher>
-		<ion-item class="card grid_items button" ng-class="{'button-positive' : gar.month_idx == 0, 'button-energized' : gar.month_idx > 0}" ng-repeat="gar in garageList" ng-click="xiso.openGarageView(gar)">
+		<ion-item class="card grid_items button" ng-class="{'button-positive' : gar.month_idx == 0, 'button-energized' : gar.month_idx > 0}" ng-repeat="gar in xiso.vGarageList" ng-click="xiso.openGarageView(gar)">
 			<div ng-if="gar.month_idx > 0">
 				{{gar.car_type_title}} / 월차
 			</div>
@@ -25,7 +25,7 @@
 		<ion-infinite-scroll
 				on-infinite="loadMore()"
 				distance="1%"
-				ng-if="moredata">
+				ng-if="xiso.moredata">
 		</ion-infinite-scroll>
 	</ion-content>
 </ion-view>

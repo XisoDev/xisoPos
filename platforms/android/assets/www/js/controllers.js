@@ -65,56 +65,61 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xisoService,
 .controller('currentCtrl', function ($scope, $state, $stateParams, Garage, xisoService) {
     $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
         if(toState.name == 'mainLayout.tabs.current'){
+            console.log('state changed - current');
             $scope.initCurrent();
         }
     });
 
-    setTimeout(function(){
+    setTimeout(function () {
+        console.log('current init');
         $scope.initCurrent();
-        $scope.xiso = xisoService;
-        $scope.xiso.init($scope);
-    },700);
+    }, 2000);
 
     //입차목록 초기화
     $scope.initCurrent = function(){
-        $scope.offset = 0;
-        $scope.moredata = false;
-        $scope.getGarageList(false);
+        $scope.xiso = xisoService;
+        $scope.xiso.init($scope);
+
+        console.log('current init func');
+        $scope.xiso.offset = 0;
+        $scope.xiso.moredata = false;
+        // $scope.getGarageList(false);
+        $scope.xiso.getGarageList(false, $scope);
     };
     
     //입차목록 리스트 불러오기
-    $scope.getGarageList = function(is_load_more){
-        var limit = 100;
-
-        Garage.allForCurrent(limit, $scope.offset).then(function(result){
-            if(result.length > 0) {
-                if(!is_load_more) {
-                    $scope.garageList = result;
-                }else{
-                    for(var key in result) {
-                        $scope.garageList.push(result[key]);
-                    }
-                }
-                $scope.offset += limit;
-                $scope.moredata = true;
-            }else{
-                $scope.moredata = false;    // 더이상 추가로드 할게 없음
-            }
-
-            $scope.$broadcast('scroll.refreshComplete');
-            $scope.$broadcast('scroll.infiniteScrollComplete');
-        });
-    };
+    // $scope.getGarageList = function(is_load_more){
+    //     var limit = 100;
+    //
+    //     Garage.allForCurrent(limit, $scope.offset).then(function(result){
+    //         if(result.length > 0) {
+    //             if(!is_load_more) {
+    //                 $scope.garageList = result;
+    //             }else{
+    //                 for(var key in result) {
+    //                     $scope.garageList.push(result[key]);
+    //                 }
+    //             }
+    //             $scope.offset += limit;
+    //             $scope.moredata = true;
+    //         }else{
+    //             $scope.moredata = false;    // 더이상 추가로드 할게 없음
+    //         }
+    //
+    //         $scope.$broadcast('scroll.refreshComplete');
+    //         $scope.$broadcast('scroll.infiniteScrollComplete');
+    //     });
+    // };
 
     //당겨서 새로고침
     $scope.refresh = function(){
-        $scope.offset = 0;
-        $scope.moredata = false;
-        $scope.getGarageList(false);
+        $scope.xiso.offset = 0;
+        $scope.xiso.moredata = false;
+        $scope.xiso.getGarageList(false, $scope);
     };
     //스크롤 내릴시 Load More
     $scope.loadMore = function(){
-        $scope.getGarageList(true);
+        $scope.xiso.getGarageList(true, $scope);
     };
 })
 
@@ -124,22 +129,26 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xisoService,
 .controller('historyCtrl', function ($scope, $state, $stateParams, Garage, xisoService) {
     $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
         if(toState.name == 'mainLayout.tabs.history'){
+            console.log('state changed - history');
             $scope.initHistory();
         }
     });
 
     setTimeout(function(){
+        console.log('history init');
         $scope.initHistory();
-        $scope.xiso = xisoService;
-        $scope.xiso.init($scope);
-    },700);
+    },1000);
 
     $scope.initHistory = function(){
+        $scope.xiso = xisoService;
+        $scope.xiso.init($scope);
+
+        console.log('history init func');
         $scope.status = 'all';
         $scope.search = {};
-        $scope.offset = 0;
-        $scope.moredata = false; //추가로드 여부
-        $scope.getGarageList(false);
+        $scope.xiso.offset = 0;
+        $scope.xiso.moredata = false; //추가로드 여부
+        $scope.xiso.getHistoryList(false, $scope);
     };
 
     // 탭 변경
@@ -168,53 +177,53 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xisoService,
     };
 
     //입출차 목록 불러오기
-    $scope.getGarageList = function(is_load_more){
-        var limit = 100;
-
-        Garage.allForHistory(limit, $scope.offset).then(function(result){
-            if(result.length > 0) {
-                for (var key in result) {
-                    if (result[key].month_idx > 0) {  //월차차량은 내부적으로 결제됨으로 저장(월차로 표시)
-                        result[key].is_paid = 'Y';
-                    } else if (result[key].pay_amount < (result[key].total_amount - result[key].discount_cooper - result[key].discount_self)) {
-                        //결제 금액 < (총 요금 - 지정주차할인 - 셀프할인)
-                        result[key].is_paid = 'N';
-                    } else if (!result[key].end_date) {
-                        //출차 하기 전엔 결제를 할수 없으므로
-                        result[key].is_paid = 'N';
-                    } else {
-                        result[key].is_paid = 'Y';
-                    }
-                }
-
-                if(!is_load_more) {
-                    //추가 로드가 아닐때
-                    $scope.garageList = result;
-                }else{
-                    //추가 로드일때
-                    for(var key in result) {
-                        $scope.garageList.push(result[key]);    // 기존 배열에 추가
-                    }
-                }
-                $scope.offset += limit;
-                $scope.moredata = true;
-            }else{
-                $scope.moredata = false;    // 더이상 추가로드 할게 없음
-            }
-            $scope.$broadcast('scroll.refreshComplete');
-            $scope.$broadcast('scroll.infiniteScrollComplete');
-        });
-    };
+    // $scope.getHistoryList = function(is_load_more){
+    //     var limit = 100;
+    //
+    //     Garage.allForHistory(limit, $scope.offset).then(function(result){
+    //         if(result.length > 0) {
+    //             for (var key in result) {
+    //                 if (result[key].month_idx > 0) {  //월차차량은 내부적으로 결제됨으로 저장(월차로 표시)
+    //                     result[key].is_paid = 'Y';
+    //                 } else if (result[key].pay_amount < (result[key].total_amount - result[key].discount_cooper - result[key].discount_self)) {
+    //                     //결제 금액 < (총 요금 - 지정주차할인 - 셀프할인)
+    //                     result[key].is_paid = 'N';
+    //                 } else if (!result[key].end_date) {
+    //                     //출차 하기 전엔 결제를 할수 없으므로
+    //                     result[key].is_paid = 'N';
+    //                 } else {
+    //                     result[key].is_paid = 'Y';
+    //                 }
+    //             }
+    //
+    //             if(!is_load_more) {
+    //                 //추가 로드가 아닐때
+    //                 $scope.garageList = result;
+    //             }else{
+    //                 //추가 로드일때
+    //                 for(var key in result) {
+    //                     $scope.garageList.push(result[key]);    // 기존 배열에 추가
+    //                 }
+    //             }
+    //             $scope.offset += limit;
+    //             $scope.moredata = true;
+    //         }else{
+    //             $scope.moredata = false;    // 더이상 추가로드 할게 없음
+    //         }
+    //         $scope.$broadcast('scroll.refreshComplete');
+    //         $scope.$broadcast('scroll.infiniteScrollComplete');
+    //     });
+    // };
 
     //당겨서 새로고침
     $scope.refresh = function(){
-        $scope.offset = 0;
-        $scope.moredata = false;
-        $scope.getGarageList(false);
+        $scope.xiso.offset = 0;
+        $scope.xiso.moredata = false;
+        $scope.xiso.getHistoryList(false, $scope);
     };
     //스크롤 내릴시 Load More
     $scope.loadMore = function(){
-        $scope.getGarageList(true);
+        $scope.xiso.getHistoryList(true, $scope);
     };
 
 })
@@ -225,24 +234,25 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xisoService,
 .controller('monthCtrl', function ($scope, $state,$stateParams,$ionicModal,$ionicPopup, Month, $compile, uiCalendarConfig, xisoService, Payment, $cordovaToast) {
     $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
         if(toState.name == 'mainLayout.tabs.month'){
+            console.log('state changed - month');
             $scope.initMonth();
         }
     });
-
-    $scope.eventSources = [];
-
+    
     setTimeout(function(){
+        $scope.eventSources = [];
         $scope.initMonth();
-        $scope.xiso = xisoService;
-        $scope.xiso.dates = {};
-    },700);
+    },1000);
 
     $scope.initMonth = function(){
+        $scope.xiso = xisoService;
+        $scope.xiso.dates = {};
+        
         $scope.status = 'all';
         $scope.search = {};
         $scope.search.is_expired = 'N';
 
-        $scope.getMonthList();
+        $scope.xiso.getMonthList(false, $scope);
     };
 
     $scope.changeStatus = function(stat){
@@ -263,26 +273,37 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xisoService,
         }
     };
 
-    $scope.getMonthList = function(){
-        Month.all().then(function(result){
-            if(result.length > 0) {
-                var msec = new Date().getTime();  // 현재 시간
-                for(var key in result){
-                    // 만료 설정
-                    if(msec > result[key].end_date || result[key].is_stop == 'Y') {
-                        result[key].is_expired = 'Y';
-                    }else{
-                        if(msec < result[key].start_date) {
-                            result[key].is_expired = 'W';
-                        }else{
-                            result[key].is_expired = 'N';
-                        }
-                    }
-                }
-                $scope.monthList = result;
-            }
-        });
+    //당겨서 새로고침
+    $scope.refresh = function(){
+        $scope.xiso.offset = 0;
+        $scope.xiso.moredata = false;
+        $scope.xiso.getMonthList(false, $scope);
     };
+    //스크롤 내릴시 Load More
+    $scope.loadMore = function(){
+        $scope.xiso.getMonthList(true, $scope);
+    };
+
+    // $scope.getMonthList = function(){
+    //     Month.all().then(function(result){
+    //         if(result.length > 0) {
+    //             var msec = new Date().getTime();  // 현재 시간
+    //             for(var key in result){
+    //                 // 만료 설정
+    //                 if(msec > result[key].end_date || result[key].is_stop == 'Y') {
+    //                     result[key].is_expired = 'Y';
+    //                 }else{
+    //                     if(msec < result[key].start_date) {
+    //                         result[key].is_expired = 'W';
+    //                     }else{
+    //                         result[key].is_expired = 'N';
+    //                     }
+    //                 }
+    //             }
+    //             $scope.monthList = result;
+    //         }
+    //     });
+    // };
 
     /* Start Of Calendar */
     //달력의 등록된 일정클릭
@@ -405,10 +426,10 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xisoService,
     });
 
     setTimeout(function(){
-        $scope.initCooper();
         $scope.xiso = xisoService;
         $scope.xiso.dates = {};
-    },700);
+        $scope.initCooper();
+    },1000);
 
     $scope.initCooper = function(){
         $scope.status = 'cooper';
@@ -521,7 +542,7 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xisoService,
 
     setTimeout(function(){
         $scope.initCalcu();
-    },700);
+    },1000);
 
     $scope.initCalcu = function(){
         $scope.makeEvents();
@@ -616,7 +637,7 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xisoService,
 //-------------------
 // 설정
 //-------------------
-.controller('configCtrl', function ($scope, $ionicModal, ShopInfo, CarType,$ionicPopup,$cordovaToast, DB, $http) {
+.controller('configCtrl', function ($scope, $ionicModal, $ionicLoading, ShopInfo, CarType,$ionicPopup,$cordovaToast, DB, $http) {
 
     $scope.initConfigParams = function(){
         $scope.defaultParams = {};
@@ -751,7 +772,8 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xisoService,
     $scope.deleteCartype = function(idx){
         var confirmPopup = $ionicPopup.confirm({
             title: '차종 삭제 확인',
-            template: '정말로 삭제 하시겠습니까?'
+            template: '정말로 삭제 하시겠습니까?',
+            okText:'예',cancelText:'아니오'
         });
 
         confirmPopup.then(function(res) {
@@ -764,11 +786,39 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xisoService,
             }
         });
     };
-/*
+    
+    $scope.initConfigDb = function(){
+        $scope.getDbList();
+    };
+    
+    $scope.getDbList = function(){
+        $http({
+            method: 'POST',
+            url: 'http://xpos.xiso.co.kr/disp.php?mClass=hwajin&act=dispList',
+            headers: {
+                'Content-Type': 'application/json; charset=utf-8',
+                'Accept': 'application/json'
+            }
+        })
+        .success(function (responsive, status, headers, config) {
+            console.log(responsive);
+            if(responsive != 'null'){
+                $scope.dbList = responsive;
+            }else{
+                $scope.dbList = {};
+                $cordovaToast.showShortBottom('DB 목록이 없습니다.');
+            }
+        })
+        .error(function (data, status, headers, config) {
+            $scope.dbList = {};
+            $cordovaToast.showShortBottom('DB 목록을 불러오는데 실패했습니다.');
+        });
+    };
+
     // DB 백업
     $scope.backup = function(){
         var successFn = function(json, count){
-            console.log("Exported JSON: "+json);
+            // console.log("Exported JSON: "+json);
             console.log("Exported JSON contains equivalent of "+count+" SQL statements");
 
             $http({
@@ -783,27 +833,103 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xisoService,
                 }
             })
             .success(function (responsive, status, headers, config) {
-                console.log('success');
-                console.log(responsive);
+                $ionicLoading.hide();
+                $cordovaToast.showShortBottom(responsive);
+                $scope.getDbList();
             })
             .error(function (data, status, headers, config) {
-                console.log('error');
+                $ionicLoading.hide();
+                $cordovaToast.showShortBottom('서버에 DB 백업을 실패하였습니다.');
                 console.log(data);
                 console.log(status);
                 console.log(headers);
-                $scope.print_r(config.data.pos_json.data.inserts);
             });
 
         };
-        cordova.plugins.sqlitePorter.exportDbToJson(DB.db, {
-            successFn: successFn
+
+        $ionicPopup.confirm({
+            title: '확인',
+            template: '현재 시점으로 디비를 백업합니다',
+            okText:'예',cancelText:'아니오'
+        }).then(function(res){
+            if(res){
+                $ionicLoading.show({
+                    template: '서버와 통신중입니다.',
+                    duration: 10000
+                });
+                cordova.plugins.sqlitePorter.exportDbToJson(DB.db, {
+                    successFn: successFn,
+                    errorFn: errorFn
+                });
+            }
         });
+
     };
 
     // DB 복구
-    $scope.restore = function(){
+    $scope.restore = function(database){
+        $ionicPopup.confirm({
+            title: '확인',
+            template: '선택한 시점으로 디비를 복구합니다',
+            okText:'예',cancelText:'아니오'
+        }).then(function(res){
+            if(res){
+                $http({
+                    method: 'POST',
+                    url: 'http://xpos.xiso.co.kr/disp.php?mClass=hwajin&act=dispView',
+                    data: {
+                        pos_srl : database.pos_srl
+                    },
+                    headers: {
+                        'Content-Type': 'application/json; charset=utf-8',
+                        'Accept': 'application/json'
+                    }
+                })
+                .success(function (responsive, status, headers, config) {
+                    if(responsive.pos_json){
+                        // cordova.plugins.sqlitePorter.wipeDb(DB.db, {
+                        //     successFn: dbSwipeSuccess,
+                        //     errorFn: errorFn
+                        // });
+
+                        cordova.plugins.sqlitePorter.importJsonToDb(DB.db, responsive.pos_json,{
+                            successFn: successFn,
+                            errorFn: errorFn,
+                            batchInsertSize: 500
+                        });
+
+                    }else{
+                        console.log('복구할 DB 를 로드하지 못했습니다.');
+                    }
+                })
+                .error(function (data, status, headers, config) {
+                    console.log(data);
+                    console.log(status);
+                    console.log(headers);
+                });
+            }
+        });
+
+        var dbSwipeSuccess = function(json){
+            console.log(json);
+            console.log('DB 삭제 성공');
+
+            cordova.plugins.sqlitePorter.importJsonToDb(DB.db, pos_json,{
+                successFn: successFn,
+                errorFn: errorFn,
+                batchInsertSize: 500
+            });
+        };
+
+        var successFn = function(){
+            $cordovaToast.showShortBottom('DB 복구를 성공하였습니다.');
+        };
 
     };
-*/
+
+    var errorFn = function(error){
+        $cordovaToast.showShortBottom('실패 : '+error.message);
+        console.log("The following error occurred: "+error.message);
+    };
 
 });

@@ -295,8 +295,9 @@ xpos.factory('DB', function($q, DB_CONFIG, $cordovaSQLite) {
 .factory('Month', function(DB) {
 	var self = this;
 
-	self.all = function() {
-		return DB.query("SELECT mon.*, (SELECT IFNULL(sum(pay_amount), 0) FROM payment WHERE lookup_idx = mon.idx AND lookup_type='month' AND is_cancel = 'N') as pay_amount FROM month mon LIMIT 1000 OFFSET 0")
+	self.all = function(limit, offset) {
+		return DB.query("SELECT mon.*, (SELECT IFNULL(sum(pay_amount), 0) FROM payment WHERE lookup_idx = mon.idx AND lookup_type='month' AND is_cancel = 'N') as pay_amount FROM month mon ORDER BY idx DESC LIMIT ? OFFSET ?",
+		[limit ? limit : 1000, offset ? offset : 0])
 			.then(function(result){
 				return DB.fetchAll(result);
 			});

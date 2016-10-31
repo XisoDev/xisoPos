@@ -15,11 +15,11 @@ var xpos = angular.module('xisoPos', ['ionic', 'ngCordova','ionicMultipleViews',
 			$ionicLoading.show({
 				template: "DB를 초기화합니다. 잠시만 기다려주세요."
 			});
-			setTimeout(function(){
+			// setTimeout(function(){
 				// xSerial.init();
 				xisoService.initX();
 				$ionicLoading.hide();
-			},500);
+			// },500);
 		});
 
 		//back button action
@@ -50,7 +50,7 @@ var xpos = angular.module('xisoPos', ['ionic', 'ngCordova','ionicMultipleViews',
 			$ionicHistory.goBack();
 		  }
 		  return false;
-		  }, 101);
+		}, 101);
 
 		//fake backbutton
 		var document = $document[0];
@@ -176,7 +176,16 @@ var xpos = angular.module('xisoPos', ['ionic', 'ngCordova','ionicMultipleViews',
 						controller: 'configCtrl'
 					}
 				}
-			});z
+			})
+			.state('mainLayout.tabs.configDatabase', {
+				url: '/configDatabase',
+				views: {
+					'tab-config': {
+						templateUrl: 'templates/config.db.html',
+						controller: 'configCtrl'
+					}
+				}
+			});
 
 		$urlRouterProvider.otherwise('/mainLayout/tabs/current');
 	});

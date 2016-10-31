@@ -1,7 +1,11 @@
 xpos
 
-.factory('xisoService', function($rootScope, $ionicModal, $ionicPopup, $ionicLoading, $cordovaToast, $state, CarType, Month, Garage, Cooper, Payment, ShopInfo) {
+.factory('xisoService', function($rootScope, $ionicModal, $ionicPopup, $ionicLoading, $cordovaToast, $state, $injector, CarType, Month, Garage, Cooper, Payment, ShopInfo) {
     var self = this;
+    
+    self.offset = 0;
+    self.moredata = false;
+    self.search = {};
 
     self.mainField = '';
     self.garage = {};
@@ -11,13 +15,18 @@ xpos
     self.dates = {};    // 단순히 start_date, end_date 검색을 위해서 씀
     self.before_is_stop = '';
 
-    //lists
+    //list
     self.monthList = {};
     self.carTypeList = {};
     self.garageList = {};
     self.cooperList = {};
     self.payList = {};
     self.dayCarList = {};
+    
+    //view's list
+    self.vGarageList = {};
+    self.vHistoryList = {};
+    self.vMonthList = {};
 
     //modals
     self.mdGarageView = {};
@@ -43,25 +52,46 @@ xpos
         self.pay_success = 'N';
         self.payObj = {};
     };
-
-    var clear = function(){
-        //lists
-        self.monthList = {};
-        self.carTypeList = {};
-        self.garageList = {};
-        self.cooperList = {};
-        self.payList = {};
-        self.dayCarList = {};
-    };
     
     var reload = function(){
-        clear();
-        $state.go($state.current, {}, {reload: true});
+        var state_name = $injector.get('$state').current.name;
+        console.log('state_name = '+state_name);
+
+        self.offset = 0;
+        self.moredata = false;
+        
+        switch (state_name){
+            case 'mainLayout.tabs.current':
+                self.getGarageList(false);
+                break;
+            case 'mainLayout.tabs.history':
+                self.getHistoryList(false);
+                break;
+            case 'mainLayout.tabs.month':
+                self.getMonthList(false);
+                break;
+        }
+        // $state.reload();
     };
+
 
     // scope 로 modal initialize
     self.init = function($scope) {
         $scope = $scope || $rootScope.$new();
+
+        //modals
+        self.mdGarageView = {};
+        self.mdDcInput = {};
+        self.mdPayInput = {};
+        self.mdCarTypeList = {};
+        self.mdMonthList = {};
+        self.mdGarageList = {};
+        self.mdOutList = {};
+        self.mdCooperList = {};
+        self.mdPayCancel = {};
+        self.mdMonthPay = {};
+        self.mdMonth = {};
+        self.mdDayCarList = {};
 
         // 차량상세 Modal
         $ionicModal.fromTemplateUrl('templates/garage_view.html', {
@@ -183,6 +213,110 @@ xpos
         self.tempGarage.pay_money = pay_money; //결제할 금액 세팅
     };
 
+    //입차목록 리스트 불러오기
+    self.getGarageList = function(is_load_more, $scope){
+        $scope = $scope || $rootScope.$new();
+        var limit = 100;
+
+        Garage.allForCurrent(limit, self.offset).then(function(result){
+            if(result.length > 0) {
+                if(!is_load_more) {
+                    self.vGarageList = result;
+                }else{
+                    for(var key in result) {
+                        self.vGarageList.push(result[key]);
+                    }
+                }
+                self.offset += limit;
+                self.moredata = true;
+            }else{
+                self.moredata = false;    // 더이상 추가로드 할게 없음
+            }
+
+            $scope.$broadcast('scroll.refreshComplete');
+            $scope.$broadcast('scroll.infiniteScrollComplete');
+        });
+    };
+
+    //입출차 목록 불러오기
+    self.getHistoryList = function(is_load_more, $scope){
+        $scope = $scope || $rootScope.$new();
+        var limit = 100;
+
+        Garage.allForHistory(limit, self.offset).then(function(result){
+            if(result.length > 0) {
+                for (var key in result) {
+                    if (result[key].month_idx > 0) {  //월차차량은 내부적으로 결제됨으로 저장(월차로 표시)
+                        result[key].is_paid = 'Y';
+                    } else if (result[key].pay_amount < (result[key].total_amount - result[key].discount_cooper - result[key].discount_self)) {
+                        //결제 금액 < (총 요금 - 지정주차할인 - 셀프할인)
+                        result[key].is_paid = 'N';
+                    } else if (!result[key].end_date) {
+                        //출차 하기 전엔 결제를 할수 없으므로
+                        result[key].is_paid = 'N';
+                    } else {
+                        result[key].is_paid = 'Y';
+                    }
+                }
+
+                if(!is_load_more) {
+                    //추가 로드가 아닐때
+                    self.vHistoryList = result;
+                }else{
+                    //추가 로드일때
+                    for(var key in result) {
+                        self.vHistoryList.push(result[key]);    // 기존 배열에 추가
+                    }
+                }
+                self.offset += limit;
+                self.moredata = true;
+            }else{
+                self.moredata = false;    // 더이상 추가로드 할게 없음
+            }
+            $scope.$broadcast('scroll.refreshComplete');
+            $scope.$broadcast('scroll.infiniteScrollComplete');
+        });
+    };
+
+    self.getMonthList = function(is_load_more, $scope){
+        $scope = $scope || $rootScope.$new();
+        var limit = 100;
+        
+        Month.all(limit, self.offset).then(function(result){
+            if(result.length > 0) {
+                var msec = new Date().getTime();  // 현재 시간
+                for(var key in result){
+                    // 만료 설정
+                    if(msec > result[key].end_date || result[key].is_stop == 'Y') {
+                        result[key].is_expired = 'Y';
+                    }else{
+                        if(msec < result[key].start_date) {
+                            result[key].is_expired = 'W';
+                        }else{
+                            result[key].is_expired = 'N';
+                        }
+                    }
+                }
+
+                if(!is_load_more){
+                    self.vMonthList = result;
+                }else{
+                    //추가 로드일때
+                    for(var key in result) {
+                        self.vMonthList.push(result[key]);    // 기존 배열에 추가
+                    }
+                }
+                self.offset += limit;
+                self.moredata = true;
+            }else{
+                self.moredata = false;
+            }
+            $scope.$broadcast('scroll.refreshComplete');
+            $scope.$broadcast('scroll.infiniteScrollComplete');
+        });
+    };
+    
+
     // 패널 - 입차 버튼 클릭시 체크
     self.inCarChk = function(){
         if(!self.mainField) return $ionicPopup.alert({title:'알림', template:'관리 번호를 입력해주세요'});
@@ -262,9 +396,9 @@ xpos
 
             self.printInCar();  //영수증 출력
 
-            $cordovaToast.showShortBottom('[ '+ self.mainField +' ] - 입차되었습니다');
-            reload();
             self.mdCarTypeList.hide();
+            reload();
+            $cordovaToast.showShortBottom('[ '+ self.mainField +' ] - 입차되었습니다');
             self.clearMF();
         }, function (err) { console.error(err); });
     };
@@ -305,9 +439,9 @@ xpos
 
                     self.printInCar();
 
+                    self.mdMonthList.hide();
                     $cordovaToast.showShortBottom('[ '+ month.car_num +' ] - 월차로 입차되었습니다');
                     reload();
-                    self.mdMonthList.hide();
                     self.clearMF();
                 }, function (err) { console.error(err); });
             }
@@ -333,6 +467,7 @@ xpos
         Month.getByCarNum('%'+self.mainField+'%').then(function(result){
             $state.go('mainLayout.tabs.month');
 
+            show('요청중입니다...',2000);
             setTimeout(function(){  // view 의 init 시간과 맞추기 위함
                 if(result.length > 0){
                     self.monthList = result;
@@ -344,8 +479,6 @@ xpos
                     self.month = {};
                     self.month.car_num = self.mainField;
 
-
-
                     self.dates.start_date = new Date();
                     self.dates.end_date = new Date(Date.parse(self.dates.start_date) + 30 * 1000 * 60 * 60 * 24);
 
@@ -354,7 +487,7 @@ xpos
 
                     self.mdMonth.show();
                 }
-            },800);
+            },2000);
         },function (err){ console.log(err); });
     };
     
@@ -435,9 +568,9 @@ xpos
         }).then(function (res) {
             if(res){
                 Garage.cancelCar(self.garage).then(function(result){
+                    self.mdGarageView.hide();
                     $cordovaToast.showShortBottom('차량번호 [ '+ self.garage.car_num +' ]의 입차취소가 완료 되었습니다');
                     reload();
-                    self.mdGarageView.hide();
                 },function(err){ console.log(err); });
             }
         });
@@ -590,14 +723,15 @@ xpos
                 self.month.idx = res.insertId;
 
                 self.mdMonth.hide();
+
+                self.openPayMonth();
+                reload();
+
                 if(!self.month.is_ext){
                     $cordovaToast.showShortBottom("차량번호 ["+ self.month.car_num +"] 새로운 월차가 추가되었습니다.");
                 }else{
                     $cordovaToast.showShortBottom("차량번호 ["+ self.month.car_num +"] 연장된 월차가 추가되었습니다.");
                 }
-
-                reload();
-                self.openPayMonth();
             }, function (err) {
                 console.log(err);
             });
@@ -607,8 +741,8 @@ xpos
             }
             Month.update(self.month).then(function(res){
 
-                self.mdMonth.hide();
                 $cordovaToast.showShortBottom("차량번호 ["+ self.month.car_num +"] 월차가 수정되었습니다.");
+                self.mdMonth.hide();
                 reload();
             },function(err){
                 console.log(err);
@@ -722,12 +856,12 @@ xpos
                     }
 
                     Payment.insert(params).then(function (res2) {
-                        $cordovaToast.showShortBottom('현금 결제처리 완료되었습니다.');
-                        self.openCash();
 
+                        self.openCash();
                         self.closeModal();
 
                         reload();
+                        $cordovaToast.showShortBottom('현금 결제처리 완료되었습니다.');
                     });
                 }
             });
@@ -776,15 +910,21 @@ xpos
 
     // 상세정보 Modal - 출차 취소 버튼
     self.cancelOutCar = function(){
-        var params = angular.copy(self.garage);
-        Garage.cancelOutCar(params).then(function(result){
-            $cordovaToast.showShortBottom('차량번호 [ '+ self.garage.car_num +' ]의 출차취소가 완료 되었습니다');
+        $ionicPopup.confirm({
+            title: '확인',
+            template: '출차 취소 하시겠습니까?',
+            okText: '예', cancelText: '아니오'
+        }).then(function (res) {
+            if (res) {
+                var params = angular.copy(self.garage);
+                Garage.cancelOutCar(params).then(function(result){
+                    self.mdGarageView.hide();
+                    $cordovaToast.showShortBottom('차량번호 [ '+ self.garage.car_num +' ]의 출차취소가 완료 되었습니다');
+                    reload();
+                },function(err){console.log(err);});
+            }
+        });
 
-            self.garage = {};
-
-            reload();
-            self.mdGarageView.hide();
-        },function(err){console.log(err);});
     };
 
     // 결체 취소 리스트에서 선택했을때 DB에서 결제취소
@@ -794,9 +934,9 @@ xpos
         }else{
             //현금일때 돈통 열어줌
             Payment.cancelPay(pay).then(function(result){
-                $cordovaToast.showShortBottom('현금 취소처리 완료되었습니다.');
                 self.openCash();
                 self.closeModal();
+                $cordovaToast.showShortBottom('현금 취소처리 완료되었습니다.');
                 reload();
             });
         }
@@ -967,7 +1107,7 @@ xpos
             show("아직 단말기가 연결되지않아 먼저 연결을 시도합니다. 연결이 성공하면 재시도 해주세요.");
             setTimeout(function(){
                 self.initX();
-            },1000);
+            },500);
             return;
         }
         if(is_init){
@@ -975,7 +1115,7 @@ xpos
             serial.writeHex("02000604FD544D0378EF");
             setTimeout(function(){
                 self.write(content);
-            },1000);
+            },500);
         }else{
             self.write(content);
         }
@@ -1007,7 +1147,7 @@ xpos
                 show("아직 단말기가 연결되지않아 먼저 연결을 시도합니다. 연결이 성공하면 재시도 해주세요.");
                 setTimeout(function(){
                     self.initX();
-                },1000);
+                },500);
             }else{
                 serial.write(str);
             }
@@ -1104,8 +1244,8 @@ xpos
     self.payCardCancel = function(pay_idx, pay_location){
         //단말기 연결 확인
         if(!inited){
-            $cordovaToast.showShortBottom('취소 실패 - 카드단말이 연결되지 않았습니다. 재접속 후 다시 시도해주세요.');
             self.closeModal();
+            $cordovaToast.showShortBottom('취소 실패 - 카드단말이 연결되지 않았습니다. 재접속 후 다시 시도해주세요.');
             reload();
             return false;
         }

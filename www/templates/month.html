@@ -35,11 +35,11 @@
         <ion-refresher
                 ng-if="status!='calendar'"
                 pulling-text="당겨서 새로 고침"
-                on-refresh="getMonthList()" style="top:0px;">
+                on-refresh="refresh()" style="top:0px;">
         </ion-refresher>
 
         <!--목록/만료목록-->
-        <ion-item class="row item item-dark ovc_item" ng-repeat="mon in monthList | filter:search:strict" ng-click="xiso.openEditMonth(mon)" ng-if="status!='calendar'">
+        <ion-item class="row item item-dark ovc_item" ng-repeat="mon in xiso.vMonthList | filter:search:strict" ng-click="xiso.openEditMonth(mon)" ng-if="status!='calendar'">
             <div class="col">{{mon.car_num}}</div>
             <div class="col">{{mon.start_date | date:'MM-dd HH:mm'}}</div>
             <div class="col">{{mon.end_date | date:'MM-dd HH:mm'}}</div>

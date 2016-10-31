@@ -7,7 +7,7 @@
         <ion-list class="background">
             <ion-item class="square" style="height:130px" ng-repeat="coop in xiso.cooperList" ng-click="xiso.procCooperDc(coop)">
                 <h4 style="padding:10px 0">{{coop.coop_title}}</h4>
-                <p>무료 {{coop.minute_free}}분 / 최초 {{coop.minute_max}}분 후 {{coop.minute_unit}}분당 {{coop.amount_unit}}원</p>
+                <p>무료 최초 {{coop.minute_max}}분 후 {{coop.minute_unit}}분당 {{coop.amount_unit}}원</p>
             </ion-item>
         </ion-list>
     </ion-content>
