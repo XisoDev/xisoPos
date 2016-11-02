@@ -2,6 +2,7 @@ xpos
 
 .factory('xisoService', function($rootScope, $ionicModal, $ionicPopup, $ionicLoading, $cordovaToast, $state, $injector, CarType, Month, Garage, Cooper, Payment, ShopInfo) {
     var self = this;
+    self.timeID2;
     
     self.offset = 0;
     self.moredata = false;
@@ -987,6 +988,7 @@ xpos
             self.initPayVariables();
             hide();
         }
+        clearTimeout(self.timeID2);
         console.log('self.complete end');
     };
     
@@ -1056,6 +1058,7 @@ xpos
                                             }else{
                                                 self.pay_success = 'N';
                                                 $cordovaToast.showShortBottom("거래실패 : 코드 - " + res.ret_code);
+                                                clearTimeout(self.timeID2);
                                             }
 
                                             self.complete(res);    //결제 종료
@@ -1075,6 +1078,9 @@ xpos
                                             }else if(res.ret_code == '9998'){
                                                 $cordovaToast.showShortBottom("거래실패 : IC 카드 빠짐");
                                                 hide();
+                                            }else {
+                                                $cordovaToast.showShortBottom("거래실패 : 코드 - " + res.ret_code);
+                                                clearTimeout(self.timeID2);
                                             }
                                         }
                                         console.log("receive : " + res.receive);
@@ -1104,7 +1110,7 @@ xpos
     self.Sender = function(content, is_init){
         if(!inited){
             hide();
-            show("아직 단말기가 연결되지않아 먼저 연결을 시도합니다. 연결이 성공하면 재시도 해주세요.");
+            show("아직 단말기가 연결되지않아 먼저 연결을 시도합니다. 연결이 성공하면 재시도 해주세요.", 3000);
             setTimeout(function(){
                 self.initX();
             },500);
@@ -1201,8 +1207,11 @@ xpos
             return false;
         }
 
-        show('카드 결제를 요청중입니다..', 40000);
-
+        show('카드 결제를 요청중입니다..', 50000);
+        self.timeID2 = setTimeout(function(){
+            hide();
+            serial.writeHex("02000604FD544D0378EF");
+        }, 40000);
         self.initPayVariables();
         self.pay_location = pay_location;   //결제 요청한 위치를 저장
 
@@ -1250,7 +1259,11 @@ xpos
             return false;
         }
 
-        show('카드 결제 취소를 요청중입니다..', 40000);
+        show('카드 결제 취소를 요청중입니다..', 50000);
+        self.timeID2 = setTimeout(function(){
+            hide();
+            serial.writeHex("02000604FD544D0378EF");
+        }, 40000);
 
         self.initPayVariables();
         self.pay_location = pay_location;   //결제 요청한 위치를 저장
