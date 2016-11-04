@@ -27,7 +27,7 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xisoService,
             }
         });
     };
-    
+
     $scope.cancelCard = function(){
         // 임의 결제 리스트 Modal을 띄운담에 골라서 취소
         $scope.xiso.openPayCancel('temp');
@@ -666,7 +666,7 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xisoService,
     };
     $scope.initDayCar = function(){
         $scope.initCartypeParams();
-        
+
         CarType.allDayCar().then(function(result){
             if(result.length > 0) $scope.carTypeList = result;
         });
@@ -786,11 +786,11 @@ xpos.controller('PanelCtrl', function ($scope, $state, $ionicPopup, xisoService,
             }
         });
     };
-    
+
     $scope.initConfigDb = function(){
         $scope.getDbList();
     };
-    
+
     $scope.getDbList = function(){
         $http({
             method: 'POST',

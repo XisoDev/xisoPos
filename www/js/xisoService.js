@@ -17,31 +17,17 @@ xpos
     self.before_is_stop = '';
 
     //list
-    self.monthList = {};
-    self.carTypeList = {};
-    self.garageList = {};
-    self.cooperList = {};
-    self.payList = {};
-    self.dayCarList = {};
+    self.monthList = null;
+    self.carTypeList = null;
+    self.garageList = null;
+    self.cooperList = null;
+    self.payList = null;
+    self.dayCarList = null;
     
     //view's list
-    self.vGarageList = {};
-    self.vHistoryList = {};
-    self.vMonthList = {};
-
-    //modals
-    self.mdGarageView = {};
-    self.mdDcInput = {};
-    self.mdPayInput = {};
-    self.mdCarTypeList = {};
-    self.mdMonthList = {};
-    self.mdGarageList = {};
-    self.mdOutList = {};
-    self.mdCooperList = {};
-    self.mdPayCancel = {};
-    self.mdMonthPay = {};
-    self.mdMonth = {};
-    self.mdDayCarList = {};
+    self.vGarageList = null;
+    self.vHistoryList = null;
+    self.vMonthList = null;
     
     //serial
     self.pay_location = '';
@@ -79,20 +65,6 @@ xpos
     // scope 로 modal initialize
     self.init = function($scope) {
         $scope = $scope || $rootScope.$new();
-
-        //modals
-        self.mdGarageView = {};
-        self.mdDcInput = {};
-        self.mdPayInput = {};
-        self.mdCarTypeList = {};
-        self.mdMonthList = {};
-        self.mdGarageList = {};
-        self.mdOutList = {};
-        self.mdCooperList = {};
-        self.mdPayCancel = {};
-        self.mdMonthPay = {};
-        self.mdMonth = {};
-        self.mdDayCarList = {};
 
         // 차량상세 Modal
         $ionicModal.fromTemplateUrl('templates/garage_view.html', {
@@ -231,6 +203,9 @@ xpos
                 self.offset += limit;
                 self.moredata = true;
             }else{
+                if(!is_load_more){
+                    self.vGarageList = null;
+                }
                 self.moredata = false;    // 더이상 추가로드 할게 없음
             }
 
@@ -272,6 +247,9 @@ xpos
                 self.offset += limit;
                 self.moredata = true;
             }else{
+                if(!is_load_more){
+                    self.vHistoryList = null;
+                }
                 self.moredata = false;    // 더이상 추가로드 할게 없음
             }
             $scope.$broadcast('scroll.refreshComplete');
@@ -310,6 +288,9 @@ xpos
                 self.offset += limit;
                 self.moredata = true;
             }else{
+                if(!is_load_more) {
+                    self.vMonthList = null;
+                }
                 self.moredata = false;
             }
             $scope.$broadcast('scroll.refreshComplete');
